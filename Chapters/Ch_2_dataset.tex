@@ -74,27 +74,52 @@ This process includes multiple critical points:
 The provided labels have however been considered correct, as no other mean of comparison are available in current conditions.
 
 
-\subsection{Labels analysis}[ht]
-Biological tissues were divided in 14 classes, the most represented of which was the \textit{tumor} class. Occurrences for each class are shown in Fig.\ref{fig:label_distribution}
-\begin{figure}
+\subsection{Labels analysis}
+Biological tissues were divided in 14 classes, the most represented of which was the \textit{tumor} class (47,92\%). Occurrences for each class are shown in Fig.\ref{fig:label_distribution}
+
+
+Elimination of non relevant spectra for the dataset (i.e. unlabeled/transparent and artifacts) and binary grouping in tumoral/healty balances out the dataset (Fig.\ref{fig:binary_label_distribution})
+
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\linewidth]{Images/Images_ch_2/label_distributions.png}
-    \caption{Occurrences for each label in the dataset}
-    \label{fig:label_distribution}
+    \subfloat[Occurrences for each label in the dataset.\label{fig:label_distribution}]{
+        \includegraphics[width=0.45\textwidth]{Images//Images_ch_2/label_distributions.png}
+    }
+    \hfill
+    \subfloat[Binary grouping by tumoral and healthy spectra after discarding unlabeled, transparent pixels and artifacts.\label{fig:binary_label_distribution}]{
+        \includegraphics[width=0.45\textwidth]{Images//Images_ch_2/binary_label_distribution.png}
+    }
+    \caption{Distribution of labels in the dataset.}
+    \label{fig:label_distributions}
 \end{figure}
-
-Elimination non relevant spectra for the dataset (i.e. unlabeled/transparent and artifacts) and binary grouping in tumoral/healty balances out the dataset (Fig.\ref{fig:binary_label_distribution})
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.75\linewidth]{Images//Images_ch_2/binary_label_distribution.png}
-    \caption{Binary grouping by tumoral and healthy spectra after discarding unlabeled, transparent pixels and artifacts}
-    \label{fig:binary_label_distribution}
-\end{figure}
-
 \section{Spectra}
 \label{sec:Spectra}
 
+The spectra, originally acquired in the range (-------), have been stripped of the 'silent region' (1800-2800 $cm^{-1}$) in order to reduce the training data weight, since in that range no useful biological information is found.
 
-\section{Binary classification}
-\label{sec:Binary classification}
+
+In a preliminary visual analysis the average spectrum for each class has been computed. individual spectra can have a relative deviation of  up to 50\% of the peak value in low intensity regions (although decreasing to roughly 20\% for major peaks).
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images//Images_ch_2/spectrum_avg_tumor.png}
+    \caption{Average spectrum for \textit{tumor} label. In light blue the standard deviation}
+    \label{fig:spectrum_avg_tumor}
+\end{figure}
+
+
+All classes appear to have the same trends, with multiple similar peaks in the 'fingerprint region' (500-1800 $cm^{-1}$) and a major peak in the 'CH region' (1800-3500 $cm^{-1}$). The only exceptions are represented by \textit{unlabeled/transparent}, \textit{artifact} and \textit{necrosis} pixels, which noticeably differed from all others (Fig.\ref{fig:spectra_comparison_discarded})
+
+
+\begin{figure}[H]
+    \centering
+    \subfloat[\textit{tumor} spectrum against the discarded classes.\label{fig:spectra_comparison_discarded}]{
+        \includegraphics[width=0.45\textwidth]{Images//Images_ch_2/spectra_comparison_discarded.png}
+    }
+    \hfill
+    \subfloat[\textit{tumor} spectrum against the most represented healthy classes.\label{fig:spectra_comparison_similar}]{
+        \includegraphics[width=0.45\textwidth]{Images//Images_ch_2/spectra_comparison_similar.png}
+    }
+    \caption{Comparison of spectra for different classes. The spectra are averaged across each label and normalized through SNV.}
+    \label{fig:spectra_comparisons}
+\end{figure}
