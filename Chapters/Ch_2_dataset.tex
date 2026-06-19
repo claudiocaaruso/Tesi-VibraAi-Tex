@@ -9,7 +9,8 @@ This chapter explains how the dataset is structured.
 The Raman spectra in the dataset have been stored in a \textit{.parquet} file, which is a column-based format designed for efficient data storage and retrieval.
 
 The analyzed biological tissue was taken from 25 different \textit{samples}, each one from a different patient.
-From each sample, 1 to 5 areas called \textit{maps}, were then selected for the Raman spectra acquisition.
+
+1 to 5 areas, called \textit{maps}, were then selected from each sample for the Raman spectra acquisition.
 A spectrum was acquired for each pixel in the map, which has a size of 120x120 pixels.
 Finally, each spectrum ranged across 483 bands, equivalent to wavenumbers (Raman shift).
 Each spectrum (i.e. pixel) has an associated \textit{label}, indicating the type of biological tissue it belongs to.
@@ -54,9 +55,7 @@ With 25 samples and 1 to 5 maps for each, the total number of maps is 78, thus a
 \section{Labels}
 \label{sec:labels}
 
-\subsection{Histopathologist's classification}
-
-Each pixel (spectrum) has been assigned a label, corresponding to a specific type of biological tissue, by a pathologist.
+Each pixel (spectrum) has been assigned a label, corresponding to a specific type of biological tissue, by a histopathologist.
 The classification pipeline started with the preparation of the samples as $12\mu m$ slices of tumoral tissue.
 Raman spectroscopy was then performed on a slice, while the contiguous slice was treated with H\&E staining.
 Classification was then performed on the stained slice by the histopathologist.
@@ -74,11 +73,10 @@ This process includes multiple critical points:
 The provided labels have however been considered correct, as no other mean of comparison are available in current conditions.
 
 
-\subsection{Labels analysis}
 Biological tissues were divided in 14 classes, the most represented of which was the \textit{tumor} class (47,92\%). Occurrences for each class are shown in \Cref{fig:label_distribution}
 
 
-Elimination of non relevant spectra for the dataset (i.e. unlabeled/transparent and artifacts) and binary grouping in tumoral/healthy balances out the dataset (\Cref{fig:binary_label_distribution})
+Among the classes, two do not correspond to any biological tissue and were  removed before further analysis. The \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifact} pixels result from acquisition issues (e.g.\ cosmic-rays, contamination) and would only introduce noise. This is confirmed by their average spectra, which deviate from all tissue classes (\Cref{fig:spectra_comparison_discarded}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset.
 
 \begin{figure}[H]
     \centering
@@ -95,10 +93,10 @@ Elimination of non relevant spectra for the dataset (i.e. unlabeled/transparent 
 \section{Spectra}
 \label{sec:spectra}
 
-The spectra, originally acquired in the range (-------), have been stripped of the 'silent region' (1800-2800 $cm^{-1}$) in order to reduce the training data weight, since in that range no useful biological information is found.
+The spectra, originally acquired in the range (-------), have been stripped of the 'silent region' (1800-2800 $cm^{-1}$) in order to reduce the training data weight by 30\%, since in that range no useful biological information is found.
 
 
-In a preliminary visual analysis the average spectrum for each class has been computed. individual spectra can have a relative deviation of  up to 50\% of the peak value in low intensity regions (although decreasing to roughly 20\% for major peaks).
+In a preliminary visual analysis the average spectrum for each class has been computed. Individual spectra can have a relative deviation of  up to 50\% of the peak value in low intensity regions,min decreasing to roughly 20\% for major peaks.
 
 \begin{figure}[ht]
     \centering
@@ -120,6 +118,10 @@ All classes appear to have the same trends, with multiple similar peaks in the '
     \subfloat[\textit{tumor} spectrum against the most represented healthy classes.\label{fig:spectra_comparison_similar}]{
         \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/spectra_comparison_similar.png}
     }
-    \caption{Comparison of spectra for different classes. The spectra are averaged across each label and normalized through SNV.}
+    \caption{Comparison of spectra for different classes. The spectra are averaged across each label and normalized.}
     \label{fig:spectra_comparisons}
 \end{figure}
+
+
+\section{Binary classification}
+\label{sec:binary_classification}
