@@ -4,9 +4,9 @@
 This chapter explains how the dataset is structured.
 
 \section{Origin and Structure}
-\label{sec:Origin and Structure}
+\label{sec:origin-structure}
 
-The raman spectra in the dataset have been stored in a \textit{.parquet} file, which is a column-based format designed for efficient data storage and retrieval.
+The Raman spectra in the dataset have been stored in a \textit{.parquet} file, which is a column-based format designed for efficient data storage and retrieval.
 
 The analyzed biological tissue was taken from 25 different \textit{samples}, each one from a different patient.
 From each sample, 1 to 5 areas called \textit{maps}, were then selected for the Raman spectra acquisition.
@@ -33,7 +33,7 @@ Each spectrum (i.e. pixel) has an associated \textit{label}, indicating the type
         \texttt{band\_}$n$  & $n \in [0, 482]$ & Raman intensity at the $n$-th spectral band,
                               for the 483 Raman shifts (cm$^{-1}$). \\
         \hline
-        \texttt{Label}      & integer & Tissue-class identifier of the pixel (see Sec.~\ref{...}). \\
+        \texttt{Label}      & integer & Tissue-class identifier of the pixel (see \Cref{sec:labels}). \\
         \hline
     \end{tabularx}
     \caption{Structure of the dataset columns.}
@@ -52,7 +52,7 @@ With 25 samples and 1 to 5 maps for each, the total number of maps is 78, thus a
 
 
 \section{Labels}
-\label{sec:Labels}
+\label{sec:labels}
 
 \subsection{Histopathologist's classification}
 
@@ -75,25 +75,25 @@ The provided labels have however been considered correct, as no other mean of co
 
 
 \subsection{Labels analysis}
-Biological tissues were divided in 14 classes, the most represented of which was the \textit{tumor} class (47,92\%). Occurrences for each class are shown in Fig.\ref{fig:label_distribution}
+Biological tissues were divided in 14 classes, the most represented of which was the \textit{tumor} class (47,92\%). Occurrences for each class are shown in \Cref{fig:label_distribution}
 
 
-Elimination of non relevant spectra for the dataset (i.e. unlabeled/transparent and artifacts) and binary grouping in tumoral/healty balances out the dataset (Fig.\ref{fig:binary_label_distribution})
+Elimination of non relevant spectra for the dataset (i.e. unlabeled/transparent and artifacts) and binary grouping in tumoral/healthy balances out the dataset (\Cref{fig:binary_label_distribution})
 
 \begin{figure}[H]
     \centering
     \subfloat[Occurrences for each label in the dataset.\label{fig:label_distribution}]{
-        \includegraphics[width=0.45\textwidth]{Images//Images_ch_2/label_distributions.png}
+        \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/label_distributions.png}
     }
     \hfill
     \subfloat[Binary grouping by tumoral and healthy spectra after discarding unlabeled, transparent pixels and artifacts.\label{fig:binary_label_distribution}]{
-        \includegraphics[width=0.45\textwidth]{Images//Images_ch_2/binary_label_distribution.png}
+        \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/binary_label_distribution.png}
     }
     \caption{Distribution of labels in the dataset.}
     \label{fig:label_distributions}
 \end{figure}
 \section{Spectra}
-\label{sec:Spectra}
+\label{sec:spectra}
 
 The spectra, originally acquired in the range (-------), have been stripped of the 'silent region' (1800-2800 $cm^{-1}$) in order to reduce the training data weight, since in that range no useful biological information is found.
 
@@ -102,23 +102,23 @@ In a preliminary visual analysis the average spectrum for each class has been co
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.5\linewidth]{Images//Images_ch_2/spectrum_avg_tumor.png}
+    \includegraphics[width=0.5\linewidth]{Images/Images_ch_2/spectrum_avg_tumor.png}
     \caption{Average spectrum for \textit{tumor} label. In light blue the standard deviation}
     \label{fig:spectrum_avg_tumor}
 \end{figure}
 
 
-All classes appear to have the same trends, with multiple similar peaks in the 'fingerprint region' (500-1800 $cm^{-1}$) and a major peak in the 'CH region' (1800-3500 $cm^{-1}$). The only exceptions are represented by \textit{unlabeled/transparent}, \textit{artifact} and \textit{necrosis} pixels, which noticeably differed from all others (Fig.\ref{fig:spectra_comparison_discarded})
+All classes appear to have the same trends, with multiple similar peaks in the 'fingerprint region' (500-1800 $cm^{-1}$) and a major peak in the 'CH region' (2800-3500 $cm^{-1}$). The only exceptions are represented by \textit{unlabeled/transparent}, \textit{artifact} and \textit{necrosis} pixels, which noticeably differed from all others (\Cref{fig:spectra_comparison_discarded})
 
 
 \begin{figure}[H]
     \centering
     \subfloat[\textit{tumor} spectrum against the discarded classes.\label{fig:spectra_comparison_discarded}]{
-        \includegraphics[width=0.45\textwidth]{Images//Images_ch_2/spectra_comparison_discarded.png}
+        \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/spectra_comparison_discarded.png}
     }
     \hfill
     \subfloat[\textit{tumor} spectrum against the most represented healthy classes.\label{fig:spectra_comparison_similar}]{
-        \includegraphics[width=0.45\textwidth]{Images//Images_ch_2/spectra_comparison_similar.png}
+        \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/spectra_comparison_similar.png}
     }
     \caption{Comparison of spectra for different classes. The spectra are averaged across each label and normalized through SNV.}
     \label{fig:spectra_comparisons}
