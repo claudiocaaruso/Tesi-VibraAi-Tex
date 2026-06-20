@@ -96,7 +96,7 @@ Among the classes, two do not correspond to any biological tissue and were  remo
 The spectra, originally acquired in the range (-------), have been stripped of the 'silent region' (1800-2800 $cm^{-1}$) in order to reduce the training data weight by 30\%, since in that range no useful biological information is found.
 
 
-In a preliminary visual analysis the average spectrum for each class has been computed. Individual spectra can have a relative deviation of  up to 50\% of the peak value in low intensity regions,min decreasing to roughly 20\% for major peaks.
+In a preliminary visual analysis the average spectrum for each class has been computed. At the major Raman peaks the standard deviation across individual spectra corresponds to 12–20\% of the peak height. Relative to the local signal intensity, this dispersion is small near the peaks, although it grows noticeably in the weak baseline regions (bands 30-200), where the standard deviation becomes roughly 30\% of the local mean.
 
 \begin{figure}[ht]
     \centering
@@ -125,3 +125,36 @@ All classes appear to have the same trends, with multiple similar peaks in the '
 
 \section{Binary classification}
 \label{sec:binary_classification}
+
+In the prospect of training a binary classification ANN it was necessary to set a choice for the binary labeling to be used as ground truth for training and performance verification.
+
+
+Two strategies were considered for this task:
+\begin{itemize}
+    \item \textbf{\textit{Tumor} vs. \textit{healthy} discrimination}
+    \\Grouping all or part of the labels under the \textit{Tumor} and \textit{Healthy} macro-classes.
+    \item \textbf{Single class discrimination}
+    \\Choosing a class of particular interest other than \textit{Tumor} and discarding all others
+\end{itemize}
+
+
+The choice had to account for the following criteria:
+\begin{itemize}
+    \item \textbf{Biological relevance:} the distinction needs to have useful applications.
+    \item \textbf{Numerosity:} the two groups had to be comparable in size.
+    \item \textbf{Discernability:} the average spectral differences between classes change classification performance and usefulness.
+\end{itemize}
+
+The first approach is the one with the most clinical relevance. Successful classification of tumoral areas against general healthy tissue would be the most versatile result possible, with further single-class distinction to be performed later depending on need. The balance between the two classes would also be close to 50/50, allowing to use the whole dataset for training and testing. This approach presents however multiple critical points.
+The \textit{healthy} macro-class, including numerous tissue types, is very heterogeneous (high intra-class variance), leading to poor feature individuation or bias towards the major class.
+The \textit{tumor} macro-class, which always includes the \textit{tumor (2)} label, could also comprise the \textit{tumor+necrosis (20)} and the \textit{necrosis (0)} labels since necrotic tissue will always be adjacent to tumors; necrotic tissue, however, show high variance (\Cref{fig:spectra_comparison_discarded}) due to structural degradation of the cells, leading to problems similar to the ones of the \textit{healthy} macro-class.
+
+
+The second approach, using isolate classes, will reduce intraclass variance and allow the model to learn the class-specific patterns, thus improving performance.
+Due to the class imbalance (tumor alone being 47\% of the dataset) the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the avaliable training data. The model is then trained on a reduced number of spectra. Due to the size of the dataset (>1000000 spectra) and the similarity of the spectra linked to adjacent pixels, the subsampling can be performed without major shortcomings down to 5-10\% of the original dataset (with the constraint of keeping spectra from each sample). This reduces the possible choices for \textit{healthy} labels to the most numerous ones (\Cref{fig:label_distribution}).
+The distinguishability of t
+
+
+
+
+
