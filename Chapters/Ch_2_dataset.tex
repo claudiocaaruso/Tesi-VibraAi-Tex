@@ -150,11 +150,29 @@ The \textit{healthy} macro-class, including numerous tissue types, is very heter
 The \textit{tumor} macro-class, which always includes the \textit{tumor (2)} label, could also comprise the \textit{tumor+necrosis (20)} and the \textit{necrosis (0)} labels since necrotic tissue will always be adjacent to tumors; necrotic tissue, however, show high variance (\Cref{fig:spectra_comparison_discarded}) due to structural degradation of the cells, leading to problems similar to the ones of the \textit{healthy} macro-class.
 
 
-The second approach, using isolate classes, will reduce intraclass variance and allow the model to learn the class-specific patterns, thus improving performance.
-Due to the class imbalance (tumor alone being 47\% of the dataset) the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the avaliable training data. The model is then trained on a reduced number of spectra. Due to the size of the dataset (>1000000 spectra) and the similarity of the spectra linked to adjacent pixels, the subsampling can be performed without major shortcomings down to 5-10\% of the original dataset (with the constraint of keeping spectra from each sample). This reduces the possible choices for \textit{healthy} labels to the most numerous ones (\Cref{fig:label_distribution}).
-The distinguishability of t
+The second approach, using isolated classes, will reduce intra-class variance and allow the model to learn the class-specific patterns, thus improving performance.
+Due to the class imbalance (tumor alone being 47\% of the dataset) the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the available training data. The model is then trained on a reduced number of spectra. Due to the size of the dataset (>1000000 spectra) and the similarity of the spectra linked to adjacent pixels, the subsampling can be performed without major shortcomings down to 5-10\% of the original dataset (with the constraint of keeping spectra from each sample). This reduces the possible choices for \textit{healthy} labels to the most numerous ones, i.e. \textit{tumor stroma (6)}, \textit{stroma with inflammation (4)} and \textit{connective tissue}(5))(\Cref{fig:label_distribution}).
 
+Regarding distinguishability, the most similar tissues are also the most clinically confusable. Being able to discriminate would then be the most valuable result. The three possible healthy classes show a comparable degree of similarity to the tumor (\cref{fig:spectra_comparison_similar}), each then constitutes an equally valid choice, with no class being a priori better suited than the rest from a separability standpoint.
 
+Clinically, each label can be relevant in different ways:
+\begin{itemize}
+    \item \textbf{Tumor stroma:} is the supportive environment for future tumoral growth (though still healthy). It sits right at the boundary between tumoral tissue and healthy tissue, thus it is of primary interest for surgical margin assessment.
+    \item \textbf{Stroma with inflammation:} Stroma infiltrated by immune cells. Related to \textit{tumor stroma}, they often overlap and are classified based of the histopathologist's judgement and not due to strict biological distinction. Stroma with inflammation can be also unrelated to tumoral activity, although the scale of the problem (few $\mu m$) makes this possibility very unlikely.
+    \item \textbf{Connective tissue:} Unaltered collagen rich tissue. Would serve to the same purpose of the macro-class distinction proposed previously.
+\end{itemize}
 
+Classification will then be performed on the tumor vs healthy approach to assess results to the global problem, while the Tumor vs. Tumor stroma as a surgically oriented problem, with a spectrally homogeneous training set based on the most numerous healthy class, expecting for it better results overall.
 
-
+\begin{figure}[H]
+    \centering
+    \subfloat[\textit{Tumor} vs. \textit{healthy} classification (1st approach.\label{fig:heatmap-tumor-vs-healthy}]{
+        \includegraphics[width=0.44\textwidth]{Images//Images_ch_2/heatmap_tumor_vs_healthy.png}
+    }
+    \hfill
+    \subfloat[\textit{Tumor} vs. \textit{stroma with inflammation} classification (2nd approach.\label{fig:heatmap-tumor-vs-stroma}]{
+        \includegraphics[width=0.46\textwidth]{Images//Images_ch_2/heatmap_tumor_vs_stroma.png}
+    }
+    \caption{Maps with highlighted labels based on classification approach. \textit{Stroma with inflammation} was chosen over \textit{Tumor stroma}, although not being the final choiche for training, for representative purposes. No map in the dataset contained both \textit{tumor stroma} and other labels.}
+    \label{fig:heatmap_classification}
+\end{figure}
