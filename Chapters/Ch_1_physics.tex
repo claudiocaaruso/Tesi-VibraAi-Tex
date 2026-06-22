@@ -1,0 +1,164 @@
+\chapter{Introduction to Raman spectroscopy for biological tissue characterization}
+\label{ch:introduction}
+
+The Raman effect was first reported by the physicist Chandrasekhara Venkata Raman in 1928 and later recognized with the Nobel Prize in Physics in 1930. When light interacts with matter, a small fraction of the incident radiation can exchange energy with the vibrational modes of the molecules in the sample, producing frequency shifts in the scattered light.
+
+Raman spectroscopy is a vibrational spectroscopic technique used to investigate the molecular composition and structure of a sample through its interaction with light, by measuring these shifts. A Raman spectrum can therefore be interpreted as a vibrational fingerprint of the material under investigation.
+
+\section{Classical and quantum interpretation of Raman effect}
+\label{sec:classical_description_raman}
+
+The Raman effect can be introduced by following the response of a molecule to the electric field of the incident radiation. In a classical description, the molecule is treated as a polarizable object: the external field slightly displaces the electronic cloud with respect to the nuclei, and this displacement creates an induced electric dipole. The electric field of a monochromatic laser beam can be written as
+\begin{equation}
+    \mathbf{E}(t) = \mathbf{E}_0 \cos(2\pi \nu_0 t),
+    \label{eq:incident_field}
+\end{equation}
+where \(\mathbf{E}_0\) is the field amplitude and \(\nu_0\) is the frequency of the exciting radiation. To first order, the induced dipole is proportional to the applied field:
+\begin{equation}
+    \boldsymbol{\mu}_{\mathrm{ind}}(t) =
+    \boldsymbol{\alpha}\mathbf{E}(t),
+    \label{eq:induced_dipole}
+\end{equation}
+where \(\boldsymbol{\alpha}\) is the polarizability tensor. Polarizability measures how easily the electronic distribution can be deformed by an external electric field. In this view, scattering is the radiation emitted by the induced dipole as it oscillates under the action of the incident wave.
+
+If the molecule were fixed at its equilibrium geometry, the polarizability would be constant and the induced dipole would oscillate only at the laser frequency. The emitted radiation would therefore have the same frequency as the incident radiation, producing an elastic process known as Rayleigh scattering. Raman scattering appears when nuclear motion is taken into account.
+
+The effect of nuclear motion on polarizability can be explained by recalling the mechanical picture behind molecular vibrations. Near the equilibrium geometry, a chemical bond can be approximated as an elastic connection. In the simplest diatomic case, the molecule behaves like two masses connected by a spring, and the vibrational frequency depends on both the stiffness of the bond and the reduced mass of the two atoms. Stiffer bonds lead to higher vibrational frequencies, while heavier atoms generally lead to lower ones. In a polyatomic molecule, the nuclear motion is more complex, but it can be decomposed into independent collective motions called normal modes. Each normal mode is described by a coordinate \(Q_k\), which represents a coordinated displacement pattern of the nuclei rather than the motion of a single atom. This description is useful for Raman scattering because changes in the nuclear geometry can modify the electronic distribution, and therefore the polarizability, along each normal coordinate.
+
+In the harmonic approximation, each normal coordinate oscillates sinusoidally around the equilibrium geometry:
+\begin{equation}
+    Q_k(t) = Q_{k,0}\cos(2\pi \nu_k t),
+    \label{eq:normal_coordinate}
+\end{equation}
+where \(\nu_k\) is the vibrational frequency of the \(k\)-th normal mode.
+
+During this motion, the molecular geometry changes, and the polarizability may change accordingly. Expanding a component of the polarizability tensor around the equilibrium configuration gives
+\begin{equation}
+    \alpha_{ij}(\{Q\}) \simeq
+    \left(\alpha_{ij}\right)_0 +
+    \sum_k
+    \left(\frac{\partial \alpha_{ij}}{\partial Q_k}\right)_0 Q_k  
+    \label{eq:polarizability_taylor}
+\end{equation}
+The constant term in equation~\eqref{eq:polarizability_taylor} describes the polarizability of the molecule at equilibrium; the linear term describes how that polarizability changes when the nuclei move along a vibrational coordinate. Substituting equations~\eqref{eq:incident_field} and \eqref{eq:normal_coordinate} into equation~\eqref{eq:induced_dipole}, and retaining the first-order term of equation~\eqref{eq:polarizability_taylor}, gives
+\begin{equation}
+\begin{split}
+    \mu_{\mathrm{ind}}(t) \propto
+    &\ \alpha_0 E_0 \cos(2\pi \nu_0 t) \\
+    &+ \frac{1}{2}
+    \left(\frac{\partial \alpha}{\partial Q_k}\right)_0
+    Q_{k,0}E_0
+    \left[
+        \cos 2\pi(\nu_0-\nu_k)t +
+        \cos 2\pi(\nu_0+\nu_k)t
+    \right].
+\end{split}
+\label{eq:induced_dipole_components}
+\end{equation}
+This expression contains the essential result of the classical treatment. The first term, proportional to \(\alpha_0\), oscillates at the laser frequency \(\nu_0\) and corresponds to Rayleigh scattering. The other terms arise only if the vibration changes the polarizability. They oscillate at \(\nu_0-\nu_k\) and \(\nu_0+\nu_k\), which correspond to the Stokes and anti-Stokes Raman components, respectively. In this sense, Raman scattering can be understood as a frequency modulation of the induced dipole caused by molecular vibration.
+
+A vibrational mode contributes to the Raman spectrum only if it changes at least one component of the polarizability tensor:
+\begin{equation}
+    \left(\frac{\partial \alpha_{ij}}{\partial Q_k}\right)_0 \neq 0.
+    \label{eq:raman_activity}
+\end{equation}
+In physical terms, this means that the vibration must modify the response of the electronic cloud to the incident electric field, by changing the ease with which the cloud can be distorted.
+
+The classical description does not fully describe the microscopic nature of the process. 
+
+In a quantum picture, the vibrational energy of the molecule is quantized, and the molecule occupies discrete vibrational states, denoted by quantum numbers \(\nu = 0, 1, 2, \ldots\). When the molecule interacts with radiation, the electric field acts as a small perturbation of this vibrational system and polarizes the molecule. The system passes through a short-lived virtual state, followed almost immediately by the emission of a scattered photon. The energy difference between the incident and scattered photons therefore reflects the change in the vibrational state of the molecule.
+
+In Rayleigh scattering, the molecule returns to the same vibrational state from which it started, and the scattered photon has the same energy as the incident photon. In Stokes Raman scattering, the molecule ends in a higher vibrational state; part of the incident photon energy remains in the molecule, so the scattered photon has lower energy compared to the incident photon. In anti-Stokes Raman scattering, the molecule is initially in an excited vibrational state and returns to a lower one; vibrational energy is transferred from the molecule to the photon, so the scattered photon has higher energy.
+
+The probability of such a transition is not determined simply by the existence of two energy levels, but by how strongly the two states are coupled by the molecular response to the field. This is why the quantum description naturally introduces matrix elements: they express whether a transition between two vibrational states is allowed and how efficiently it can occur. The probability of a Raman transition between an initial vibrational state \(|i\rangle\) and a final state \(|f\rangle\) is proportional to the squared modulus of the polarizability matrix element:
+\begin{equation}
+    P_{i\rightarrow f}^{\mathrm{Raman}} \propto
+    \left|\alpha_{fi}\right|^2,
+    \qquad
+    \alpha_{fi} = \langle f|\hat{\alpha}|i\rangle .
+    \label{eq:raman_transition_probability}
+\end{equation}
+Using the first-order expansion of polarizability, the probability amplitude for the Raman transition contains a term that couples the initial and final vibrational states through the coordinate \(Q_k\):
+\begin{equation}
+    \alpha_{fi}^{\mathrm{Raman}} \propto
+    \left(\frac{\partial \alpha}{\partial Q_k}\right)_0
+    \langle v_f|Q_k|v_i\rangle .
+    \label{eq:raman_matrix_element}
+\end{equation}
+This equation links the classical and quantum descriptions. The derivative of the polarizability gives the Raman activity condition, while the matrix element of \(Q_k\) gives the vibrational selection rule for the mode considered. In a molecule with several normal modes, the same idea can be written more explicitly as
+\begin{equation}
+    \alpha_{fi}^{\mathrm{Raman}} \propto
+    \sum_k
+    \left(\frac{\partial \alpha}{\partial Q_k}\right)_0
+    \langle v_{f,k}|Q_k|v_{i,k}\rangle
+    \prod_{j\neq k}
+    \langle v_{f,j}|v_{i,j}\rangle .
+    \label{eq:raman_matrix_element_multimode}
+\end{equation}
+The factor \(\langle v_{f,k}|Q_k|v_{i,k}\rangle\) describes the transition of the active mode \(k\). In the harmonic approximation, it is non-zero only for \(\Delta v_k=\pm 1\). The product over \(j\neq k\) contains overlap integrals for all the other modes. Since different harmonic oscillator states are orthogonal, these factors are non-zero only when the final and initial quantum numbers are the same for those modes. Therefore, in a fundamental Raman transition, one normal mode changes by one quantum, while the other normal modes remain unchanged. The Stokes process corresponds to \(\Delta v_k=+1\), while the anti-Stokes process corresponds to \(\Delta v_k=-1\).
+
+The quantum picture also explains why Stokes lines are usually more intense than anti-Stokes lines. At thermal equilibrium, most molecules occupy the lowest vibrational state, while only a smaller fraction is already vibrationally excited. Stokes scattering can therefore start from the most populated state, whereas anti-Stokes scattering requires the molecule to be in an excited vibrational state before the interaction with the photon. As temperature increases, the population of excited vibrational states also increases, and the anti-Stokes signal can become stronger. Under ordinary experimental conditions, however, this population is usually small for many vibrational modes. This is why biological Raman measurements commonly focus on the Stokes side of the spectrum.
+
+In practice, Raman spectra are not usually represented as a function of the absolute wavelength of the scattered light. The horizontal axis is instead the Raman shift, defined as the difference between the wavenumber of the incident radiation and that of the scattered radiation. For Stokes scattering,
+\begin{equation}
+    \Delta \tilde{\nu} =
+    \tilde{\nu}_0 - \tilde{\nu}_s =
+    \frac{1}{\lambda_0} - \frac{1}{\lambda_s},
+    \label{eq:raman_shift}
+\end{equation}
+and it is expressed in \(\mathrm{cm}^{-1}\). This representation is useful because Raman band positions correspond to vibrational energy differences and are therefore characteristic of the sample, independently of the excitation wavelength. In measured biological spectra, the intense Rayleigh component is removed by optical filters, so the useful spectrum is mainly composed of Raman bands, typically on the Stokes side.
+
+\section{Spectral information in biological tissues} 
+\label{sec:raman_biological_tissues}
+
+A molecular Raman spectrum can be interpreted as a vibrational fingerprint of the sample. In simple molecules, individual bands may often be assigned to specific vibrational modes. In biological tissues, however, this interpretation is more complex and Raman spectroscopy does not usually allow the unambiguous identification of a specific molecule. Tissues are chemically heterogeneous systems, and each measured spectrum combines contributions from several molecular families, such as proteins, lipids, nucleic acids, carbohydrates, collagen and other extracellular matrix components. 
+
+As a result, changes in tissue organization or biochemical composition do not usually affect a single isolated peak. Instead, they can modify relative intensities, band shapes, peak positions and correlations among different spectral regions. The information relevant for tissue characterization is therefore often distributed across the whole spectrum.
+
+One spectral interval of particular interest is the fingerprint region, approximately between \(500\) and \(1800~\mathrm{cm}^{-1}\). This is generally the most chemically specific part of a biological Raman spectrum, since it contains bands associated with different molecular vibrations, including contributions from proteins, lipids, nucleic acids, carbohydrates and other tissue constituents. The overall pattern of peaks in this region can provide detailed information on the biochemical composition of the sample.
+
+A second relevant interval is the high-wavenumber region, around \(2800\)--\(3000~\mathrm{cm}^{-1}\), where C--H stretching vibrations are often observed. These bonds are abundant in biological molecules rich in carbon and hydrogen, especially lipids and proteins, making the signal from this region useful for tissue discrimination. However, its bands are usually broader and more overlapping than those in the fingerprint region, which makes individual molecular assignments less specific. Even so, their combined pattern can still carry class-relevant information.
+
+The interval between the fingerprint and high-wavenumber regions, approximately \(1800\)--\(2800~\mathrm{cm}^{-1}\), is often called the silent region because biological samples usually show few Raman bands in this range.
+
+Raman spectroscopy offers several advantages for biological and clinical applications. It is label-free, so it does not require fluorescent markers or staining to generate chemically specific contrast. It can be non-destructive, preserving the sample for further analysis, and it is compatible with microscopy, which makes it possible to acquire spectra from localized regions of a tissue section.
+
+In Raman microspectroscopy, spectra can be acquired point by point over a sample, producing a hyperspectral map. Each spatial position is associated with a spectrum and therefore with hundreds of spectral variables. 
+
+Computational methods can handle many correlated spectral features simultaneously and can search for class-dependent patterns that may not be evident from visual inspection of single peaks. This approach is particularly suitable for biological samples, where relevant differences may be subtle, distributed over several wavenumbers and affected by correlations between neighbouring spectral variables. 
+The goal of the classification model developed in this thesis is to learn patterns in the spectral profile that are associated with different tissue classes. At the same time, Raman spectra do not replace histopathology. Histological annotation remains the reference used to define the labels for supervised learning.
+
+\section{Experimental setup and Raman data acquisition}
+\label{sec:experimental_setup}
+
+The Raman data used in this project were acquired with a home-built Raman microspectroscopy system developed for the analysis of biological samples. 
+
+The excitation source is a continuous-wave diode-pumped laser operating in the red spectral region, around \(660~\mathrm{nm}\), providing the monochromatic radiation required for Raman measurements.
+The Raman scattering efficiency increases strongly at shorter wavelengths, approximately as
+\begin{equation}
+    I_R \propto \frac{1}{\lambda_0^4},
+    \label{eq:lambda_dependence}
+\end{equation}
+where \(\lambda_0\) is the excitation wavelength.
+Shorter wavelengths can therefore increase the Raman signal and can also improve spatial resolution. However, they may also increase the risk of photodamage and can enhance unwanted fluorescence background. A red excitation wavelength provides a practical balance between signal intensity, spatial resolution and sample preservation.
+
+Along the excitation path, the laser beam is first filtered to remove unwanted spectral components and then attenuated by neutral-density filters. This step is important for biological tissues, where excessive laser power can cause local heating, photodamage or burning. The beam is then expanded before entering the microscope, helping the objective to focus the laser more effectively on the sample.
+
+Inside the microscope, the excitation beam is directed toward the objective and focused onto a small region of the tissue section. The same objective collects the light backscattered from the illuminated region. In this way, each Raman spectrum is associated with a localized area of the sample. When a map is acquired, the sample can be scanned point by point, so that each spatial position is linked to a Raman spectrum.
+
+The collected light contains both the weak Raman signal and a much stronger Rayleigh component with the same wavelength as the excitation laser. Since Rayleigh scattering is several orders of magnitude more intense than Raman scattering, it must be rejected before detection, because it could hide the Raman signal and saturate the detector. This is done using optical elements such as a dichroic beamsplitter and edge or long-pass filters, which attenuate the elastic component while transmitting the Raman-shifted light.
+
+After filtering, the Raman signal enters the spectrometer, where it is dispersed by a diffraction grating to separate the collected light into its different wavelength components. These components reach different positions on the CCD detector, which records the intensity of the light at each pixel. The raw output is therefore an intensity signal as a function of detector pixel position. Through calibration, the pixel axis is converted into Raman shift, producing the final spectrum expressed as intensity versus Raman shift.
+
+The experimental parameters must be chosen carefully for biological tissues because the Raman signal is intrinsically weak. Increasing laser power or exposure time can improve the signal-to-noise ratio, making the Raman bands more distinguishable from noise, but these choices also increase the risk of heating, photodamage or sample alteration. Other choices, such as the objective, the focus position, the slit width, the grating and the scanned area, affect spatial resolution, spectral resolution, acquisition time and background contributions from the support on which the tissue section is placed. The measured data therefore reflect a balance between spectral quality, acquisition time and preservation of the biological specimen.
+
+These limitations matter directly for machine learning. The spectra used as input to the classification model are shaped not only by tissue biochemistry, but also by acquisition conditions and experimental noise. If these effects are not properly controlled or corrected, the model may learn patterns related to measurement variability rather than tissue class.
+
+\section{Scope of the thesis}
+\label{sec:scope_thesis}
+
+Raman spectroscopy produces high-dimensional data. A single spectrum can contain hundreds of intensity values, and adjacent spectral bands are often correlated. The connection with machine learning arises naturally from this data structure. The measured spectrum is rich in chemical information, but the relevant differences between classes may be subtle, multivariate and affected by noise. Machine learning methods can use the entire spectral pattern to predict a label or a probability.
+
+The aim of this thesis is to evaluate a computational pipeline based on an artificial neural network for the binary classification of Raman spectra acquired from biological tissue samples, with particular attention to the recognition of tumour tissue.
+
+The results should be interpreted as an assessment of a machine learning pipeline on the available Raman dataset. They do not constitute a clinical validation of Raman spectroscopy as a diagnostic tool. Such a validation would require a larger and independent cohort of samples, a predefined clinical protocol and systematic comparison with established diagnostic procedures.
