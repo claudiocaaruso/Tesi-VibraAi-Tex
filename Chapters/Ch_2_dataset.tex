@@ -1,19 +1,23 @@
 \chapter{Dataset}
 \label{ch:Dataset}
 
-This chapter explains how the dataset is structured.
+This chapter describes the dataset of Raman spectra used throughout this work, collected from head and neck squamous cell carcinoma (HNSCC) tissue samples.
+\Cref{sec:origin-structure} presents the hierarchical organisation of the data, from patients down to individual pixel-level spectra, together with the column schema of the storage format.
+\Cref{sec:labels} details how each pixel was assigned a tissue-class label by a histopathologist and discusses the limitations inherent in the annotation procedure, concluding with the removal of two non-tissue classes (\textit{unlabeled/transparent} and \textit{artifact}) that carry no biological information.
+\Cref{sec:spectra} characterises the spectral content of the dataset: the preprocessing steps already applied before delivery, the silent-region removal that reduces the spectral dimension to 483 bands, and a visual comparison of the average spectra across classes.
+Finally, \Cref{sec:binary_classification} motivates and formalises the two binary labeling strategies adopted for the classification experiments: a broad \textit{tumor} vs.\ \textit{healthy} grouping and a surgically oriented \textit{tumor} vs.\ \textit{tumor stroma} pairing.
 
 \section{Origin and Structure}
 \label{sec:origin-structure}
 
 The Raman spectra in the dataset have been stored in a \textit{.parquet} file, which is a column-based format designed for efficient data storage and retrieval.
 
-The analyzed biological tissue was taken from 25 different \textit{samples}, each one from a different patient.
+The analyzed biological tissue consisted of patient-derived head and neck squamous cell carcinoma (HNSCC). It was taken from 25 \textit{samples}, one from each of 25 different patients, so that samples and patients are in one-to-one correspondence in this dataset.
 
-1 to 5 areas, called \textit{maps}, were then selected from each sample for the Raman spectra acquisition.
-A spectrum was acquired for each pixel in the map, which has a size of 120x120 pixels.
+Two to five areas, called \textit{maps}, were then selected from each sample for the Raman spectra acquisition.
+A spectrum was acquired for each pixel in the map. Each map has a size of 120$\times$120 pixels, obtained by discarding the outermost row and column of the original 121$\times$121 acquisition to remove photobleaching artefacts.
 Finally, each spectrum ranged across 483 bands, equivalent to wavenumbers (Raman shift).
-Each spectrum (i.e. pixel) has an associated \textit{label}, indicating the type of biological tissue it belongs to.
+Each spectrum (i.e.\ pixel) has an associated \textit{label}, indicating the type of biological tissue it belongs to.
 
 \begin{table}[ht]
     \centering
@@ -24,7 +28,7 @@ Each spectrum (i.e. pixel) has an associated \textit{label}, indicating the type
         \texttt{Sample\_ID} & e.g. \texttt{1234\_567} & The first 4 digits identify the patient, the
                               last 3 the sample from that patient. \\
         \hline
-        \texttt{Map\_ID}    & e.g. \texttt{Map\_1} & Acquisition map; 1 to 5 maps were
+        \texttt{Map\_ID}    & e.g. \texttt{Map\_1} & Acquisition map; 2 to 5 maps were
                               analysed per sample. \\
         \hline
         \texttt{x} & $x\in [0, 119]$ & Pixel coordinates on the horizontal axis\\
@@ -32,7 +36,7 @@ Each spectrum (i.e. pixel) has an associated \textit{label}, indicating the type
         \texttt{y} & $y\in [0, 119]$ & Pixel coordinates on the vertical axis\\
         \hline
         \texttt{band\_}$n$  & $n \in [0, 482]$ & Raman intensity at the $n$-th spectral band,
-                              for the 483 Raman shifts (cm$^{-1}$). \\
+                              for the 483 Raman shifts ($\mathrm{cm}^{-1}$). \\
         \hline
         \texttt{Label}      & integer & Tissue-class identifier of the pixel (see \Cref{sec:labels}). \\
         \hline
@@ -41,12 +45,12 @@ Each spectrum (i.e. pixel) has an associated \textit{label}, indicating the type
     \label{tab:dataset-structure}
 \end{table}
 
-With 25 samples and 1 to 5 maps for each, the total number of maps is 78, thus amounting to 1\,123\,200 spectra.
+With 25 samples and 2 to 5 maps each, the total number of maps is 78, thus amounting to 1\,123\,200 spectra.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.5\linewidth]{Images/logo_polimi_scritta.eps}
-    \caption{Relation between Sample, maps and spectra}
+    \caption{Relationship between samples, maps and spectra}
     \label{fig:placeholder}
 \end{figure}
 
@@ -65,18 +69,45 @@ Finally the classification was applied to the Raman image.
 This process includes multiple critical points:
 
 \begin{itemize}
-    \item Differences in composition for contiguous slices, leading to incorrect classification
-    \item Human classification is not pixel-wise, as is artificial classification. Errors will be particularly common in boundaries between tissues
+    \item Differences in composition for contiguous slices, leading to incorrect classification.
+    \item Human annotation is region-based rather than pixel-wise, unlike automated classification; errors are therefore particularly common at boundaries between tissues.
     \item Human misclassification of entire areas.
 \end{itemize}
 
-The provided labels have however been considered correct, as no other mean of comparison are available in current conditions.
+The provided labels have, however, been considered correct, as no other means of comparison is available in current conditions.
 
 
-Biological tissues were divided in 14 classes, the most represented of which was the \textit{tumor} class (47,92\%). Occurrences for each class are shown in \Cref{fig:label_distribution}
+Biological tissues were divided into 13 classes, the most represented of which was the \textit{tumor} class (46,71\%). Occurrences for each class are shown in \Cref{fig:label_distribution} and detailed in \Cref{tab:label-distribution}.
 
 
-Among the classes, two do not correspond to any biological tissue and were  removed before further analysis. The \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifact} pixels result from acquisition issues (e.g.\ cosmic-rays, contamination) and would only introduce noise. This is confirmed by their average spectra, which deviate from all tissue classes (\Cref{fig:spectra_comparison_discarded}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset.
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|c|l|r|r|}
+        \hline
+        \textbf{Label} & \textbf{Tissue class} & \textbf{Spectra} & \textbf{\%} \\
+        \hline
+        2  & Tumor                         & 524\,671 & 46,71 \\
+        6  & Tumor stroma                  & 216\,117 & 19,24 \\
+        4  & Stroma with inflammation      & 149\,319 & 13,29 \\
+        5  & Connective tissue             & 68\,619  & 6,11  \\
+        20 & Tumor with necrosis           & 54\,911  & 4,89  \\
+        $-1$ & Unlabeled/transparent       & 45\,940  & 4,09  \\
+        15 & Artifact                      & 18\,215  & 1,62  \\
+        19 & Epithelium (squamous, normal) & 15\,189  & 1,35  \\
+        3  & Skeletal muscle cells         & 11\,143  & 0,99  \\
+        0  & Necrosis                      & 10\,795  & 0,96  \\
+        8  & Glandular tissue              & 4\,203   & 0,37  \\
+        10 & Blood vessel                  & 3\,412   & 0,30  \\
+        23 & Lymphatic tissue              & 666      & 0,06  \\
+        \hline
+        \multicolumn{2}{|r|}{\textbf{Total}} & \textbf{1\,123\,200} & \textbf{100} \\
+        \hline
+    \end{tabular}
+    \caption{Per-class composition of the dataset, ordered by abundance. The \textit{unlabeled/transparent} and \textit{artifact} classes are non-tissue classes that are excluded before further analysis (see text).}
+    \label{tab:label-distribution}
+\end{table}
+
+Among the classes, two do not correspond to any biological tissue and were removed before further analysis. The \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifact} pixels result from acquisition issues (e.g.\ cosmic-rays, contamination) and would only introduce noise. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset.
 
 \begin{figure}[H]
     \centering
@@ -93,37 +124,43 @@ Among the classes, two do not correspond to any biological tissue and were  remo
 \section{Spectra}
 \label{sec:spectra}
 
-The spectra, originally acquired in the range (-------), have been stripped of the 'silent region' (1800-2800 $cm^{-1}$) in order to reduce the training data weight by 30\%, since in that range no useful biological information is found.
+Before being provided for this work, the spectra had undergone a standard Raman preprocessing pipeline, including cosmic-ray (spike) removal, subtraction of the quartz-substrate contribution and baseline correction to remove the autofluorescence background. For the cross-class comparisons reported below, the averaged spectra were further normalized with the standard normal variate (SNV) transform, which centres each spectrum and scales it to unit standard deviation, so that band shapes can be compared independently of overall intensity.
+
+The spectra, originally acquired over the \texttt{[acquisition range to confirm]}~$\mathrm{cm}^{-1}$ interval, have been stripped of the ``silent region'' (1800--2800 $\mathrm{cm}^{-1}$), where no useful biological information is found; this leaves the 483 bands described above, which span the fingerprint and CH regions.
+% TODO: replace [acquisition range to confirm] with the exact range (in cm^-1) obtained from the supervisor.
+% Note: the earlier "200--3500 cm^-1" / "30%" figures came from a different (master-thesis) interpolation grid and are unverified for this dataset.
+% --- FALLBACK if the exact range cannot be obtained: comment out the paragraph above and uncomment the line below. ---
+% The spectra, acquired over a broader Raman-shift range, have been stripped of the ``silent region'' (1800--2800 $\mathrm{cm}^{-1}$), where no useful biological information is found, leaving the 483 bands described above, which span the fingerprint and CH regions.
 
 
-In a preliminary visual analysis the average spectrum for each class has been computed. At the major Raman peaks the standard deviation across individual spectra corresponds to 12–20\% of the peak height. Relative to the local signal intensity, this dispersion is small near the peaks, although it grows noticeably in the weak baseline regions (bands 30-200), where the standard deviation becomes roughly 30\% of the local mean.
+In a preliminary visual analysis the average spectrum for each class has been computed. At the major Raman peaks the standard deviation across individual spectra corresponds to 12–20\% of the peak height. Relative to the local signal intensity, this dispersion is small near the peaks, although it grows noticeably in the weak baseline regions (bands 30--200), where the standard deviation becomes roughly 30\% of the local mean.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.5\linewidth]{Images/Images_ch_2/spectrum_avg_tumor.png}
-    \caption{Average spectrum for \textit{tumor} label. In light blue the standard deviation}
+    \caption{Average spectrum for the \textit{tumor} label. The shaded band shows $\pm1$ standard deviation across spectra.}
     \label{fig:spectrum_avg_tumor}
 \end{figure}
 
 
-All classes appear to have the same trends, with multiple similar peaks in the 'fingerprint region' (500-1800 $cm^{-1}$) and a major peak in the 'CH region' (2800-3500 $cm^{-1}$). The only exceptions are represented by \textit{unlabeled/transparent}, \textit{artifact} and \textit{necrosis} pixels, which noticeably differed from all others (\Cref{fig:spectra_comparison_discarded})
+All classes appear to have the same trends, with multiple similar peaks in the ``fingerprint region'' (500--1800 $\mathrm{cm}^{-1}$) and a major peak in the ``CH region'' (2800--3000 $\mathrm{cm}^{-1}$). The only exceptions are represented by \textit{unlabeled/transparent}, \textit{artifact} and \textit{necrosis} pixels, which differ from the others mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded}).
 
 
 \begin{figure}[H]
     \centering
-    \subfloat[\textit{tumor} spectrum against the discarded classes.\label{fig:spectra_comparison_discarded}]{
+    \subfloat[\textit{tumor} spectrum against the excluded non-tissue classes (\textit{unlabeled/transparent}, \textit{artifact}) and \textit{necrosis}.\label{fig:spectra_comparison_discarded}]{
         \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/spectra_comparison_discarded.png}
     }
     \hfill
     \subfloat[\textit{tumor} spectrum against the most represented healthy classes.\label{fig:spectra_comparison_similar}]{
         \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/spectra_comparison_similar.png}
     }
-    \caption{Comparison of spectra for different classes. The spectra are averaged across each label and normalized.}
+    \caption{Comparison of spectra for different classes. The spectra are averaged across each label and SNV-normalized.}
     \label{fig:spectra_comparisons}
 \end{figure}
 
 
-\section{Binary classification}
+\section{Binary labelling}
 \label{sec:binary_classification}
 
 In the prospect of training a binary classification ANN it was necessary to set a choice for the binary labeling to be used as ground truth for training and performance verification.
@@ -147,32 +184,35 @@ The choice had to account for the following criteria:
 
 The first approach is the one with the most clinical relevance. Successful classification of tumoral areas against general healthy tissue would be the most versatile result possible, with further single-class distinction to be performed later depending on need. The balance between the two classes would also be close to 50/50, allowing to use the whole dataset for training and testing. This approach presents however multiple critical points.
 The \textit{healthy} macro-class, including numerous tissue types, is very heterogeneous (high intra-class variance), leading to poor feature individuation or bias towards the major class.
-The \textit{tumor} macro-class, which always includes the \textit{tumor (2)} label, could also comprise the \textit{tumor+necrosis (20)} and the \textit{necrosis (0)} labels since necrotic tissue will always be adjacent to tumors; necrotic tissue, however, show high variance (\Cref{fig:spectra_comparison_discarded}) due to structural degradation of the cells, leading to problems similar to the ones of the \textit{healthy} macro-class.
+The \textit{tumor} macro-class, which always includes the \textit{tumor (2)} label, could also comprise the \textit{tumor with necrosis (20)} and the \textit{necrosis (0)} labels since necrotic tissue will always be adjacent to tumors; necrotic tissue, however, shows high variance (\Cref{fig:spectra_comparison_discarded}) due to structural degradation of the cells, leading to problems similar to the ones of the \textit{healthy} macro-class.
 
 
 The second approach, using isolated classes, will reduce intra-class variance and allow the model to learn the class-specific patterns, thus improving performance.
-Due to the class imbalance (tumor alone being 47\% of the dataset) the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the available training data. The model is then trained on a reduced number of spectra. Due to the size of the dataset (>1000000 spectra) and the similarity of the spectra linked to adjacent pixels, the subsampling can be performed without major shortcomings down to 5-10\% of the original dataset (with the constraint of keeping spectra from each sample). This reduces the possible choices for \textit{healthy} labels to the most numerous ones, i.e. \textit{tumor stroma (6)}, \textit{stroma with inflammation (4)} and \textit{connective tissue}(5))(\Cref{fig:label_distribution}).
+Due to the class imbalance (tumor alone being 46,71\% of the dataset) the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the available training data. The model is then trained on a reduced number of spectra. Due to the size of the dataset ($>$1\,000\,000 spectra) and the strong spatial correlation between adjacent pixels, which makes neighbouring spectra highly redundant, the data can be substantially subsampled with little loss of information, provided that spectra from every sample are retained.
+% TODO (optional, for a stronger quantitative claim): validate the subsampling empirically instead of stating it qualitatively.
+% Sweep the training-set fraction (e.g. 5/10/25/50/100%) using the SUBSAMPLE knob in scripts/train.py of the VibraAI repo, keeping the leakage-free per-patient split, and plot AUC/accuracy vs fraction.
+% If performance stays flat down to a small fraction, replace the sentence above with the measured number (e.g. "down to X% with no significant performance loss") and add the plot as a figure. This reduces the possible choices for \textit{healthy} labels to the most numerous ones, i.e.\ \textit{tumor stroma (6)}, \textit{stroma with inflammation (4)} and \textit{connective tissue (5)} (\Cref{fig:label_distribution}).
 
-Regarding distinguishability, the most similar tissues are also the most clinically confusable. Being able to discriminate would then be the most valuable result. The three possible healthy classes show a comparable degree of similarity to the tumor (\cref{fig:spectra_comparison_similar}), each then constitutes an equally valid choice, with no class being a priori better suited than the rest from a separability standpoint.
+Regarding distinguishability, the most similar tissues are also the most clinically confusable. Being able to discriminate would then be the most valuable result. The three possible healthy classes show a comparable degree of similarity to the tumor (\Cref{fig:spectra_comparison_similar}), each then constitutes an equally valid choice, with no class being a priori better suited than the rest from a separability standpoint.
 
 Clinically, each label can be relevant in different ways:
 \begin{itemize}
     \item \textbf{Tumor stroma:} is the supportive environment for future tumoral growth (though still healthy). It sits right at the boundary between tumoral tissue and healthy tissue, thus it is of primary interest for surgical margin assessment.
-    \item \textbf{Stroma with inflammation:} Stroma infiltrated by immune cells. Related to \textit{tumor stroma}, they often overlap and are classified based of the histopathologist's judgement and not due to strict biological distinction. Stroma with inflammation can be also unrelated to tumoral activity, although the scale of the problem (few $\mu m$) makes this possibility very unlikely.
+    \item \textbf{Stroma with inflammation:} Stroma infiltrated by immune cells. Related to \textit{tumor stroma}, they often overlap and are classified based on the histopathologist's judgement and not due to strict biological distinction. Stroma with inflammation can be also unrelated to tumoral activity, although the scale of the problem (few $\mu m$) makes this possibility very unlikely.
     \item \textbf{Connective tissue:} Unaltered collagen rich tissue. Would serve to the same purpose of the macro-class distinction proposed previously.
 \end{itemize}
 
-Classification will then be performed on the tumor vs healthy approach to assess results to the global problem, while the Tumor vs. Tumor stroma as a surgically oriented problem, with a spectrally homogeneous training set based on the most numerous healthy class, expecting for it better results overall.
+Two binary problems are therefore taken forward to the classification stage. The first, \textit{tumor} vs.\ \textit{healthy}, groups all valid non-tumor classes into a single \textit{healthy} macro-class: it targets the broad, clinically versatile question and keeps the two groups close to 50/50, allowing the whole dataset to be used. The second, \textit{tumor} vs.\ \textit{tumor stroma}, is a single, surgically motivated pairing for margin assessment; building the \textit{healthy} side from the most numerous single class yields a spectrally homogeneous and balanced training set, for which better performance is expected.
 
 \begin{figure}[H]
     \centering
-    \subfloat[\textit{Tumor} vs. \textit{healthy} classification (1st approach.\label{fig:heatmap-tumor-vs-healthy}]{
-        \includegraphics[width=0.44\textwidth]{Images//Images_ch_2/heatmap_tumor_vs_healthy.png}
+    \subfloat[\textit{Tumor} vs. \textit{healthy} classification (1st approach).\label{fig:heatmap-tumor-vs-healthy}]{
+        \includegraphics[width=0.44\textwidth]{Images/Images_ch_2/heatmap_tumor_vs_healthy.png}
     }
     \hfill
-    \subfloat[\textit{Tumor} vs. \textit{stroma with inflammation} classification (2nd approach.\label{fig:heatmap-tumor-vs-stroma}]{
-        \includegraphics[width=0.46\textwidth]{Images//Images_ch_2/heatmap_tumor_vs_stroma.png}
+    \subfloat[\textit{Tumor} vs. \textit{stroma with inflammation} classification (2nd approach).\label{fig:heatmap-tumor-vs-stroma}]{
+        \includegraphics[width=0.46\textwidth]{Images/Images_ch_2/heatmap_tumor_vs_stroma.png}
     }
-    \caption{Maps with highlighted labels based on classification approach. \textit{Stroma with inflammation} was chosen over \textit{Tumor stroma}, although not being the final choiche for training, for representative purposes. No map in the dataset contained both \textit{tumor stroma} and other labels.}
+    \caption{Maps with highlighted labels based on classification approach. \textit{Stroma with inflammation} is shown instead of \textit{tumor stroma} (the actual training target) for illustrative purposes, because no map in the dataset contained \textit{tumor stroma} together with other labels.}
     \label{fig:heatmap_classification}
 \end{figure}
