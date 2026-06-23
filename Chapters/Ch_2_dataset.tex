@@ -12,10 +12,10 @@ Finally, \Cref{sec:binary_classification} motivates and formalises the two binar
 
 The Raman spectra in the dataset have been stored in a \textit{.parquet} file, which is a column-based format designed for efficient data storage and retrieval.
 
-The analyzed biological tissue consisted of patient-derived head and neck squamous cell carcinoma (HNSCC). It was taken from 25 \textit{samples}, one from each of 25 different patients, so that samples and patients are in one-to-one correspondence in this dataset.
+The analyzed biological tissue consisted of head and neck squamous cell carcinoma (HNSCC). It was taken from 25 \textit{samples}, one from each of 25 different patients.
 
 Two to five areas, called \textit{maps}, were then selected from each sample for the Raman spectra acquisition.
-A spectrum was acquired for each pixel in the map. Each map has a size of 120$\times$120 pixels, obtained by discarding the outermost row and column of the original 121$\times$121 acquisition to remove photobleaching artefacts.
+A spectrum was acquired for each pixel in the map. Each map has a size of 120$\times$120 pixels.
 Finally, each spectrum ranged across 483 bands, equivalent to wavenumbers (Raman shift).
 Each spectrum (i.e.\ pixel) has an associated \textit{label}, indicating the type of biological tissue it belongs to.
 
@@ -103,11 +103,11 @@ Biological tissues were divided into 13 classes, the most represented of which w
         \multicolumn{2}{|r|}{\textbf{Total}} & \textbf{1\,123\,200} & \textbf{100} \\
         \hline
     \end{tabular}
-    \caption{Per-class composition of the dataset, ordered by abundance. The \textit{unlabeled/transparent} and \textit{artifact} classes are non-tissue classes that are excluded before further analysis (see text).}
+    \caption{Per-class composition of the dataset, ordered by abundance. The \textit{unlabeled/transparent} and \textit{artifact} classes are non-tissue classes that are excluded before further analysis.}
     \label{tab:label-distribution}
 \end{table}
 
-Among the classes, two do not correspond to any biological tissue and were removed before further analysis. The \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifact} pixels result from acquisition issues (e.g.\ cosmic-rays, contamination) and would only introduce noise. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset.
+Among the classes, two do not correspond to any biological tissue and were removed before further analysis: the \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifact} pixels result from acquisition issues (e.g.\ cosmic-rays, contamination) and would only introduce noise. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset.
 
 \begin{figure}[H]
     \centering
@@ -124,16 +124,11 @@ Among the classes, two do not correspond to any biological tissue and were remov
 \section{Spectra}
 \label{sec:spectra}
 
-Before being provided for this work, the spectra had undergone a standard Raman preprocessing pipeline, including cosmic-ray (spike) removal, subtraction of the quartz-substrate contribution and baseline correction to remove the autofluorescence background. For the cross-class comparisons reported below, the averaged spectra were further normalized with the standard normal variate (SNV) transform, which centres each spectrum and scales it to unit standard deviation, so that band shapes can be compared independently of overall intensity.
+Before being provided for this work, the spectra had undergone a standard Raman preprocessing pipeline, including cosmic-ray (spike) removal, subtraction of the quartz-substrate contribution and baseline correction to remove the background. For the cross-class comparisons reported below, the averaged spectra were further normalized with the standard normal variate (SNV) transform, which centers each spectrum and scales it to unit standard deviation, so that band shapes can be compared independently of overall intensity.
 
-The spectra, originally acquired over the \texttt{[acquisition range to confirm]}~$\mathrm{cm}^{-1}$ interval, have been stripped of the ``silent region'' (1800--2800 $\mathrm{cm}^{-1}$), where no useful biological information is found; this leaves the 483 bands described above, which span the fingerprint and CH regions.
-% TODO: replace [acquisition range to confirm] with the exact range (in cm^-1) obtained from the supervisor.
-% Note: the earlier "200--3500 cm^-1" / "30%" figures came from a different (master-thesis) interpolation grid and are unverified for this dataset.
-% --- FALLBACK if the exact range cannot be obtained: comment out the paragraph above and uncomment the line below. ---
-% The spectra, acquired over a broader Raman-shift range, have been stripped of the ``silent region'' (1800--2800 $\mathrm{cm}^{-1}$), where no useful biological information is found, leaving the 483 bands described above, which span the fingerprint and CH regions.
+The spectra, acquired over a broader Raman-shift range, have been stripped of the ``silent region'' (1800--2800 $\mathrm{cm}^{-1}$), where no useful biological information is found, leaving the 483 bands described above, which span the fingerprint and CH regions.
 
-
-In a preliminary visual analysis the average spectrum for each class has been computed. At the major Raman peaks the standard deviation across individual spectra corresponds to 12–20\% of the peak height. Relative to the local signal intensity, this dispersion is small near the peaks, although it grows noticeably in the weak baseline regions (bands 30--200), where the standard deviation becomes roughly 30\% of the local mean.
+In a preliminary visual analysis, the average spectrum for each class has been computed. At the major Raman peaks the standard deviation across individual spectra corresponds to 12–20\% of the peak height. Relative to the local signal intensity, this dispersion is small near the peaks, although it grows noticeably in the weak baseline regions (bands 30--200), where the standard deviation becomes roughly 30\% of the local mean.
 
 \begin{figure}[ht]
     \centering
@@ -184,7 +179,7 @@ The choice had to account for the following criteria:
 
 The first approach is the one with the most clinical relevance. Successful classification of tumoral areas against general healthy tissue would be the most versatile result possible, with further single-class distinction to be performed later depending on need. The balance between the two classes would also be close to 50/50, allowing to use the whole dataset for training and testing. This approach presents however multiple critical points.
 The \textit{healthy} macro-class, including numerous tissue types, is very heterogeneous (high intra-class variance), leading to poor feature individuation or bias towards the major class.
-The \textit{tumor} macro-class, which always includes the \textit{tumor (2)} label, could also comprise the \textit{tumor with necrosis (20)} and the \textit{necrosis (0)} labels since necrotic tissue will always be adjacent to tumors; necrotic tissue, however, shows high variance (\Cref{fig:spectra_comparison_discarded}) due to structural degradation of the cells, leading to problems similar to the ones of the \textit{healthy} macro-class.
+The \textit{tumor} macro-class, which always includes the \textit{tumor (2)} label, could also comprise the \textit{tumor with necrosis (20)} and the \textit{necrosis (0)} labels, since necrotic tissue is expected to be adjacent to tumors; necrotic tissue, however, shows high variance (\Cref{fig:spectra_comparison_discarded}) due to structural degradation of the cells, leading to problems similar to the ones of the \textit{healthy} macro-class.
 
 
 The second approach, using isolated classes, will reduce intra-class variance and allow the model to learn the class-specific patterns, thus improving performance.
@@ -193,7 +188,7 @@ Due to the class imbalance (tumor alone being 46,71\% of the dataset) the classe
 % Sweep the training-set fraction (e.g. 5/10/25/50/100%) using the SUBSAMPLE knob in scripts/train.py of the VibraAI repo, keeping the leakage-free per-patient split, and plot AUC/accuracy vs fraction.
 % If performance stays flat down to a small fraction, replace the sentence above with the measured number (e.g. "down to X% with no significant performance loss") and add the plot as a figure. This reduces the possible choices for \textit{healthy} labels to the most numerous ones, i.e.\ \textit{tumor stroma (6)}, \textit{stroma with inflammation (4)} and \textit{connective tissue (5)} (\Cref{fig:label_distribution}).
 
-Regarding distinguishability, the most similar tissues are also the most clinically confusable. Being able to discriminate would then be the most valuable result. The three possible healthy classes show a comparable degree of similarity to the tumor (\Cref{fig:spectra_comparison_similar}), each then constitutes an equally valid choice, with no class being a priori better suited than the rest from a separability standpoint.
+Regarding discernability, the most similar tissues are also the most clinically confusable. Being able to discriminate would then be the most valuable result. The three possible healthy classes show a comparable degree of similarity to the tumor (\Cref{fig:spectra_comparison_similar}), each then constitutes an equally valid choice, with no class being a priori better suited than the rest from a separability standpoint.
 
 Clinically, each label can be relevant in different ways:
 \begin{itemize}
