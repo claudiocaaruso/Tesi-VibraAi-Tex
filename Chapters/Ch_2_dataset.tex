@@ -1,11 +1,7 @@
 \chapter{Dataset}
 \label{ch:Dataset}
 
-This chapter describes the dataset of Raman spectra used throughout this work, collected from head and neck squamous cell carcinoma (HNSCC) tissue samples.
-\Cref{sec:origin-structure} presents the hierarchical organisation of the data, from patients down to individual pixel-level spectra, together with the column schema of the storage format.
-\Cref{sec:labels} details how each pixel was assigned a tissue-class label by a histopathologist and discusses the limitations inherent in the annotation procedure, concluding with the removal of two non-tissue classes (\textit{unlabeled/transparent} and \textit{artifact}) that carry no biological information.
-\Cref{sec:spectra} characterises the spectral content of the dataset: the preprocessing steps already applied before delivery, the silent-region removal that reduces the spectral dimension to 483 bands, and a visual comparison of the average spectra across classes.
-Finally, \Cref{sec:binary_classification} motivates and formalises the two binary labeling strategies adopted for the classification experiments: a broad \textit{tumor} vs.\ \textit{healthy} grouping and a surgically oriented \textit{tumor} vs.\ \textit{tumor stroma} pairing.
+This chapter describes the dataset of Raman spectra collected from head and neck squamous cell carcinoma (HNSCC) tissue samples. It gives an overview on the organisation of the dataset, the histopathological labels and their limitations, the spectral preprocessing already applied before delivery, and the binary labeling strategies used for classification.
 
 \section{Origin and Structure}
 \label{sec:origin-structure}
