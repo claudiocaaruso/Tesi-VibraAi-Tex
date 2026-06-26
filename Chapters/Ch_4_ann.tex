@@ -1,0 +1,75 @@
+\chapter{Neural Network and Training Protocol}
+\label{ch:ann}
+
+
+\section{Fundamentals of Feed-Forward Neural Networks}
+\label{sec:ann_fundamentals}
+
+Firstly, a a few topics of particular interest for neural networks, and in particular the architecture used for this work) will be explained.
+
+
+\subsection{Neurons, Weights and Bias}
+\label{subsec:neurons}
+
+\subsection{Forward Propagation and Backpropagation}
+\label{subsec:forward_back}
+
+\subsection{ReLU Activation Function}
+\label{subsec:relu}
+
+\subsection{Sigmoid Activation Function}
+\label{subsec:sigmoid}
+
+\subsection{Binary Cross-Entropy Loss}
+\label{subsec:bce}
+
+\subsection{Adam Optimizer}
+\label{subsec:adam}
+
+\section{Architectures Implemented in \texttt{model.py}}
+\label{sec:architectures}
+
+\subsection{Small Model: 16--8--1}
+\label{subsec:model_small}
+
+\subsection{Medium Model: 64--32--1}
+\label{subsec:model_medium}
+
+\subsection{Large Model: 128--64--16--1}
+\label{subsec:model_large}
+
+\section{Architecture Adopted in the Final Experiment}
+\label{sec:final_architecture}
+
+\section{Data Split by \texttt{Sample\_ID}}
+\label{sec:data_split}
+
+\section{Stratified Group K-Fold with Five Folds}
+\label{sec:kfold}
+
+\section{Internal Validation Set}
+\label{sec:validation_set}
+
+\section{Overlap Check}
+\label{sec:overlap_check}
+
+\section{Training Configuration}
+\label{sec:training_config}
+
+\subsection{Epochs and Batch Size}
+\label{subsec:epochs_batch}
+
+\subsection{Classification Threshold}
+\label{subsec:threshold}
+
+\subsection{Early Stopping on Validation AUC}
+\label{subsec:early_stopping}
+
+\subsection{Adaptive Learning Rate Reduction}
+\label{subsec:lr_reduction}
+
+\subsection{Reproducibility via Seed}
+\label{subsec:seed}
+
+\section{Saving Models and Artifacts}
+\label{sec:saving}
