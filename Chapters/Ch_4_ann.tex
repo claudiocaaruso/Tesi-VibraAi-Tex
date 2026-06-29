@@ -1,15 +1,47 @@
 \chapter{Neural Network and Training Protocol}
 \label{ch:ann}
 
+In this chapter, a few topics of particular interest for neural networks, and in particular the architecture used for this work, will be explained.
 
-\section{Fundamentals of Feed-Forward Neural Networks}
+\section{Fundamentals Neural Networks}
 \label{sec:ann_fundamentals}
 
-Firstly, a a few topics of particular interest for neural networks, and in particular the architecture used for this work) will be explained.
+To introduce neural networks~\cite{Goodfellow-et-al-2016} , it is useful to understand first linear models and see how to overcome their limitations. Linear models, such as linear regression, can fit data efficiently and reliably. The problem with linear models is that their fitting capacity is limited to linear functions.
 
+Neural networks, on the contrary, are able to approximate any function. More precisely, the \textbf{Universal Approximation Theorem}~\cite{prince2023understanding} states that there exists a network with one hidden layer containing a finite number of hidden units that can approximate any specified continuous function on a compact subset of $\mathbb{R}^n$ to arbitrary accuracy. This was proved by Cybenko (1989) for a class of sigmoid activations and was later shown to be true for a larger class of nonlinear activation functions.
+The terms used in the theorem will be explained in the following sections.
 
 \subsection{Neurons, Weights and Bias}
 \label{subsec:neurons}
+
+Neural networks owe their name to the loose analogy between artificial neurons and biological neurons.
+Biological neurons~\cite{geron2022hands} are composed of a cell body with multiple ramifications. the main branch is called the axon, and it connects to other neurons through synapses. Biological neurons receive short electrical impulses called signals from other neurons via these synapses. When a neuron receives a sufficient number of signals from other neurons within a few milliseconds, it fires its own signals. Individual biological neurons seem to behave in a simple way, but they are organized in a vast network, often in consecutive layers ,with each neuron typically connected to thousands of other neurons.
+
+A simple model for the behavior of biological neurons, the artificial neuron, has one or more binary
+(on/off) inputs and one binary output. The artificial neuron simply activates its output when more than a certain number of its inputs are active.
+
+The Perceptron is a slightly more refined model, based on a linear threshold unit (LTU): the inputs
+and output are now numbers (instead of binary on/off values) and each input connection is associated with a weight. The LTU computes a weighted sum of its inputs ($z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n = x^T w$), then applies a step function to that sum and outputs the result: $h_w(x) = step(z)$
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[Single Perceptron: inputs are combined via a weighted sum then passed through a step function.\label{fig:perceptron}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/perceptron.png}
+    }
+    \hfill
+    \subfloat[Two-layer Perceptron: multiple TLUs stacked into an input and an output layer.\label{fig:two_layer_perceptron}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/two_layer_perceptron.png}
+    }
+    \caption{Perceptron architectures.}
+    \label{fig:perceptrons}
+\end{figure}
+
+A Perceptron is simply composed of a single layer of TLUs,6 with each TLU connected
+to all the inputs. When all the neurons in a layer are connected to every neuron in the previous layer (its input neurons), it is called a \textit{dense
+layer}.
+
+Moreover, an extra input called \textit{bias} is added (x0 = 1): it is typically represented using a special type of neuron called a bias neuron, which just outputs 1 all the time. The bias shifts the activation boundary away from the origin.
+
 
 \subsection{Forward Propagation and Backpropagation}
 \label{subsec:forward_back}
@@ -25,51 +57,3 @@ Firstly, a a few topics of particular interest for neural networks, and in parti
 
 \subsection{Adam Optimizer}
 \label{subsec:adam}
-
-\section{Architectures Implemented in \texttt{model.py}}
-\label{sec:architectures}
-
-\subsection{Small Model: 16--8--1}
-\label{subsec:model_small}
-
-\subsection{Medium Model: 64--32--1}
-\label{subsec:model_medium}
-
-\subsection{Large Model: 128--64--16--1}
-\label{subsec:model_large}
-
-\section{Architecture Adopted in the Final Experiment}
-\label{sec:final_architecture}
-
-\section{Data Split by \texttt{Sample\_ID}}
-\label{sec:data_split}
-
-\section{Stratified Group K-Fold with Five Folds}
-\label{sec:kfold}
-
-\section{Internal Validation Set}
-\label{sec:validation_set}
-
-\section{Overlap Check}
-\label{sec:overlap_check}
-
-\section{Training Configuration}
-\label{sec:training_config}
-
-\subsection{Epochs and Batch Size}
-\label{subsec:epochs_batch}
-
-\subsection{Classification Threshold}
-\label{subsec:threshold}
-
-\subsection{Early Stopping on Validation AUC}
-\label{subsec:early_stopping}
-
-\subsection{Adaptive Learning Rate Reduction}
-\label{subsec:lr_reduction}
-
-\subsection{Reproducibility via Seed}
-\label{subsec:seed}
-
-\section{Saving Models and Artifacts}
-\label{sec:saving}
