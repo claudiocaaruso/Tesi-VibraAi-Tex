@@ -40,11 +40,48 @@ A Perceptron is simply composed of a single layer of TLUs,6 with each TLU connec
 to all the inputs. When all the neurons in a layer are connected to every neuron in the previous layer (its input neurons), it is called a \textit{dense
 layer}.
 
-Moreover, an extra input called \textit{bias} is added (x0 = 1): it is typically represented using a special type of neuron called a bias neuron, which just outputs 1 all the time. The bias shifts the activation boundary away from the origin.
-
+Moreover, an extra input called \textit{bias} is added ($x_0 = 1$): it is typically represented using a special type of neuron called a bias neuron, which just outputs 1 all the time. The bias shifts the activation boundary away from the origin.
 
 \subsection{Forward Propagation and Backpropagation}
 \label{subsec:forward_back}
+
+The outputs of a layer of artificial neurons for several instances at once can be expressed through the following equation:
+
+\begin{equation}
+h_{\mathbf{W, b}}(\mathbf{X}) = \phi (\mathbf{X W} + \mathbf{b})
+\end{equation}
+
+\begin{itemize}
+    \item As always, $\mathbf{X}$ represents the matrix of input features. It has one row per instance (e.g. spectrum), one column per feature (e.g. band).
+    \item The weight matrix $\mathbf{W}$ contains all the connection weights except for the ones from the bias neuron. It has one row per input neuron, for the first layer it corresponds to the number of features, and one column per artificial neuron in the layer.
+    \item The bias vector $\mathbf{b}$ contains all the connection weights between the bias neuron and the artificial neurons. It has one bias term per artificial neuron.
+    \item The function $\phi$ is the activation function (e.g. step, sigmoid or ReLU).
+\end{itemize}
+
+Initially, perceptrons were trained by accounting for the error made by the network on a single training instance at a time. The weights of connections that helped reduce the error between predicion and ground truth were reinforced:
+
+\begin{equation}
+    w_{i,j}^{(\text{new})} = w_{i,j} + \eta \left( y_j - \hat{y}_j \right) x_i
+    \label{eq:perceptron_update}
+\end{equation}
+
+where $x_i$ is the $i$-th input value of the current training instance, $\hat{y}_j$ is the predicted output of the $j$-th neuron, $y_j$ is the target output, and $\eta$ is the learning rate.
+This learning method, solely based on the prediction for one instance, cannot be applied in networks with more than one hiddend layer. This is due to not being able to isolate the role of a single connection in the prediction. The method, however, strongly resembles gradient descent.
+
+In the case of networks with more than one hidden layer, called(\textit{deep neural networks} (DNN), weights are updated through the \textit{backpropagation} algorithm, which is in fact gradient descent. In two
+passes through the network (one forward, one backward), the backpropagation algorithm computes the gradient of the network's error with regards to every single model parameter:
+
+\begin{itemize}
+    \item It takes one mini-batch at a time (for example containing 32 instances each), and it goes through the full training set multiple times. Each pass is called an \textit{epoch}.
+    \item The output for every instance in the mini-batch is computed layer by layer. This is the \textit{forward pass}: it is like making predictions, but all intermediate results are preserved since they are needed for the backward pass.
+    \item The algorithm measures the network's output error through a chosen loss function
+    \item It computes how much each connection in a layer contributed to the error. This is done analytically by applying the chain rule, from the output layer to the first one. This is the \textit{backward pass}
+    \item Finally, the algorithm performs a Gradient Descent step to tweak all the connection weights in the network, using the error gradients it just computed.
+\end{itemize}
+
+It is important to initialize all the hidden layers' connection weights randomly, otherwise all neurons will be identical, hence evolve in the same way. The model would be equivalent of having a single neuron per layer
+Furthermore, in order for this algorithm to work, the activation function must be changed from the step function to one such that its derivative is well-defined and nonzero everywhere, so that the gradient can be computed.
+
 
 \subsection{ReLU Activation Function}
 \label{subsec:relu}
