@@ -10,7 +10,100 @@ Machine learning methods are commonly distinguished according to the information
 
 When labels are not part of the learning process, the analysis becomes unsupervised: the algorithm only receives the input data and searches for structure within them. This approach is useful when the goal is not to assign a class directly, but to explore the organization of the data, visualize similarities between spectra or reduce the number of variables. PCA belongs to this second case. 
 
-This chapter focuses on Principal Component Analysis (PCA), an unsupervised dimensionality-reduction method that identifies the directions along which the spectra show the largest variance. PCA projects the original spectral variables onto a new set of components, providing a more compact representation of the data. This transformation is useful because dimensionality reduction can be performed by retaining only the first principal components, which account for most of the spectral variance, and discarding later components associated with smaller contributions. In this way, each spectrum is represented by a reduced set of PCA scores instead of the full set of original Raman-shift variables. This compact representation can reduce redundancy and may limit the influence of weak or noisy variations before classification.
+This chapter focuses on Principal Component Analysis (PCA), an unsupervised 
+dimensionality-reduction method that identifies the directions along which the spectra show the largest variance. PCA projects the original spectral variables onto a new set of components, providing a more compact representation of the data. This transformation is useful because dimensionality reduction can be performed by retaining only the first principal components, which account for most of the spectral variance, and discarding later components associated with smaller contributions. In this way, each spectrum is represented by a reduced set of PCA scores instead of the full set of original Raman-shift variables. This compact representation can reduce redundancy and may limit the influence of weak or noisy variations before classification.
 
 In this work, PCA is therefore first used as an
 exploratory analysis of the dataset. Its theoretical formulation is presented with particular attention to the identification of the principal components, the amount of variance retained after projection, and the interpretation of the spectra in the transformed PCA space. When PCA is later used inside the classification pipeline, however, it must be fitted only on the training data of each split or fold and then applied to the corresponding validation or test data. This preserves the separation between training and evaluation data, preventing information from the validation or test set from influencing the learned representation.
+
+\section{Dimensionality reduction}
+\label{sec:dimensionality_reduction}
+
+The spectral dataset can be represented as a numerical matrix
+\begin{equation}
+    \mathbf{X} \in \mathbb{R}^{n \times p},
+    \label{eq:pca_data_matrix}
+\end{equation}
+where \(n\) is the number of spectra and \(p\) is the number of spectral variables. In the
+dataset described in \Cref{ch:Dataset}, each spectrum is represented by \(p = 483\)
+Raman-shift intensity values after the removal of the silent region. Thus, each spectrum
+can be interpreted not only as a curve, but also as a point in a \(483\)-dimensional
+feature space, where each coordinate corresponds to the intensity measured at one Raman
+shift.
+
+Working directly with all the original variables is possible, but it is not always the
+most convenient representation. In Raman spectra, nearby variables are often correlated because spectral bands are broad and can overlap. Therefore, the \(483\) spectral variables do not necessarily correspond
+to \(483\) independent sources of information. Dimensionality reduction addresses this
+situation by replacing the original variables with a smaller number of new variables
+designed to retain the main structure of the dataset.
+
+The motivation for this step is also connected to the so-called curse of dimensionality.
+In low-dimensional spaces, data points can be relatively close to one another, so local
+neighbourhoods and similarities are easier to identify. When the number of dimensions
+increases, the volume of the feature space grows exponentially with the number of
+variables. Therefore, keeping the same density of samples would require an exponentially
+larger number of training observations. If the number of available spectra remains fixed,
+the dataset becomes sparse: the points are spread across a much larger space and tend to
+be far from one another. This has an important consequence for learning algorithms: if a
+new observation is far from the training examples, the model has less direct evidence on
+which to base its prediction, and the risk of learning patterns that are specific to the
+training set increases. 
+
+This does not mean that dimensionality reduction is automatically beneficial. Removing
+dimensions inevitably removes part of the original information, and the discarded
+variation may include subtle class-related spectral differences. For this reason, dimensionality reduction does not necessarily lead to an improvement. Its effect must be interpreted together with the downstream
+classification performance and with the amount of variance retained in the reduced
+representation.
+
+One common way to reduce dimensionality is projection. In projection-based methods, the
+original data are represented in a lower-dimensional subspace by projecting each sample
+onto a new set of axes. These axes define new variables, which are combinations of the
+original features. If the data lie close to a lower-dimensional linear subspace, this
+projection can preserve much of the relevant structure while using fewer coordinates. PCA
+belongs to this projection-based family of methods.
+
+\section{Principal Component Analysis}
+\label{sec:pca_theory}
+
+Principal Component Analysis (PCA) searches for a new orthogonal coordinate system in
+which the variability of the data is represented as efficiently as possible. Starting from
+centered observations, the first principal component is chosen as the direction along which
+the projected data have maximum variance. The second component describes the largest
+remaining variance under the constraint of being orthogonal to the first, and the same
+criterion is applied to the following components. In this way, PCA orders the new axes from
+the most to the least informative in terms of variance.
+
+Since PCA is unsupervised, class labels are not involved in the computation of these axes.
+The method therefore identifies directions that summarize the dominant variability of the
+spectra, not necessarily the directions that best separate tissue classes. For this reason,
+when PCA is used before a classifier, the usefulness of the reduced representation must be
+assessed through the performance of the complete classification pipeline.
+
+\subsection{Data centering}
+\label{subsec:pca_centering_covariance}
+
+Let \(\mathbf{X} \in \mathbb{R}^{n \times p}\) be the data matrix, where each row
+\(\mathbf{x}_i^{T}\) is one spectrum and each column is one spectral variable. PCA is
+applied to centered data. The mean vector is
+\begin{equation}
+    \bar{\mathbf{x}} =
+    \frac{1}{n}\sum_{i=1}^{n}\mathbf{x}_i,
+    \label{eq:pca_mean_spectrum}
+\end{equation}
+the centered data matrix is
+\begin{equation}
+    \mathbf{X}_c =
+    \mathbf{X} - \mathbf{1}\bar{\mathbf{x}}^{T},
+    \label{eq:pca_centered_matrix}
+\end{equation}
+where \(\mathbf{1}\) is a column vector of ones. Centering subtracts the average spectrum
+from each observation, so PCA describes variations around the mean profile rather than
+absolute intensity levels.
+
+\subsection{Singular Value Decomposition and principal components}
+
+\subsection{Scores and loadings}
+
+\subsection{Explained variance}
+
+\section{PCA analysis of the VIBRA dataset}
