@@ -79,15 +79,42 @@ passes through the network (one forward, one backward), the backpropagation algo
     \item Finally, the algorithm performs a Gradient Descent step to tweak all the connection weights in the network, using the error gradients it just computed.
 \end{itemize}
 
-It is important to initialize all the hidden layers' connection weights randomly, otherwise all neurons will be identical, hence evolve in the same way. The model would be equivalent of having a single neuron per layer
-Furthermore, in order for this algorithm to work, the activation function must be changed from the step function to one such that its derivative is well-defined and nonzero everywhere, so that the gradient can be computed.
+It is important to initialize all the hidden layers' connection weights randomly, otherwise all neurons will be identical, hence evolve in the same way. The model would be equivalent of having a single neuron per layer.
+n order for this algorithm to work, the activation function must be changed from the step function to one such that its derivative is well-defined and nonzero everywhere, so that the gradient can always be computed and the weights updated effectively.
+
+\subsection{Activation Functions: sigmoid, ReLU}
+\label{subsec:activation_functions}
+
+In order for the backpropagation algorithm to work, the activation function must be changed from the step function to one such that its derivative is well-defined and nonzero everywhere, so that the gradient can always be computed and the weights updated effectively.
+Furthermore, the activation functions must be non-linear. If they were linear, the transformation obtained by chaining them will be linear too (For example: $f(x)=x+1,\quad g(x)=2x-1 \quad\Rightarrow\quad f(g(x))=(2x-1)+1$). Without some non-linearity between layers, then even a deep stack of layers is equivalent to a single layer.
+
+Multiple choices are possible for the activation function. In the model developed for this thesis, two functions were used: sigmoid and ReLU.
+
+The \textit{sigmoid function} (also known as \textit{logistic function}), was historically the first replacement to the step function. 
+
+\begin{equation}
+    \sigma(z) = \frac{1}{1 + e^{-z}}
+\end{equation}
+
+It closely represents the firing rates of biological neurons and, due to squashing any input to a value $\in(0,1)$, it can be interpreted as a probability. It is thus particularly suited for the output layer, which is also where it was implemented in our model.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{Images/images_ch_4/sigmoid.png}
+    \caption{Sigmoid function $\sigma(z)$ (left) and its derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$ (right). The shaded regions show the saturation zones where the gradient is nearly zero, slowing down learning through backpropagation.}
+    \label{fig:sigmoid}
+\end{figure}
+
+The sigmoid shows nevertheless some problems.
+Firstly the saturation of the values of $\sigma(z)$ when $|z|\gg1$ causes the values of the gradient to shrink. Gradients can get progresively smaller as the algorithm progresses
+down to the lower layers. As a result, the Gradient Descent update leaves the lower layer connection weights virtually unchanged, and training never converges to a good solution. This is called the \textit{vanishing gradients} problem 
 
 
-\subsection{ReLU Activation Function}
-\label{subsec:relu}
+The \textit{Rectified Linear Unit} (ReLU) is a simpler alternative that has become the default choice in deep networks:
 
-\subsection{Sigmoid Activation Function}
-\label{subsec:sigmoid}
+\begin{equation}
+    \text{ReLU}(z) = \max(0, z)
+\end{equation}
 
 \subsection{Binary Cross-Entropy Loss}
 \label{subsec:bce}
