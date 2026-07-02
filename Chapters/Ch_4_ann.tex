@@ -79,8 +79,48 @@ passes through the network (one forward, one backward), the backpropagation algo
     \item Finally, the algorithm performs a Gradient Descent step to tweak all the connection weights in the network, using the error gradients it just computed.
 \end{itemize}
 
+
+More formally, for a network with $D$ layers, the loss is a composition:
+
+\begin{equation}
+    \mathcal{L} = L\!\Big(f^{(D)}\big(\cdots f^{(1)}(\mathbf{X};\, \mathbf{W}^{(1)}) \cdots;\, \mathbf{W}^{(D)}\big)\Big)
+\end{equation}
+
+Where $L(\cdot)$ is the loss function and $f^{(i)}$ the full layer transformation for layer $i$ (i.e. $\phi\!\left(\mathbf{X}\mathbf{W}^{(i)} + \mathbf{b}^{(i)}\right)$).
+
+The goal of backpropagation is to compute $\frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(r)}}$ for every layer $r$, so that each weight matrix can be updated by gradient descent.
+
+For layer $r$, preactivation $\mathbf{z}^{(r)}$ and activation $\mathbf{h}^{(r)}$ are:
+\begin{equation}
+    \mathbf{z}^{(r)} = \mathbf{h}^{(r-1)} \mathbf{W}^{(r)} + \mathbf{b}^{(r)}, \qquad \mathbf{h}^{(r)} = \phi\!\left(\mathbf{z}^{(r)}\right), \qquad \mathbf{h}^{(0)} = \mathbf{X}
+\end{equation}
+Applying the chain rule through all layers from $D$ back to $r$:
+\begin{equation}
+    \frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(r)}} =
+    \frac{\partial \mathcal{L}}{\partial \mathbf{h}^{(D)}} \cdot
+    \frac{\partial \mathbf{h}^{(D)}}{\partial \mathbf{z}^{(D)}} \cdot
+    \frac{\partial \mathbf{z}^{(D)}}{\partial \mathbf{h}^{(D-1)}} \cdot
+    \frac{\partial \mathbf{h}^{(D-1)}}{\partial \mathbf{z}^{(D-1)}} \cdots
+    \frac{\partial \mathbf{z}^{(r+1)}}{\partial \mathbf{h}^{(r)}} \cdot
+    \frac{\partial \mathbf{h}^{(r)}}{\partial \mathbf{z}^{(r)}} \cdot
+    \frac{\partial \mathbf{z}^{(r)}}{\partial \mathbf{W}^{(r)}}
+      \label{eq:chain_rule}
+\end{equation}
+where each intermediate factor is
+\begin{equation}
+    \frac{\partial \mathbf{h}^{(k)}}{\partial \mathbf{z}^{(k)}} = \phi'\!\left(\mathbf{z}^{(k)}\right), \qquad
+    \frac{\partial \mathbf{z}^{(k)}}{\partial \mathbf{h}^{(k-1)}} = \mathbf{W}^{(k)}, \qquad
+\end{equation}
+Finally, the full gradient can be rewritten in short form as follows
+\begin{equation}
+    \frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(r)}} = \mathbf{h}^{(r-1)\top} \boldsymbol{\delta}^{(r)}
+\end{equation}
+where $\boldsymbol{\delta}^{(r)}$ is the \textit{backpropagated error signal} at layer $r$, which compresses all the intermediate derivatives in one term, while $\mathbf{h}^{(r-1)\top}$ comes from the last term in \eqref{eq:chain_rule}
+
+
 It is important to initialize all the hidden layers' connection weights randomly, otherwise all neurons will be identical, hence evolve in the same way. The model would be equivalent of having a single neuron per layer.
 n order for this algorithm to work, the activation function must be changed from the step function to one such that its derivative is well-defined and nonzero everywhere, so that the gradient can always be computed and the weights updated effectively.
+
 
 \subsection{Activation Functions: sigmoid, ReLU}
 \label{subsec:activation_functions}
@@ -100,21 +140,34 @@ It closely represents the firing rates of biological neurons and, due to squashi
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{Images/images_ch_4/sigmoid.png}
+    \includegraphics[width=0.8\textwidth]{Images/images_ch_4/sigmoid.png}
     \caption{Sigmoid function $\sigma(z)$ (left) and its derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$ (right). The shaded regions show the saturation zones where the gradient is nearly zero, slowing down learning through backpropagation.}
     \label{fig:sigmoid}
 \end{figure}
 
 The sigmoid shows nevertheless some problems.
 Firstly the saturation of the values of $\sigma(z)$ when $|z|\gg1$ causes the values of the gradient to shrink. Gradients can get progresively smaller as the algorithm progresses
-down to the lower layers. As a result, the Gradient Descent update leaves the lower layer connection weights virtually unchanged, and training never converges to a good solution. This is called the \textit{vanishing gradients} problem 
+down to the lower layers. As a result, the Gradient Descent update leaves the lower layer connection weights virtually unchanged, and training never converges to a good solution. This is called the \textit{vanishing gradients} problem.
+To solve this problem, the hidden layers must have a non-saturating activation function.
 
-
-The \textit{Rectified Linear Unit} (ReLU) is a simpler alternative that has become the default choice in deep networks:
+The \textit{Rectified Linear Unit} (ReLU) is a simple alternative that doesn't saturate for positive values and proven to be very effective in deep networks:
 
 \begin{equation}
     \text{ReLU}(z) = \max(0, z)
 \end{equation}
+
+It is continuous but not differentiable at z = 0, which can make Gradient Descent bounce around, but it has the advantage of being very fast to compute, reducing significantly training times.
+This has been the choice for the hidden layers for the ANN used for this thesis.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/images_ch_4/relu.png}
+    \caption{ReLU function (left) and its derivative (right). For $z < 0$ the output and gradient are both exactly zero --- the so-called \textit{dying ReLU} problem --- while for $z > 0$ the gradient is a constant 1, avoiding saturation.}
+    \label{fig:relu}
+\end{figure}
+
+However, ReLU has the disadvantage that its derivative is zero for negative inputs. If all the training examples produce negative inputs to a given ReLU function, the parameters feeding into this ReLU during training cannot be improved, since the gradient with respect to the incoming weights is locally flat. This is known as the \textit{dying ReLU problem}.
+To solve it, functions such as LeakyReLU (slightly tilted for $z<0$) exist, but they were not implemented in this work for simplicity.
 
 \subsection{Binary Cross-Entropy Loss}
 \label{subsec:bce}
