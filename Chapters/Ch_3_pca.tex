@@ -100,10 +100,143 @@ where \(\mathbf{1}\) is a column vector of ones. Centering subtracts the average
 from each observation, so PCA describes variations around the mean profile rather than
 absolute intensity levels.
 
-\subsection{Singular Value Decomposition and principal components}
+\subsection{Singular Value Decomposition}
+\label{subsec:pca_svd}
 
-\subsection{Scores and loadings}
+PCA can be obtained through
+the Singular Value Decomposition (SVD) of the centered data matrix. The SVD is a stable
+matrix factorization that represents the data in terms of directions adapted to the dataset
+itself. Applied to \(\mathbf{X}_c\), it writes
+\begin{equation}
+    \mathbf{X}_c =
+    \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^{T},
+    \label{eq:pca_svd}
+\end{equation}
+where \(\mathbf{U}\) and \(\mathbf{V}\) have orthonormal columns and
+\(\boldsymbol{\Sigma}\) is diagonal.  
+The matrix \(\mathbf{V}\) contains the principal components \(\mathrm{PC}_j\):
+\begin{equation}
+    \mathbf{V} =
+    \begin{bmatrix}
+    \mathrm{PC}_1 & \mathrm{PC}_2 & \cdots & \mathrm{PC}_p
+    \end{bmatrix}
+    \in \mathbb{R}^{p \times p}.
+    \label{eq:pca_v_matrix}
+\end{equation}
+ The columns of
+\(\mathbf{V}\) are the right singular vectors; each of them specifies
+how the original Raman-shift variables are weighted to form one principal component.
+In the PCA terminology, these are the loading vectors.
+
+The diagonal entries of \(\boldsymbol{\Sigma}\) are the singular values:
+\begin{equation}
+    \boldsymbol{\Sigma} =
+    \begin{bmatrix}
+    \sigma_1 & 0 & \cdots & 0 \\
+    0 & \sigma_2 & \cdots & 0 \\
+    \vdots & \vdots & \ddots & \vdots \\
+    0 & 0 & \cdots & \sigma_p
+    \end{bmatrix}
+    \in \mathbb{R}^{p \times p}.
+    \label{eq:pca_sigma_matrix}
+\end{equation}
+These values indicate the relative importance of the corresponding components in
+describing the variability of the dataset. Since they are ordered from largest to smallest,
+the SVD naturally provides a hierarchy of components, from the dominant patterns to
+progressively weaker contributions.
+
+The columns of \(\mathbf{U}\) are the corresponding left singular vectors, which provide
+normalized coordinates of the spectra along these directions:
+\begin{equation}
+    \mathbf{U} =
+    \begin{bmatrix}
+    \mathbf{u}_1 & \mathbf{u}_2 & \cdots & \mathbf{u}_p
+    \end{bmatrix}
+    \in \mathbb{R}^{n \times p}.
+    \label{eq:pca_u_matrix}
+\end{equation}
+When these coordinates are scaled by the singular values in \(\boldsymbol{\Sigma}\), they
+give the projection of the original spectra onto the principal components. These projected
+coordinates are the PCA scores.
+
+This computational approach has a statistical interpretation in terms of variance and
+covariance. Variance measures the spread of the data along a direction, while covariance
+describes how spectral variables vary together. PCA is linked to these quantities because
+it searches for directions obtained as combinations of the original variables, choosing
+directions along which the projected data show large variability.
+
+Let \(\mathbf{W}_d\) be the matrix containing the first \(d\) columns of
+\(\mathbf{V}\). Following the notation used for projection, \(\mathbf{W}_d\) contains the
+first \(d\) principal directions. For \(d\) retained components, the projected data matrix
+is
+\begin{equation}
+    \mathbf{X}_{d\text{-proj}} =
+    \mathbf{X}_c \mathbf{W}_d =
+    \mathbf{U}_d\boldsymbol{\Sigma}_d,
+    \label{eq:pca_scores_svd}
+\end{equation}
+where \(\mathbf{X}_{d\text{-proj}} \in \mathbb{R}^{n \times d}\). Each row corresponds
+to one spectrum expressed in the PCA space.
+
+Keeping only the first \(d\) directions gives a rank-\(d\) approximation of the centered
+data:
+\begin{equation}
+    \mathbf{X}_c \approx
+    \mathbf{U}_d\boldsymbol{\Sigma}_d\mathbf{W}_d^{T}.
+    \label{eq:pca_low_rank}
+\end{equation}
+This truncated representation is the basis of dimensionality reduction in PCA: each
+spectrum is described by \(d\) scores instead of all \(p\) original variables. The choice
+of \(d\) is guided by the explained variance. Each principal component accounts for a
+fraction of the total variability in the data; the cumulative explained variance is the
+progressive sum of these fractions up to the \(d\)-th component and indicates
+how much of the original variability is retained after projection.
+
  
-\subsection{Explained variance}
+
+\subsection{Computational implementation}
+\label{subsec:pca_computational_implementation}
+
+In Python, PCA can be implemented using the \texttt{PCA} class provided by
+scikit-learn. The input is a numerical data matrix \(\mathbf{X}\), whose rows are the
+observations and whose columns are the original variables. Once the PCA object is fitted,
+the method \texttt{transform} projects the data onto the principal directions. The
+combined method \texttt{fit\_transform} performs both operations in a single call:
+
+\begin{lstlisting}[style=pythoncode]
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components=d)
+X_d_proj = pca.fit_transform(X)
+\end{lstlisting}
+
+In this code, \texttt{n\_components} is the number \(d\) of retained principal
+components, and \texttt{X\_d\_proj} is the projected data matrix. Scikit-learn centers
+the data internally before computing PCA, so the user provides the original data matrix
+and the algorithm estimates the principal axes from it.
+
+When the number of components is not known in advance, PCA can first be fitted without
+specifying \texttt{n\_components}. The cumulative explained variance can then be used as
+a diagnostic to choose a possible value of \(d\):
+
+\begin{lstlisting}[style=pythoncode]
+import numpy as np
+
+pca = PCA()
+pca.fit(X)
+
+cumsum = np.cumsum(pca.explained_variance_ratio_)
+d = np.argmax(cumsum >= 0.95) + 1
+\end{lstlisting}
+
+The attribute \texttt{explained\_variance\_ratio\_} contains the fraction of variance
+associated with each principal component. Its cumulative sum indicates how much of the
+total variance is retained when the first components are kept. In the example above,
+\(d\) is the smallest number of components required to preserve at least \(95\%\) of the
+variance. This threshold is only a practical criterion: the final number of components
+should still be evaluated with respect to the goal of the analysis or of the predictive
+model.
+
+
 
 \section{PCA analysis of the VIBRA dataset}
