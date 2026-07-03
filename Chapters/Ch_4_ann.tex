@@ -172,5 +172,49 @@ To solve it, functions such as LeakyReLU (slightly tilted for $z<0$) exist, but 
 \subsection{Binary Cross-Entropy Loss}
 \label{subsec:bce}
 
+As seen in the previous sections, Gradient Descent finds the best mapping from input to output by minimizing a \textit{Loss Function}.
+Given a dataset $\{(\mathbf{x}_i, y_i)\}$ of input/output pairs, the \textit{loss function}~\cite{prince2023understanding} $L(\boldsymbol{\theta})$ returns a single number that describes the mismatch between the model predictions $f(\mathbf{x}_i, \boldsymbol{\theta})$ and their corresponding ground-truth outputs $y_i$, where $\boldsymbol{\theta}$ denotes the full set of learnable parameters (weights and biases).
+
+Due to the \textit{binary classification} approach discussed in \cref{sec:binary_classification}, the ground-truth outputs for this Neural Network will be $y_i\in\{0,1\}$. For more complex cases, \textit{multiclass classification}, with $K$ classes and $y_i\in\{0,1,\dots, K-1\}$, can be more useful.
+
+To construct the loss function, a probability distribution based the output space $y \in \{0,1\}$ must be chosen. A suitable choice is the Bernoulli distribution, which is defined on the domain $\{0,1\}$. This has a single parameter $\lambda \in [0,1]$ that represents the probability that $y$ takes the value one:
+
+\begin{equation}
+    \Pr(y|\lambda) = (1-\lambda)^{1-y} \cdot \lambda^y.
+\end{equation}
+
+The model $f[\mathbf{x}, \boldsymbol{\theta}]$ is set to predict the single distribution parameter $\lambda$. Since $\lambda$ can only take values in the range $[0,1]$, and the direct ouput of the last layer of the ANN is not bound in said range, its output is passed through a function that maps $\mathbb{R} \rightarrow [0,1]$. This is why the output neuron has the \textit{sigmoid} as the activation function (\cref{subsec:activation_functions}).
+
+Hence, the distribution parameter is predicted as $\lambda = \sigma(f[\mathbf{x}, \boldsymbol{\theta}])$. The likelihood is now:
+
+\begin{equation}
+    \Pr(y|\mathbf{x}) = (1 - \sigma[f[\mathbf{x}, \boldsymbol{\theta}]])^{1-y} \cdot \sigma[f[\mathbf{x}, \boldsymbol{\theta}]]^y.
+\end{equation}
+
+On the full training set $\{(\mathbf{x}_i, y_i)\}_{i=1}^{I}$, assuming independence across instances, it becomes:
+
+\begin{equation}
+    \prod_{i=1}^{I} \Pr(y_i | \mathbf{x}_i, 
+    \boldsymbol{\theta}) = \prod_{i=1}^{I} \left(1 - \sigma(f[\mathbf{x}_i, 
+    \boldsymbol{\theta}])\right)^{1-y_i} \cdot \sigma(f[\mathbf{x}_i, 
+    \boldsymbol{\theta}])^{y_i}
+\end{equation}
+
+since each factor $\Pr(y_i|\mathbf{x}_i, \boldsymbol{\theta}) \in (0,1)$, the product over $\sim10^6$ instances (Raman dataset's size) could underflow to zero. Taking the logarithm resolves this, transforming the product into a sum, which cannor underflow.
+
+Likelihood is then maximized by minimizing its negative logarithm, since $\log$ is strictly monotonically increasing and thus preserves the location of the optimum.
+
+\begin{equation}
+    L[\boldsymbol{\theta}] = 
+    -\sum_{i=1}^{I} \left[(1-y_i)\log\left(1 - \sigma(f[\mathbf{x}_i, 
+    \boldsymbol{\theta}])\right) + y_i \log\left(\sigma(f[\mathbf{x}_i, 
+    \boldsymbol{\theta}])\right)\right]
+\end{equation}
+
+This is known as the \textit{binary cross-entropy loss}. The transformed model output $\sigma[f[\mathbf{x}, \boldsymbol{\theta}]]$ predicts the parameter $\lambda$ of the Bernoulli distribution. This represents the probability that $y = 1$, and it follows that $1 - \lambda$ represents the probability that $y = 0$.
+
+When performing inference, the point estimate of $y$ is usually set such that $y = 1$ if $\lambda > 0.5$ and $y = 0$ otherwise.
+However, in some cases it might be preferable to slightly tweak this to improve accuracy or recall (improving one will worsen the other).
+
 \subsection{Adam Optimizer}
 \label{subsec:adam}
