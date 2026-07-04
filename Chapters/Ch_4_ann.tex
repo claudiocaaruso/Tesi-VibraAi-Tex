@@ -115,8 +115,14 @@ Finally, the full gradient can be rewritten in short form as follows
 \begin{equation}
     \frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(r)}} = \mathbf{h}^{(r-1)\top} \boldsymbol{\delta}^{(r)}
 \end{equation}
-where $\boldsymbol{\delta}^{(r)}$ is the \textit{backpropagated error signal} at layer $r$, which compresses all the intermediate derivatives in one term, while $\mathbf{h}^{(r-1)\top}$ comes from the last term in \eqref{eq:chain_rule}
+where $\boldsymbol{\delta}^{(r)}$ is the \textit{backpropagated error signal} at layer $r$, which compresses all the intermediate derivatives in one term, while $\mathbf{h}^{(r-1)\top}$ comes from the last term in \eqref{eq:chain_rule}.
 
+Once the gradient is available, each weight matrix is updated by a step in the negative gradient direction:
+\begin{equation}
+    \mathbf{W}^{(r)}_{\text{new}} \leftarrow \mathbf{W}^{(r)} - \eta \, \frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(r)}}
+    \label{eq:gd_update}
+\end{equation}
+where $\eta > 0$ is the \textit{learning rate}, a hyperparameter controlling the step size. The same update applies to the bias vectors $\mathbf{b}^{(r)}$.
 
 It is important to initialize all the hidden layers' connection weights randomly, otherwise all neurons will be identical, hence evolve in the same way. The model would be equivalent of having a single neuron per layer.
 n order for this algorithm to work, the activation function must be changed from the step function to one such that its derivative is well-defined and nonzero everywhere, so that the gradient can always be computed and the weights updated effectively.
@@ -218,3 +224,32 @@ However, in some cases it might be preferable to slightly tweak this to improve 
 
 \subsection{Adam Optimizer}
 \label{subsec:adam}
+
+Training of the neural network can be substantially sped up by using a faster optimizer than the regular Gradient Descent.
+
+Recalling that Gradient Descent, as in \cref{eq:gd_update}, simply updates the parameters $\boldsymbol{\theta}$ (weights and biases for all layers) by subtracting the gradient of the loss $\mathcal{L}$ multiplied by the learning rate $\eta$:
+\begin{equation*}
+    \boldsymbol{\theta} \leftarrow \boldsymbol{\theta} - \eta \, \frac{\partial \mathcal{L}}{\partial \boldsymbol{\theta}}
+\end{equation*}
+If the local gradient is tiny, convergence is very slow. 
+
+Unfortunately, loss functions for most nonlinear models, are non-convex, meaning they have multiple local minima and saddle points. The algorithm can thus terminate in one
+of the stationary points and there is no way of knowing whether there is a better solution elsewhere.
+
+The final destination of a gradient descent algorithm is entirely determined by the starting point. \textit{Stochastic gradient descent} (SGD) attempts to solve this problem by adding some noise to the gradient at each step. There are multiple ways of indroducing randomness in the algorithm.
+
+Firstly, by dividing the training set in \textit{batches} and updating $\boldsymbol{\theta}$ after computing the gradient on every batch, the gradient will be representative of just a subset of the training set, and will tend to generalize better. SGD does not necessarily converge but, when close to the global minimum, all the data points will generally be well described by the model, so the gradients will be small. In practice, SGD is often applied with a \textit{learning rate schedule}. The learning rate $\eta$ starts at a high value and is decreased by a constant factor every $N$ epochs.
+
+A common modification to SGD is to add a \textit{momentum} term. Parameters are updated with a weighted combination of the gradient computed from the current batch and the direction moved in the previous step:
+
+\begin{align}
+    \mathbf{m}_{t+1} &\leftarrow \beta \cdot \mathbf{m}_t + (1 - \beta) \sum_{i \in \mathcal{B}_t} \frac{\partial \mathcal{L}_i(\boldsymbol{\theta}_t)}{\partial \boldsymbol{\theta}} \notag \\
+    \boldsymbol{\theta}_{t+1} &\leftarrow \boldsymbol{\theta}_t - \eta \cdot \mathbf{m}_{t+1},
+    \label{eq:momentum}
+\end{align}
+
+where $\mathbf{m}_t$ is the momentum (which drives the update at iteration $t$), $\beta \in [0,1)$ controls the degree to which the gradient is smoothed over time, and $\eta$ is the learning rate.
+
+The recursive formulation of the momentum calculation means that the gradient step is an infinite weighted sum of all the previous gradients, where the weights get smaller as we move back in time. The effective learning rate increases if all these gradients are aligned over multiple iterations and vice versa. The overall effect is a smoother trajectory and reduced oscillatory behavior in valleys.
+
+
