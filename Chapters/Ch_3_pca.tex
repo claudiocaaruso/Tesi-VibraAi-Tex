@@ -194,7 +194,7 @@ how much of the original variability is retained after projection.
 
  
 
-\subsection{Computational implementation}
+\subsection{Computational implementation of PCA}
 \label{subsec:pca_computational_implementation}
 
 In Python, PCA can be implemented using the \texttt{PCA} class provided by
@@ -203,12 +203,12 @@ observations and whose columns are the original variables. Once the PCA object i
 the method \texttt{transform} projects the data onto the principal directions. The
 combined method \texttt{fit\_transform} performs both operations in a single call:
 
-\begin{lstlisting}[style=pythoncode]
+\begin{verbatim}
 from sklearn.decomposition import PCA
 
 pca = PCA(n_components=d)
 X_d_proj = pca.fit_transform(X)
-\end{lstlisting}
+\end{verbatim}
 
 In this code, \texttt{n\_components} is the number \(d\) of retained principal
 components, and \texttt{X\_d\_proj} is the projected data matrix. Scikit-learn centers
@@ -219,7 +219,8 @@ When the number of components is not known in advance, PCA can first be fitted w
 specifying \texttt{n\_components}. The cumulative explained variance can then be used as
 a diagnostic to choose a possible value of \(d\):
 
-\begin{lstlisting}[style=pythoncode]
+
+\begin{verbatim}
 import numpy as np
 
 pca = PCA()
@@ -227,7 +228,7 @@ pca.fit(X)
 
 cumsum = np.cumsum(pca.explained_variance_ratio_)
 d = np.argmax(cumsum >= 0.95) + 1
-\end{lstlisting}
+\end{verbatim}
 
 The attribute \texttt{explained\_variance\_ratio\_} contains the fraction of variance
 associated with each principal component. Its cumulative sum indicates how much of the
@@ -236,6 +237,7 @@ total variance is retained when the first components are kept. In the example ab
 variance. This threshold is only a practical criterion: the final number of components
 should still be evaluated with respect to the goal of the analysis or of the predictive
 model.
+
 
 
 
