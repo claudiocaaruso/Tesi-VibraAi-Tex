@@ -240,5 +240,112 @@ model.
 
 
 
+\section{Exploratory PCA of the dataset}
+\label{sec:pca_dataset}
 
-\section{PCA analysis of the VIBRA dataset}
+In this work, PCA was first used as an exploratory tool to inspect the structure of the Raman dataset before building the classification model. This analysis should be interpreted as descriptive. PCA is unsupervised: it does not use
+the tissue labels to determine the components, and therefore it is not expected to find
+directions that are optimal for classification. Nevertheless, it is useful before
+training a predictive model because it shows whether the spectral dataset contains
+dominant variance patterns and how many components may be needed to obtain a compact representation of the
+spectra.
+
+
+For this exploratory stage, PCA was applied to the available cleaned dataset after the
+exclusions and preprocessing choices described in \Cref{ch:Dataset}. 
+
+\subsection{Spectral input and centering}
+\label{subsec:pca_input_centering}
+
+PCA was applied to the previously described matrix \(\mathbf{X}\), using the Raman
+intensity columns as input variables. The effect of the centering step on a single
+spectrum is shown in \Cref{fig:original_centered_spectrum}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Images/images_ch_3/05_original_vs_centered_spectrum.png}
+    \caption{Example of an original Raman spectrum and the corresponding centered
+    spectrum used for PCA.}
+    \label{fig:original_centered_spectrum}
+\end{figure}
+
+\subsection{Explained variance of the principal components}
+\label{subsec:pca_explained_variance_vibra}
+
+The explained variance was first inspected to evaluate how the information in
+\(\mathbf{X}\) is distributed across the principal components. The scree plot in
+\Cref{fig:pca_scree_plot} shows that the first components explain most of the variance,
+while the contribution of later components rapidly becomes smaller.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Images/images_ch_3/07_scree_plot_explained_variance.png}
+    \caption{Explained variance associated with the first principal components.}
+    \label{fig:pca_scree_plot}
+\end{figure}
+
+The cumulative explained variance, shown in \Cref{fig:pca_cumulative_variance}, gives
+the corresponding global view. The curve has a steep initial increase and then gradually
+flattens, indicating that the first components retain a large part of the total variance,
+whereas additional components provide progressively smaller contributions. In this
+analysis, the \(95\%\) threshold is reached by retaining the first \(89\) principal
+components; this value was used as a practical reference for comparing reduced PCA
+representations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Images/images_ch_3/06_cumulative_explained_variance.png}
+    \caption{Cumulative explained variance as a function of the number of retained
+    principal components.}
+    \label{fig:pca_cumulative_variance}
+\end{figure}
+
+\Cref{fig:pca_reconstructed_89} shows the effect of retaining these \(89\) components on
+a single spectrum and provides a visual
+interpretation of the dimensionality reduction. The reconstructed curve preserves the
+main spectral profile.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Images/images_ch_3/12_original_vs_reconstructed_89_components.png}
+    \caption{Comparison between an original Raman spectrum and its reconstruction using
+    the first \(89\) principal components.}
+    \label{fig:pca_reconstructed_89}
+\end{figure}
+
+\subsection{Projection of spectra in PCA space}
+\label{subsec:pca_projection_vibra}
+
+After inspecting the variance distribution, the spectra were visualized in the PCA space
+using score plots. For readability, the plots were generated on a random subset of
+\(10000\) spectra, with points coloured according to the associated tissue label. In
+these plots, PC1, PC2 and PC483 denote the scores of each spectrum along the corresponding
+principal components, ordered from the largest to the smallest explained variance.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Images/images_ch_3/08_pca_score_plot_pc1_pc2.png}
+    \caption{Projection of Raman spectra onto the first two principal components.}
+    \label{fig:pca_score_pc1_pc2}
+\end{figure}
+
+\Cref{fig:pca_score_pc1_pc2} shows that the data cloud is distributed along both axes,
+although its spatial extension is larger along PC1. This is consistent with the larger
+variance associated with the first principal component, while PC2 still describes a
+visible part of the variability of the dataset. The coloured labels remain largely
+overlapped in this plane, indicating that the first two components do not isolate the
+tissue classes by themselves.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Images/images_ch_3/09_pca_score_plot_pc1_pc483.png}
+    \caption{Projection of Raman spectra onto PC1 and PC483.}
+    \label{fig:pca_score_pc1_pc483}
+\end{figure}
+
+\Cref{fig:pca_score_pc1_pc483} makes the contrast between a dominant component and a late
+component more evident. The points preserve a wide spread along PC1, whereas their
+coordinates along PC483 are compressed close to zero. This visual difference reflects the
+much smaller variance explained by the last component: in this projection, the structure
+of the point cloud is therefore mainly determined by PC1.
