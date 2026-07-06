@@ -6,7 +6,7 @@ In this chapter, a few topics of particular interest for neural networks, and in
 \section{Fundamentals Neural Networks}
 \label{sec:ann_fundamentals}
 
-To introduce neural networks~\cite{Goodfellow-et-al-2016} , it is useful to understand first linear models and see how to overcome their limitations. Linear models, such as linear regression, can fit data efficiently and reliably. The problem with linear models is that their fitting capacity is limited to linear functions.
+To introduce neural networks~\cite{Goodfellow-et-al-2016}, it is useful to understand first linear models and see how to overcome their limitations. Linear models, such as linear regression, can fit data efficiently and reliably. The problem with linear models is that their fitting capacity is limited to linear functions.
 
 Neural networks, on the contrary, are able to approximate any function. More precisely, the \textbf{Universal Approximation Theorem}~\cite{prince2023understanding} states that there exists a network with one hidden layer containing a finite number of hidden units that can approximate any specified continuous function on a compact subset of $\mathbb{R}^n$ to arbitrary accuracy. This was proved by Cybenko (1989) for a class of sigmoid activations and was later shown to be true for a larger class of nonlinear activation functions.
 The terms used in the theorem will be explained in the following sections.
@@ -15,13 +15,13 @@ The terms used in the theorem will be explained in the following sections.
 \label{subsec:neurons}
 
 Neural networks owe their name to the loose analogy between artificial neurons and biological neurons.
-Biological neurons~\cite{geron2022hands} are composed of a cell body with multiple ramifications. the main branch is called the axon, and it connects to other neurons through synapses. Biological neurons receive short electrical impulses called signals from other neurons via these synapses. When a neuron receives a sufficient number of signals from other neurons within a few milliseconds, it fires its own signals. Individual biological neurons seem to behave in a simple way, but they are organized in a vast network, often in consecutive layers ,with each neuron typically connected to thousands of other neurons.
+Biological neurons~\cite{geron2022hands} are composed of a cell body with multiple ramifications. The main branch is called the axon, and it connects to other neurons through synapses. Biological neurons receive short electrical impulses called signals from other neurons via these synapses. When a neuron receives a sufficient number of signals from other neurons within a few milliseconds, it fires its own signals. Individual biological neurons seem to behave in a simple way, but they are organized in a vast network, often in consecutive layers, with each neuron typically connected to thousands of other neurons.
 
 A simple model for the behavior of biological neurons, the artificial neuron, has one or more binary
 (on/off) inputs and one binary output. The artificial neuron simply activates its output when more than a certain number of its inputs are active.
 
 The Perceptron is a slightly more refined model, based on a linear threshold unit (LTU): the inputs
-and output are now numbers (instead of binary on/off values) and each input connection is associated with a weight. The LTU computes a weighted sum of its inputs ($z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n = x^T w$), then applies a step function to that sum and outputs the result: $h_w(x) = step(z)$
+and output are now numbers (instead of binary on/off values) and each input connection is associated with a weight. The LTU computes a weighted sum of its inputs ($z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n = x^T w$), then applies a step function to that sum and outputs the result: $h_w(x) = \text{step}(z)$
 
 \begin{figure}[ht]
     \centering
@@ -36,7 +36,7 @@ and output are now numbers (instead of binary on/off values) and each input conn
     \label{fig:perceptrons}
 \end{figure}
 
-A Perceptron is simply composed of a single layer of TLUs,6 with each TLU connected
+A Perceptron is simply composed of a single layer of TLUs, with each TLU connected
 to all the inputs. When all the neurons in a layer are connected to every neuron in the previous layer (its input neurons), it is called a \textit{dense
 layer}.
 
@@ -58,7 +58,7 @@ h_{\mathbf{W, b}}(\mathbf{X}) = \phi (\mathbf{X W} + \mathbf{b})
     \item The function $\phi$ is the activation function (e.g. step, sigmoid or ReLU).
 \end{itemize}
 
-Initially, perceptrons were trained by accounting for the error made by the network on a single training instance at a time. The weights of connections that helped reduce the error between predicion and ground truth were reinforced:
+Initially, perceptrons were trained by accounting for the error made by the network on a single training instance at a time. The weights of connections that helped reduce the error between prediction and ground truth were reinforced:
 
 \begin{equation}
     w_{i,j}^{(\text{new})} = w_{i,j} + \eta \left( y_j - \hat{y}_j \right) x_i
@@ -66,16 +66,16 @@ Initially, perceptrons were trained by accounting for the error made by the netw
 \end{equation}
 
 where $x_i$ is the $i$-th input value of the current training instance, $\hat{y}_j$ is the predicted output of the $j$-th neuron, $y_j$ is the target output, and $\eta$ is the learning rate.
-This learning method, solely based on the prediction for one instance, cannot be applied in networks with more than one hiddend layer. This is due to not being able to isolate the role of a single connection in the prediction. The method, however, strongly resembles gradient descent.
+This learning method, solely based on the prediction for one instance, cannot be applied in networks with more than one hidden layer. This is due to not being able to isolate the role of a single connection in the prediction. The method, however, strongly resembles gradient descent.
 
-In the case of networks with more than one hidden layer, called(\textit{deep neural networks} (DNN), weights are updated through the \textit{backpropagation} algorithm, which is in fact gradient descent. In two
-passes through the network (one forward, one backward), the backpropagation algorithm computes the gradient of the network's error with regards to every single model parameter:
+In the case of networks with more than one hidden layer, called \textit{deep neural networks} (DNN), weights are updated through the \textit{backpropagation} algorithm, which is in fact gradient descent. In two
+passes through the network (one forward, one backward), the backpropagation algorithm computes the gradient of the network's error with respect to every single model parameter:
 
 \begin{itemize}
     \item It takes one mini-batch at a time (for example containing 32 instances each), and it goes through the full training set multiple times. Each pass is called an \textit{epoch}.
     \item The output for every instance in the mini-batch is computed layer by layer. This is the \textit{forward pass}: it is like making predictions, but all intermediate results are preserved since they are needed for the backward pass.
-    \item The algorithm measures the network's output error through a chosen loss function
-    \item It computes how much each connection in a layer contributed to the error. This is done analytically by applying the chain rule, from the output layer to the first one. This is the \textit{backward pass}
+    \item The algorithm measures the network's output error through a chosen loss function.
+    \item It computes how much each connection in a layer contributed to the error. This is done analytically by applying the chain rule, from the output layer to the first one. This is the \textit{backward pass}.
     \item Finally, the algorithm performs a Gradient Descent step to tweak all the connection weights in the network, using the error gradients it just computed.
 \end{itemize}
 
@@ -86,7 +86,7 @@ More formally, for a network with $D$ layers, the loss is a composition:
     \mathcal{L} = L\!\Big(f^{(D)}\big(\cdots f^{(1)}(\mathbf{X};\, \mathbf{W}^{(1)}) \cdots;\, \mathbf{W}^{(D)}\big)\Big)
 \end{equation}
 
-Where $L(\cdot)$ is the loss function and $f^{(i)}$ the full layer transformation for layer $i$ (i.e. $\phi\!\left(\mathbf{X}\mathbf{W}^{(i)} + \mathbf{b}^{(i)}\right)$).
+where $L(\cdot)$ is the loss function and $f^{(i)}$ the full layer transformation for layer $i$ (i.e. $\phi\!\left(\mathbf{X}\mathbf{W}^{(i)} + \mathbf{b}^{(i)}\right)$).
 
 The goal of backpropagation is to compute $\frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(r)}}$ for every layer $r$, so that each weight matrix can be updated by gradient descent.
 
@@ -115,7 +115,7 @@ Finally, the full gradient can be rewritten in short form as follows
 \begin{equation}
     \frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(r)}} = \mathbf{h}^{(r-1)\top} \boldsymbol{\delta}^{(r)}
 \end{equation}
-where $\boldsymbol{\delta}^{(r)}$ is the \textit{backpropagated error signal} at layer $r$, which compresses all the intermediate derivatives in one term, while $\mathbf{h}^{(r-1)\top}$ comes from the last term in \eqref{eq:chain_rule}.
+where $\boldsymbol{\delta}^{(r)}$ is the \textit{backpropagated error signal} at layer $r$, which compresses all the intermediate derivatives ad is computed recursively, while $\mathbf{h}^{(r-1)\top}$ comes from the last term in \eqref{eq:chain_rule}.
 
 Once the gradient is available, each weight matrix is updated by a step in the negative gradient direction:
 \begin{equation}
@@ -124,19 +124,17 @@ Once the gradient is available, each weight matrix is updated by a step in the n
 \end{equation}
 where $\eta > 0$ is the \textit{learning rate}, a hyperparameter controlling the step size. The same update applies to the bias vectors $\mathbf{b}^{(r)}$.
 
-It is important to initialize all the hidden layers' connection weights randomly, otherwise all neurons will be identical, hence evolve in the same way. The model would be equivalent of having a single neuron per layer.
-n order for this algorithm to work, the activation function must be changed from the step function to one such that its derivative is well-defined and nonzero everywhere, so that the gradient can always be computed and the weights updated effectively.
-
+It is important to initialize all the hidden layers' connection weights randomly, otherwise all neurons will be identical, hence evolve in the same way. The model would be equivalent to having a single neuron per layer.
 
 \subsection{Activation Functions: sigmoid, ReLU}
 \label{subsec:activation_functions}
 
 In order for the backpropagation algorithm to work, the activation function must be changed from the step function to one such that its derivative is well-defined and nonzero everywhere, so that the gradient can always be computed and the weights updated effectively.
-Furthermore, the activation functions must be non-linear. If they were linear, the transformation obtained by chaining them will be linear too (For example: $f(x)=x+1,\quad g(x)=2x-1 \quad\Rightarrow\quad f(g(x))=(2x-1)+1$). Without some non-linearity between layers, then even a deep stack of layers is equivalent to a single layer.
+Furthermore, the activation functions must be non-linear. If they were linear, the transformation obtained by chaining them would be linear too (for example: $f(x)=x+1,\quad g(x)=2x-1 \quad\Rightarrow\quad f(g(x))=(2x-1)+1$). Without some non-linearity between layers, then even a deep stack of layers is equivalent to a single layer.
 
 Multiple choices are possible for the activation function. In the model developed for this thesis, two functions were used: sigmoid and ReLU.
 
-The \textit{sigmoid function} (also known as \textit{logistic function}), was historically the first replacement to the step function. 
+The \textit{sigmoid function} (also known as \textit{the logistic function}) was historically the first replacement for the step function. 
 
 \begin{equation}
     \sigma(z) = \frac{1}{1 + e^{-z}}
@@ -152,17 +150,17 @@ It closely represents the firing rates of biological neurons and, due to squashi
 \end{figure}
 
 The sigmoid shows nevertheless some problems.
-Firstly the saturation of the values of $\sigma(z)$ when $|z|\gg1$ causes the values of the gradient to shrink. Gradients can get progresively smaller as the algorithm progresses
+Firstly, the saturation of the values of $\sigma(z)$ when $|z|\gg1$ causes the values of the gradient to shrink. Gradients can get progressively smaller as the algorithm progresses
 down to the lower layers. As a result, the Gradient Descent update leaves the lower layer connection weights virtually unchanged, and training never converges to a good solution. This is called the \textit{vanishing gradients} problem.
 To solve this problem, the hidden layers must have a non-saturating activation function.
 
-The \textit{Rectified Linear Unit} (ReLU) is a simple alternative that doesn't saturate for positive values and proven to be very effective in deep networks:
+The \textit{Rectified Linear Unit} (ReLU) is a simple alternative that doesn't saturate for positive values and has proven to be very effective in deep networks:
 
 \begin{equation}
     \text{ReLU}(z) = \max(0, z)
 \end{equation}
 
-It is continuous but not differentiable at z = 0, which can make Gradient Descent bounce around, but it has the advantage of being very fast to compute, reducing significantly training times.
+It is continuous but not differentiable at z = 0, which can make Gradient Descent bounce around, but it has the advantage of being very fast to compute, significantly reducing training time.
 This has been the choice for the hidden layers for the ANN used for this thesis.
 
 \begin{figure}[ht]
@@ -183,13 +181,13 @@ Given a dataset $\{(\mathbf{x}_i, y_i)\}$ of input/output pairs, the \textit{los
 
 Due to the \textit{binary classification} approach discussed in \cref{sec:binary_classification}, the ground-truth outputs for this Neural Network will be $y_i\in\{0,1\}$. For more complex cases, \textit{multiclass classification}, with $K$ classes and $y_i\in\{0,1,\dots, K-1\}$, can be more useful.
 
-To construct the loss function, a probability distribution based the output space $y \in \{0,1\}$ must be chosen. A suitable choice is the Bernoulli distribution, which is defined on the domain $\{0,1\}$. This has a single parameter $\lambda \in [0,1]$ that represents the probability that $y$ takes the value one:
+To construct the loss function, a probability distribution based on the output space $y \in \{0,1\}$ must be chosen. A suitable choice is the Bernoulli distribution, which is defined on the domain $\{0,1\}$. This has a single parameter $\lambda \in [0,1]$ that represents the probability that $y$ takes the value one:
 
 \begin{equation}
     \Pr(y|\lambda) = (1-\lambda)^{1-y} \cdot \lambda^y.
 \end{equation}
 
-The model $f[\mathbf{x}, \boldsymbol{\theta}]$ is set to predict the single distribution parameter $\lambda$. Since $\lambda$ can only take values in the range $[0,1]$, and the direct ouput of the last layer of the ANN is not bound in said range, its output is passed through a function that maps $\mathbb{R} \rightarrow [0,1]$. This is why the output neuron has the \textit{sigmoid} as the activation function (\cref{subsec:activation_functions}).
+The model $f[\mathbf{x}, \boldsymbol{\theta}]$ is set to predict the single distribution parameter $\lambda$. Since $\lambda$ can only take values in the range $[0,1]$, and the direct output of the last layer of the ANN is not bounded within said range, its output is passed through a function that maps $\mathbb{R} \rightarrow [0,1]$. This is why the output neuron has the \textit{sigmoid} as the activation function (\cref{subsec:activation_functions}).
 
 Hence, the distribution parameter is predicted as $\lambda = \sigma(f[\mathbf{x}, \boldsymbol{\theta}])$. The likelihood is now:
 
@@ -206,7 +204,7 @@ On the full training set $\{(\mathbf{x}_i, y_i)\}_{i=1}^{I}$, assuming independe
     \boldsymbol{\theta}])^{y_i}
 \end{equation}
 
-since each factor $\Pr(y_i|\mathbf{x}_i, \boldsymbol{\theta}) \in (0,1)$, the product over $\sim10^6$ instances (Raman dataset's size) could underflow to zero. Taking the logarithm resolves this, transforming the product into a sum, which cannor underflow.
+since each factor $\Pr(y_i|\mathbf{x}_i, \boldsymbol{\theta}) \in (0,1)$, the product over $\sim10^6$ instances (Raman dataset's size) could underflow to zero. Taking the logarithm resolves this, transforming the product into a sum, which cannot underflow.
 
 Likelihood is then maximized by minimizing its negative logarithm, since $\log$ is strictly monotonically increasing and thus preserves the location of the optimum.
 
@@ -222,7 +220,7 @@ This is known as the \textit{binary cross-entropy loss}. The transformed model o
 When performing inference, the point estimate of $y$ is usually set such that $y = 1$ if $\lambda > 0.5$ and $y = 0$ otherwise.
 However, in some cases it might be preferable to slightly tweak this to improve accuracy or recall (improving one will worsen the other).
 
-\subsection{Adam Optimizer}
+\subsection{Optimizers: from Gradient Descent to Adam}
 \label{subsec:adam}
 
 Training of the neural network can be substantially sped up by using a faster optimizer than the regular Gradient Descent.
@@ -233,23 +231,62 @@ Recalling that Gradient Descent, as in \cref{eq:gd_update}, simply updates the p
 \end{equation*}
 If the local gradient is tiny, convergence is very slow. 
 
-Unfortunately, loss functions for most nonlinear models, are non-convex, meaning they have multiple local minima and saddle points. The algorithm can thus terminate in one
+Unfortunately, loss functions for most nonlinear models are non-convex, meaning they have multiple local minima and saddle points. The algorithm can thus terminate in one
 of the stationary points and there is no way of knowing whether there is a better solution elsewhere.
 
-The final destination of a gradient descent algorithm is entirely determined by the starting point. \textit{Stochastic gradient descent} (SGD) attempts to solve this problem by adding some noise to the gradient at each step. There are multiple ways of indroducing randomness in the algorithm.
+The final destination of a gradient descent algorithm is entirely determined by the starting point. \textit{Stochastic gradient descent} (SGD) attempts to solve this problem by adding some noise to the gradient at each step. There are multiple ways of introducing randomness in the algorithm.
 
-Firstly, by dividing the training set in \textit{batches} and updating $\boldsymbol{\theta}$ after computing the gradient on every batch, the gradient will be representative of just a subset of the training set, and will tend to generalize better. SGD does not necessarily converge but, when close to the global minimum, all the data points will generally be well described by the model, so the gradients will be small. In practice, SGD is often applied with a \textit{learning rate schedule}. The learning rate $\eta$ starts at a high value and is decreased by a constant factor every $N$ epochs.
+Firstly, by dividing the training set in \textit{batches} and updating $\boldsymbol{\theta}$ after computing the gradient on every batch, the gradient will be representative of just a subset of the training set, and will tend to generalize better. SGD does not necessarily converge but, when close to the global minimum, all the data points will generally be well described by the model, so the gradients on all batches will be small. In practice, SGD is often applied with a \textit{learning rate schedule}. The learning rate $\eta$ starts at a high value and is decreased by a constant factor every $N$ epochs.
 
-A common modification to SGD is to add a \textit{momentum} term. Parameters are updated with a weighted combination of the gradient computed from the current batch and the direction moved in the previous step:
+A possible improvement to SGD is to add a \textit{momentum} term. Parameters are updated with a weighted combination of the gradient computed from the current batch and the direction moved in the previous step:
 
 \begin{align}
-    \mathbf{m}_{t+1} &\leftarrow \beta \cdot \mathbf{m}_t + (1 - \beta) \sum_{i \in \mathcal{B}_t} \frac{\partial \mathcal{L}_i(\boldsymbol{\theta}_t)}{\partial \boldsymbol{\theta}} \notag \\
-    \boldsymbol{\theta}_{t+1} &\leftarrow \boldsymbol{\theta}_t - \eta \cdot \mathbf{m}_{t+1},
+    \mathbf{m}_{t+1} &\leftarrow \beta \cdot \mathbf{m}_t + (1-\beta) \cdot \sum_{i \in \mathcal{B}_t} \frac{\partial \mathcal{L}_i(\boldsymbol{\theta}_t)}{\partial \boldsymbol{\theta}} \notag \\
+    \boldsymbol{\theta}_{t+1} &\leftarrow \boldsymbol{\theta}_t - \eta \mathbf{m}_{t+1},
     \label{eq:momentum}
 \end{align}
 
-where $\mathbf{m}_t$ is the momentum (which drives the update at iteration $t$), $\beta \in [0,1)$ controls the degree to which the gradient is smoothed over time, and $\eta$ is the learning rate.
+where $\mathbf{m}_t$ is the momentum at iteration $t$, $\beta \in [0,1)$ a hyperparameter that models friction ($\beta = 0 \Rightarrow$ high friction, $\beta \rightarrow 1 \Rightarrow$ no friction), $\eta$ the learning rate, and the gradient is calculated on the current mini-batch $\mathcal{B}_t$ \cite{geron2022hands, prince2023understanding}.
 
-The recursive formulation of the momentum calculation means that the gradient step is an infinite weighted sum of all the previous gradients, where the weights get smaller as we move back in time. The effective learning rate increases if all these gradients are aligned over multiple iterations and vice versa. The overall effect is a smoother trajectory and reduced oscillatory behavior in valleys.
+The gradient step is an exponentially-weighted sum of all the previous gradients, where the weights get smaller moving back in time. The overall effect is a smoother trajectory and reduced oscillatory behavior in valleys.
 
+To further speed up the convergence in cases where the surface is much steeper in one direction than another (e.g.elongated bowl problem), it's possible to perform a pointwise \textit{normalization} of the gradient, in order to descend more directly towards the minimum (\cref{fig:gd_small_lr_grid,fig:gd_large_lr_grid,fig:norm_grad_grid}). However, since gradients are normalized, this method progresses with a fixed step, $\eta$, bouncing back and forth when near the minimum.
 
+The combination of normalization and momentum gives the \textit{Adam Optimizer} \cite{geron2022hands, prince2023understanding}. The momentum term $\mathbf{m}_t$ from \cref{eq:momentum} is kept, and a second statistic $\mathbf{v}_t$ evolves in the same way, using another friction hyperparameter $\gamma \in [0,1)$. Rather than normalizing by the instantaneous gradient as above, Adam divides by a running estimate of its magnitude.
+
+\begin{align}
+    \mathbf{m}_{t+1} &\leftarrow \beta \cdot \mathbf{m}_t + (1-\beta) \cdot \sum_{i \in \mathcal{B}_t} \frac{\partial \mathcal{L}_i(\boldsymbol{\theta}_t)}{\partial \boldsymbol{\theta}} \notag \\
+    \mathbf{v}_{t+1} &\leftarrow \gamma \cdot \mathbf{v}_t + (1-\gamma) \cdot \left(\sum_{i \in \mathcal{B}_t} \frac{\partial \mathcal{L}_i(\boldsymbol{\theta}_t)}{\partial \boldsymbol{\theta}}\right)^2,
+    \label{eq:adam_moments}
+\end{align}
+
+where the square is taken elementwise.
+Finally, $\boldsymbol{\theta}$ is updated using the momentum $\mathbf{m}_{t+1}$, normalized pointwise by the square root of the mean squared gradient $\mathbf{v}_{t+1}$:
+
+\begin{equation}
+    \boldsymbol{\theta}_{t+1} \leftarrow \boldsymbol{\theta}_t - \eta \cdot \frac{\mathbf{m}_{t+1}}{\sqrt{\mathbf{v}_{t+1}} + \epsilon},
+    \label{eq:adam_update}
+\end{equation}
+
+where $\epsilon$ is a small constant added to avoid divergence when $\mathbf{v}_{t+1} \rightarrow 0$.
+The result of \textit{Adam} is shown in \cref{fig:adam_grid}.
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[GD, $\eta=0.05$.\label{fig:gd_small_lr_grid}]{
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_4/grad_desc_1.png}
+    }
+    \hfill
+    \subfloat[GD, $\eta=1.0$.\label{fig:gd_large_lr_grid}]{
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_4/grad_desc_2.png}
+    }\\[1ex]
+    \subfloat[Normalized gradients.\label{fig:norm_grad_grid}]{
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_4/norm_grad.png}
+    }
+    \hfill
+    \subfloat[Adam.\label{fig:adam_grid}]{
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_4/adam.png}
+    }
+    \caption{Optimizer trajectories on an elongated bowl-shaped loss surface.}
+    \label{fig:optimizers_grid}
+\end{figure}
