@@ -100,11 +100,37 @@ where \(\mathbf{1}\) is a column vector of ones. Centering subtracts the average
 from each observation, so PCA describes variations around the mean profile rather than
 absolute intensity levels.
 
+\subsection{Covariance-based formulation}
+\label{subsec:pca_covariance_formulation}
+
+A statistical formulation of PCA starts from the covariance matrix of the
+centered data. For the matrix \(\mathbf{X}_c\), the sample covariance matrix is
+\begin{equation}
+    \mathbf{C} =
+    \frac{1}{n-1}\mathbf{X}_c^{T}\mathbf{X}_c .
+    \label{eq:pca_covariance_matrix}
+\end{equation}
+Its elements describe how pairs of spectral variables vary together across the dataset.
+In Raman data, this means measuring how the intensities at different Raman shifts change
+jointly among the spectra.
+
+The principal directions can be obtained by solving the eigenvalue problem
+\begin{equation}
+    \mathbf{C}\mathbf{V} =
+    \mathbf{V}\boldsymbol{\Lambda},
+    \label{eq:pca_covariance_eigendecomposition}
+\end{equation}
+where the columns of \(\mathbf{V}\) are the eigenvectors of the covariance matrix and
+\(\boldsymbol{\Lambda}\) is the diagonal matrix of the corresponding eigenvalues.
+For real-valued data, the covariance matrix is symmetric; more generally, in the complex
+case, it is Hermitian. This property ensures that the eigenvectors can be chosen
+orthonormal. These eigenvectors define the principal directions, while the eigenvalues
+quantify the variance along them. 
+
 \subsection{Singular Value Decomposition}
 \label{subsec:pca_svd}
 
-PCA can be obtained through
-the Singular Value Decomposition (SVD) of the centered data matrix. The SVD is a stable
+The same directions can also be obtained from the Singular Value Decomposition (SVD) of the centered data matrix. The SVD is a stable
 matrix factorization that represents the data in terms of directions adapted to the dataset
 itself. Applied to \(\mathbf{X}_c\), it writes
 \begin{equation}
@@ -215,29 +241,6 @@ components, and \texttt{X\_d\_proj} is the projected data matrix. Scikit-learn c
 the data internally before computing PCA, so the user provides the original data matrix
 and the algorithm estimates the principal axes from it.
 
-When the number of components is not known in advance, PCA can first be fitted without
-specifying \texttt{n\_components}. The cumulative explained variance can then be used as
-a diagnostic to choose a possible value of \(d\):
-
-
-\begin{verbatim}
-import numpy as np
-
-pca = PCA()
-pca.fit(X)
-
-cumsum = np.cumsum(pca.explained_variance_ratio_)
-d = np.argmax(cumsum >= 0.95) + 1
-\end{verbatim}
-
-The attribute \texttt{explained\_variance\_ratio\_} contains the fraction of variance
-associated with each principal component. Its cumulative sum indicates how much of the
-total variance is retained when the first components are kept. In the example above,
-\(d\) is the smallest number of components required to preserve at least \(95\%\) of the
-variance. This threshold is only a practical criterion: the final number of components
-should still be evaluated with respect to the goal of the analysis or of the predictive
-model.
-
 
 
 \section{Exploratory PCA of the dataset}
@@ -263,7 +266,7 @@ spectrum is shown in \Cref{fig:original_centered_spectrum}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{Images/images_ch_3/05_original_vs_centered_spectrum.png}
+    \includegraphics[width=0.70\textwidth]{Images/images_ch_3/05_original_vs_centered_spectrum.png}
     \caption{Example of an original Raman spectrum and the corresponding centered
     spectrum used for PCA.}
     \label{fig:original_centered_spectrum}
@@ -279,7 +282,7 @@ while the contribution of later components rapidly becomes smaller.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{Images/images_ch_3/07_scree_plot_explained_variance.png}
+    \includegraphics[width=0.70\textwidth]{Images/images_ch_3/07_scree_plot_explained_variance.png}
     \caption{Explained variance associated with the first principal components.}
     \label{fig:pca_scree_plot}
 \end{figure}
@@ -294,7 +297,7 @@ representations.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{Images/images_ch_3/06_cumulative_explained_variance.png}
+    \includegraphics[width=0.70\textwidth]{Images/images_ch_3/06_cumulative_explained_variance.png}
     \caption{Cumulative explained variance as a function of the number of retained
     principal components.}
     \label{fig:pca_cumulative_variance}
@@ -308,7 +311,7 @@ main spectral profile.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Images/images_ch_3/12_original_vs_reconstructed_89_components.png}
+    \includegraphics[width=0.70\textwidth]{Images/images_ch_3/12_original_vs_reconstructed_89_components.png}
     \caption{Comparison between an original Raman spectrum and its reconstruction using
     the first \(89\) principal components.}
     \label{fig:pca_reconstructed_89}
@@ -325,9 +328,15 @@ principal components, ordered from the largest to the smallest explained varianc
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{Images/images_ch_3/08_pca_score_plot_pc1_pc2.png}
-    \caption{Projection of Raman spectra onto the first two principal components.}
-    \label{fig:pca_score_pc1_pc2}
+    \subfloat[Projection onto PC1 and PC2.\label{fig:pca_score_pc1_pc2}]{
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_3/08_pca_score_plot_pc1_pc2.png}
+    }
+    \hfill
+    \subfloat[Projection onto PC1 and PC483.\label{fig:pca_score_pc1_pc483}]{
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_3/09_pca_score_plot_pc1_pc483.png}
+    }
+    \caption{Score plots of Raman spectra in the PCA space.}
+    \label{fig:pca_score_plots}
 \end{figure}
 
 \Cref{fig:pca_score_pc1_pc2} shows that the data cloud is distributed along both axes,
@@ -336,13 +345,6 @@ variance associated with the first principal component, while PC2 still describe
 visible part of the variability of the dataset. The coloured labels remain largely
 overlapped in this plane, indicating that the first two components do not isolate the
 tissue classes by themselves.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{Images/images_ch_3/09_pca_score_plot_pc1_pc483.png}
-    \caption{Projection of Raman spectra onto PC1 and PC483.}
-    \label{fig:pca_score_pc1_pc483}
-\end{figure}
 
 \Cref{fig:pca_score_pc1_pc483} makes the contrast between a dominant component and a late
 component more evident. The points preserve a wide spread along PC1, whereas their
