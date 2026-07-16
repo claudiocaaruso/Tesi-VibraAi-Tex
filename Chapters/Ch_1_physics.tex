@@ -5,8 +5,11 @@ The Raman effect was first reported by the physicist Chandrasekhara Venkata Rama
 
 Raman spectroscopy is a vibrational spectroscopic technique used to investigate the molecular composition and structure of a sample through its interaction with light, by measuring these shifts. A Raman spectrum can therefore be interpreted as a vibrational fingerprint of the material under investigation.
 
-\section{Classical and quantum interpretation of Raman effect}
-\label{sec:classical_description_raman}
+\section{Physical description of the Raman effect}
+\label{sec:theory_raman_effect}
+
+\subsection{Classical theory: induced dipole and polarizability}
+\label{subsec:classical_raman}
 
 The Raman effect can be introduced by following the response of a molecule to the electric field of the incident radiation. In a classical description, the molecule is treated as a polarizable object: the external field slightly displaces the electronic cloud with respect to the nuclei, and this displacement creates an induced electric dipole. The electric field of a monochromatic laser beam can be written as
 \begin{equation}
@@ -21,9 +24,13 @@ where \(\mathbf{E}_0\) is the field amplitude and \(\nu_0\) is the frequency of 
 \end{equation}
 where \(\boldsymbol{\alpha}\) is the polarizability tensor. Polarizability measures how easily the electronic distribution can be deformed by an external electric field. In this view, scattering is the radiation emitted by the induced dipole as it oscillates under the action of the incident wave.
 
+\subsection{Molecular vibrations and Raman activity}
+\label{subsec:molecular_vibrations}
+
 If the molecule were fixed at its equilibrium geometry, the polarizability would be constant and the induced dipole would oscillate only at the laser frequency. The emitted radiation would therefore have the same frequency as the incident radiation, producing an elastic process known as Rayleigh scattering. Raman scattering appears when nuclear motion is taken into account.
 
-The effect of nuclear motion on polarizability can be explained by recalling the mechanical picture behind molecular vibrations. Near the equilibrium geometry, a chemical bond can be approximated as an elastic connection. In the simplest diatomic case, the molecule behaves like two masses connected by a spring, and the vibrational frequency depends on both the stiffness of the bond and the reduced mass of the two atoms. Stiffer bonds lead to higher vibrational frequencies, while heavier atoms generally lead to lower ones. In a polyatomic molecule, the nuclear motion is more complex, but it can be decomposed into independent collective motions called normal modes. Each normal mode is described by a coordinate \(Q_k\), which represents a coordinated displacement pattern of the nuclei rather than the motion of a single atom. This description is useful for Raman scattering because changes in the nuclear geometry can modify the electronic distribution, and therefore the polarizability, along each normal coordinate.
+The effect of nuclear motion on polarizability can be explained by recalling the mechanical picture behind molecular vibrations. A chemical bond has an equilibrium geometry, corresponding to the minimum of its potential energy curve. A real bond is more accurately described by an anharmonic Morse-like potential; however, for small displacements around equilibrium, this potential can be approximated by a parabola. In this harmonic approximation, the restoring force is proportional to the displacement, according to Hooke's law, and the bond can be treated as an elastic connection.
+In the simplest diatomic case, the molecule behaves like two masses connected by a spring, and the vibrational frequency depends on both the stiffness of the bond and the reduced mass of the two atoms. Stiffer bonds lead to higher vibrational frequencies, while heavier atoms generally lead to lower ones. In a polyatomic molecule, the nuclear motion is more complex, but it can be decomposed into independent collective motions called normal modes. Each normal mode is described by a coordinate \(Q_k\), which represents a coordinated displacement pattern of the nuclei rather than the motion of a single atom. This description is useful for Raman scattering because changes in the nuclear geometry can modify the electronic distribution, and therefore the polarizability, along each normal coordinate.
 
 In the harmonic approximation, each normal coordinate oscillates sinusoidally around the equilibrium geometry:
 \begin{equation}
@@ -31,6 +38,13 @@ In the harmonic approximation, each normal coordinate oscillates sinusoidally ar
     \label{eq:normal_coordinate}
 \end{equation}
 where \(\nu_k\) is the vibrational frequency of the \(k\)-th normal mode.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.70\textwidth]{Images/images_ch_1/normal_modes.png}
+    \caption{Examples of normal vibrational modes in simple molecules. Each mode corresponds to a coordinated displacement pattern of the nuclei, such as symmetric stretching, bending or asymmetric stretching.}
+    \label{fig:normal_modes}
+\end{figure}
 
 During this motion, the molecular geometry changes, and the polarizability may change accordingly. Expanding a component of the polarizability tensor around the equilibrium configuration gives
 \begin{equation}
@@ -55,7 +69,7 @@ The constant term in equation~\eqref{eq:polarizability_taylor} describes the pol
 \end{split}
 \label{eq:induced_dipole_components}
 \end{equation}
-This expression contains the essential result of the classical treatment. The first term, proportional to \(\alpha_0\), oscillates at the laser frequency \(\nu_0\) and corresponds to Rayleigh scattering. The other terms arise only if the vibration changes the polarizability. They oscillate at \(\nu_0-\nu_k\) and \(\nu_0+\nu_k\), which correspond to the Stokes and anti-Stokes Raman components, respectively. In this sense, Raman scattering can be understood as a frequency modulation of the induced dipole caused by molecular vibration.
+This expression contains the essential result of the classical treatment. The first term, proportional to \(\alpha_0\), oscillates at the laser frequency \(\nu_0\) and corresponds to Rayleigh scattering.  The other terms arise only if the vibration changes the polarizability. They oscillate at \(\nu_0-\nu_k\) and \(\nu_0+\nu_k\), which correspond to the Stokes and anti-Stokes Raman components, respectively. In this sense, Raman scattering can be understood as a frequency modulation of the induced dipole caused by molecular vibration.
 
 A vibrational mode contributes to the Raman spectrum only if it changes at least one component of the polarizability tensor:
 \begin{equation}
@@ -64,11 +78,33 @@ A vibrational mode contributes to the Raman spectrum only if it changes at least
 \end{equation}
 In physical terms, this means that the vibration must modify the response of the electronic cloud to the incident electric field, by changing the ease with which the cloud can be distorted.
 
-The classical description does not fully describe the microscopic nature of the process. 
+\subsection{Quantum interpretation: vibrational levels and virtual states}
+\label{subsec:quantum_raman}
 
-In a quantum picture, the vibrational energy of the molecule is quantized, and the molecule occupies discrete vibrational states, denoted by quantum numbers \(\nu = 0, 1, 2, \ldots\). When the molecule interacts with radiation, the electric field acts as a small perturbation of this vibrational system and polarizes the molecule. The system passes through a short-lived virtual state, followed almost immediately by the emission of a scattered photon. The energy difference between the incident and scattered photons therefore reflects the change in the vibrational state of the molecule.
+The classical description explains the origin of the shifted frequencies, but it does not account for the quantization of molecular vibrational energy or for the different populations of the initial vibrational states. A quantum interpretation is therefore needed to describe Raman scattering in terms of transitions between vibrational levels.
+ 
+ In a quantum picture, the vibrational energy of the molecule is quantized, and the molecule occupies discrete vibrational states, denoted by quantum numbers \(\nu = 0, 1, 2, \ldots\).
+ 
+ \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.55\textwidth]{Images/images_ch_1/molecular_vibrational_states.png}
+    \caption{A typical Morse curve for an electronic state showing the vibrational levels as horizontal tie lines.}
+    \label{fig:molecular_vibrational_states}
+\end{figure}
+ 
+  When radiation interacts with the molecule the oscillating electric field distorts the electronic cloud and forms a very short-lived  complex, usually described as a virtual state. This state is not a stable eigenstate of the isolated molecule and exists only during the scattering event. The system then relaxes almost immediately by emitting a scattered photon.
 
 In Rayleigh scattering, the molecule returns to the same vibrational state from which it started, and the scattered photon has the same energy as the incident photon. In Stokes Raman scattering, the molecule ends in a higher vibrational state; part of the incident photon energy remains in the molecule, so the scattered photon has lower energy compared to the incident photon. In anti-Stokes Raman scattering, the molecule is initially in an excited vibrational state and returns to a lower one; vibrational energy is transferred from the molecule to the photon, so the scattered photon has higher energy.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Images/images_ch_1/stokes_and_anti_stokes.png}
+    \caption{Energy-level representation of Rayleigh, Stokes and anti-Stokes scattering.}
+    \label{fig:stokes_anti_stokes}
+\end{figure}
+
+\subsection{Selection rules}
+\label{subsec:selection_rules}
 
 The probability of such a transition is not determined simply by the existence of two energy levels, but by how strongly the two states are coupled by the molecular response to the field. This is why the quantum description naturally introduces matrix elements: they express whether a transition between two vibrational states is allowed and how efficiently it can occur. The probability of a Raman transition between an initial vibrational state \(|i\rangle\) and a final state \(|f\rangle\) is proportional to the squared modulus of the polarizability matrix element:
 \begin{equation}
@@ -98,6 +134,9 @@ This equation links the classical and quantum descriptions. The derivative of th
 The factor \(\langle v_{f,k}|Q_k|v_{i,k}\rangle\) describes the transition of the active mode \(k\). In the harmonic approximation, it is non-zero only for \(\Delta v_k=\pm 1\). The product over \(j\neq k\) contains overlap integrals for all the other modes. Since different harmonic oscillator states are orthogonal, these factors are non-zero only when the final and initial quantum numbers are the same for those modes. Therefore, in a fundamental Raman transition, one normal mode changes by one quantum, while the other normal modes remain unchanged. The Stokes process corresponds to \(\Delta v_k=+1\), while the anti-Stokes process corresponds to \(\Delta v_k=-1\).
 
 The quantum picture also explains why Stokes lines are usually more intense than anti-Stokes lines. At thermal equilibrium, most molecules occupy the lowest vibrational state, while only a smaller fraction is already vibrationally excited. Stokes scattering can therefore start from the most populated state, whereas anti-Stokes scattering requires the molecule to be in an excited vibrational state before the interaction with the photon. As temperature increases, the population of excited vibrational states also increases, and the anti-Stokes signal can become stronger. Under ordinary experimental conditions, however, this population is usually small for many vibrational modes. This is why biological Raman measurements commonly focus on the Stokes side of the spectrum.
+
+\subsection{Raman shift and spectral representation}
+\label{subsec:raman_shifts}
 
 In practice, Raman spectra are not usually represented as a function of the absolute wavelength of the scattered light. The horizontal axis is instead the Raman shift, defined as the difference between the wavenumber of the incident radiation and that of the scattered radiation. For Stokes scattering,
 \begin{equation}
