@@ -335,3 +335,48 @@ A splitting protocol based on Sample IDs was thus impemented to solve the two pr
 
 Regarding data splitting, the Sample IDs are considered when performing the train/validation/test split in order to prevent the same sample from appearing in both training and testing. A stratified split is performed while keeping this constraint and mantaining the ratio of the two labels close to 1:1 during training. 
 
+
+\section{Spatial post-processing}
+\label{sec:spatial_post_processing}
+
+The network outputs one probability for each spectrum. Since spectra are acquired on a
+regular Raman map, each probability is associated with spatial coordinates \((x,y)\).
+Adjacent pixels correspond to spatially close measurements and are therefore likely to
+contain related biological information. 
+
+Spatial post-processing is applied after the network has produced its predicted
+probabilities, without modifying the architecture, the training procedure or the
+learned parameters. In particular, smoothing is applied to the continuous class-1
+probabilities before converting them into binary labels through the classification
+threshold. The operation is performed independently within each Raman map, identified by
+\texttt{Sample\_ID} and \texttt{Map\_ID}. Borders are handled by replacing the missing neighbouring values with the nearest
+available pixel values of the same map.
+
+Let \(p(x,y)\) be the probability predicted by the model for the positive class at the
+pixel located at coordinates \((x,y)\). With a \(k \times k\) mean filter, the smoothed
+probability \(\tilde{p}(x,y)\) can be written as
+\begin{equation}
+    \tilde{p}(x,y) =
+    \frac{1}{|\mathcal{N}_{k \times k}(x,y)|}
+    \sum_{(i,j)\in \mathcal{N}_{k \times k}(x,y)} p(i,j),
+    \label{eq:spatial_smoothing}
+\end{equation}
+where \(\mathcal{N}_{k \times k}(x,y)\) is the local neighbourhood centered on
+\((x,y)\). The kernel size \(k\) is a configurable parameter; in the experiments,
+different neighbourhood sizes, such as \(3 \times 3\) and \(5 \times 5\), were considered.
+
+After smoothing, the final binary prediction is obtained by applying the same
+classification threshold used for the raw probabilities:
+\begin{equation}
+    \hat{y}(x,y) =
+    \begin{cases}
+        1, & \tilde{p}(x,y) > \tau,\\
+        0, & \tilde{p}(x,y) \leq \tau,
+    \end{cases}
+    \label{eq:threshold_after_smoothing}
+\end{equation}
+where \(\tau = 0.47\) in the experiments considered in this work. The objective is to
+reduce isolated noisy predictions and obtain spatially more coherent probability maps.
+This operation can also remove small true regions or propagate local errors; for this
+reason, raw and smoothed predictions are compared separately in the experimental results.
+
