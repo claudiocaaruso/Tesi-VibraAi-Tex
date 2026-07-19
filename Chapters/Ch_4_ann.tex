@@ -290,3 +290,48 @@ The result of \textit{Adam} is shown in \cref{fig:adam_grid}.
     \caption{Optimizer trajectories on an elongated bowl-shaped loss surface~\cite{prince2023understanding}.}
     \label{fig:optimizers_grid}
 \end{figure}
+
+
+\section{Network architectures}
+\label{sec:architectures}
+
+The classification stage was based on three model architectures (S, M, L) that varied in width (\cref{tab:architectures}). A grid search was performed by varying model size and multiple hyperparameters to determine the best possible combination. Too small of a model would be expected to underfit, not learning enough relevant patterns to be able to categorize well enough, while too big would overfit, memorizing the dataset rather than generalizing.
+
+\begin{table}[ht]
+    \centering
+    \small
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Model} & \textbf{Hidden layers} & \textbf{Neurons/layer} & \textbf{Dropout} & \textbf{Output} \\
+        \hline
+        Small (S)  & 2 & 16, 8      & 0.4 & 1 (sigmoid) \\
+        Medium (M) & 2 & 64, 32      & 0.4 & 1 (sigmoid) \\
+        Large (L)  & 3 & 128, 64, 16 & 0.4  & 1 (sigmoid) \\
+        \hline
+    \end{tabular}
+    \caption{Architecture of the three model sizes (S, M, L). All hidden layers use ReLU activation (\cref{subsec:activation_functions}); the output layer is a single sigmoid unit for binary classification (\cref{subsec:bce}).}
+    \label{tab:architectures}
+\end{table}
+
+The models all consisted of \textit{dense} (fully connected) layers, with \textit{dropout} rate of 0.4 to reduce overfitting. \textit{Dropout} is a regularization technique such that at every training step, every neuron (excluding the output neurons) has a probability p of being temporarily ignored, though it may be active during the next step. Neurons trained with \textit{dropout} cannot co-adapt with their neighboring neurons; they have to be as useful as possible on their own. They also cannot rely excessively on just a few input neurons and must pay attention to each of their input neurons \cite{geron2022hands}.
+
+All the hidden layers used ReLU as activtion functions and the number of input units is set to the number of retained PC components, while the output neurons had a sigmoid activation.
+
+The best result was observed for the small (S) architecture, yielding similar results to the medium (M) one but with lesser computational cost and risk of overfitting, while the large (L) model showed clear overfitting.
+
+
+\section{Data Splitting And Cross Validation}
+\label{sec:data_splitting}
+
+The spectra in the dataset are spatially correlated: neighbouring pixels show similar patterns and peaks. Therefore, a simple random split of the whole dataset in training, validation and test sets would result in spectra from the same map or sample to be present in all the divisions. Such a split would let the model memorize sample specific signatures and give misleading results due to the data leakage in the test set.
+
+Furthermore, due to the difference across maps and samples regarding the presence of different biological tissues, the performance of the model in testing and validation is heavily dependent on the samples present in the sets.
+
+A splitting protocol based on Sample IDs was thus impemented to solve the two problems:
+\begin{itemize}
+    \item \textit{Data splitting} in train/validation/test so that results were realistic and trustworthy.
+    \item \textit{Cross validation} on multiple test sets in order to obtain an average and well representative result.
+\end{itemize}
+
+Regarding data splitting, the Sample IDs are considered when performing the train/validation/test split in order to prevent the same sample from appearing in both training and testing. A stratified split is performed while keeping this constraint and mantaining the ratio of the two labels close to 1:1 during training. 
+
