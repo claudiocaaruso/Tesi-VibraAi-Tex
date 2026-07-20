@@ -329,15 +329,74 @@ Furthermore, because different maps and samples contain different mixes of biolo
 
 A splitting protocol based on Sample IDs was implemented to solve both problems at once, combining a Sample-ID-based split with cross validation into a single pipeline:
 \begin{enumerate}
-    \item The dataset is divided by Sample ID into $k$ stratified folds (\textit{Stratified Group K-Fold}), keeping the ratio of the two labels close to 1:1 in each fold and ensuring that no Sample ID is split across folds.
+    \item The dataset is divided by Sample ID into $k$ \textit{stratified} folds, where the stratification means keeping the ratio of the two labels close to 1:1 in each fold (by downsampling the majoritary class) while ensuring that no Sample ID is split across folds.
     \item At each of the $k$ iterations, one fold is held out as the \textit{test} set, while the remaining $k-1$ folds form the training pool.
-    \item An internal \textit{validation} set is then carved out of that training pool (again split by Sample ID, to avoid leakage), leaving the rest as the actual training set. The validation set is used to monitor the model during training (e.g. for early stopping), while the test fold is reserved for final evaluation only.
+    \item An internal \textit{validation} set is carved out of the training pool (again split by Sample ID, to avoid leakage), leaving the rest as the actual training set. The validation set is used to monitor the model during training (e.g. for early stopping), while the test fold is reserved for final evaluation only.
 \end{enumerate}
 
 This is repeated for all $k$ folds, so that every sample is used exactly once for testing. Results are saved for each fold and then averaged, to balance out 'easy' and 'difficult' folds and obtain a representative estimate of performance rather than one dependent on a single, possibly lucky, split.
 
+If PCA was performed one the whole dataset, the test set would be decomposed in PCs that were fitted on the training set and vice-versa. This would once again lead to data leakage. To avoid this issue, the split was performed on the raw dataset, then PCA was refitted on each training set ($k$ PCAs performed each time, once per split)
+
 For this dataset, cross validation was performed with $k=5$ folds, maintaining roughly 5 sample IDs per fold ($\sim20\%$ of the dataset).
 
 
-\section{Grid Search}
-\label{sec:grid_search}
+\section{Training}
+\label{sec:training}
+
+There are multiple hyperparameters that are not fixed a priori, for which an optimal value has to be found to make the model perform best. Those parameters comprise: network size, number of retained PCs and batch size.
+To choose between them, a grid search was performed. For each hyperparameter, a list of possible values was chosen, then the model was trained and tested for every possible combination of those values (said combinations are called the \textit{search space}).
+
+Network size and number of retained PCs were searched jointly first, over the three possible network sizes S, M, L (\cref{sec:architectures}) and thirteen values of retained principal components $N_{PC} \in \{1, 2, 3, 5, 10, 20, 30, 50, 75, 100, 200, 300, 483\}$, where the last value corresponds to full dimensionality (equivalent to training on the full Raman spectra).
+The full search, using 5-fold cross validation (\cref{sec:data_splitting}), meant training $3\times 13\times 5 = 195$ models and comparing the $3\times 13 = 39$ results.
+
+To recuce computational complexity, once the best architecture and $N_{PC}$ combination was selected, batch size was tuned separately on this fixed configuration, over six values $N_\mathcal{B} \in \{512, 1024, 2048, 4096, 8192, 16384\}$. Batch sizes were chosen as powers of 2 due to convention and minor optimization in computer memory.
+
+As explained in \cref{subsec:pca_svd}, PCA is fitted on the full dimensional spectrum, then the required number of PCs are selected by keeping only the first columns of the projected data matrix. This avoids the computational burden of reducing dimensionality for every training instance.
+
+Two callbacks were implemented to control training:
+
+\begin{itemize}
+    \item \textit{Early stopping:} training stops when the validation AUC (Area Under the Curve, explained in \cref{sec:evaluation_metrics}) doesn't improve for 10 consecutive epochs, restoring the weights to the best epoch.
+    \item \textit{Learning rate reduction on plateau:} when validation loss fails to improve for 4 consecutive epochs, the learning rate $\eta$ is reduced by half, down to a minimum of $\eta = 10^{-6}$. This allows for finer tuning compared to the relatively coarse \textit{Adam} steps.
+\end{itemize}
+
+All stochastic parts of the pipeline (i.e. fold assignment, the split within each fold, and majority-class downsampling) use a fixed random seed, so that results are deterministic and comparable across the grid, although the model's weight initialization done by keras is not fixed. Differences in metrics between configurations reflect the architecture/$N_{PC}$ choice itself, not casual variation from a different random split. The variations caused by the different initializations are negligible ($\sim1\%$ on AUC) compared to those given by the split.
+
+
+
+\section{Spatial post-processing}
+\label{sec:spatial_post_processing}
+
+The network outputs one probability for each spectrum. Since spectra are acquired on a regular Raman map, each probability is associated with spatial coordinates \((x,y)\). Adjacent pixels correspond to spatially close measurements and are therefore likely to contain related biological information. 
+
+Spatial post-processing is applied after the network has produced its predicted probabilities, without modifying the architecture, the training procedure or the learned parameters. In particular, smoothing is applied to the continuous class-1 probabilities before converting them into binary labels through the classification threshold. The operation is performed independently within each Raman map, identified by \texttt{Sample\_ID} and \texttt{Map\_ID}. Borders are handled by replacing the missing neighbouring values with the nearest available pixel values of the same map.
+
+Let \(p(x,y)\) be the probability predicted by the model for the positive class at the pixel located at coordinates \((x,y)\). With a \(k \times k\) mean filter, the smoothed probability \(\tilde{p}(x,y)\) can be written as
+
+\begin{equation}
+    \tilde{p}(x,y) =
+    \frac{1}{|\mathcal{N}_{k \times k}(x,y)|}
+    \sum_{(i,j)\in \mathcal{N}_{k \times k}(x,y)} p(i,j),
+    \label{eq:spatial_smoothing}
+\end{equation}
+
+where \(\mathcal{N}_{k \times k}(x,y)\) is the local neighbourhood centered on \((x,y)\). The kernel size \(k\) is a configurable parameter; in the experiments, different neighbourhood sizes, such as \(3 \times 3\) and \(5 \times 5\), were considered.
+
+After smoothing, the final binary prediction is obtained by applying the same classification threshold used for the raw probabilities:
+
+\begin{equation}
+    \hat{y}(x,y) =
+    \begin{cases}
+        1, & \tilde{p}(x,y) > \tau,\\
+        0, & \tilde{p}(x,y) \leq \tau,
+    \end{cases}
+    \label{eq:threshold_after_smoothing}
+\end{equation}
+
+where \(\tau = 0.47\) in the experiments considered in this work. The objective is to reduce isolated noisy predictions and obtain spatially more coherent probability maps. This operation can also remove small true regions or propagate local errors; for this reason, raw and smoothed predictions are compared separately in the experimental results.
+
+
+\section{Evaluation Metrics}
+\label{sec:evaluation_metrics}
+
