@@ -52,7 +52,7 @@ h_{\mathbf{W, b}}(\mathbf{X}) = \phi (\mathbf{X W} + \mathbf{b})
 \end{equation}
 
 \begin{itemize}
-    \item As always, $\mathbf{X}$ represents the matrix of input features. It has one row per instance (e.g. spectrum), one column per feature (e.g. band).
+    \item As always, $\mathbf{X}$ represents the matrix of input features. It has one row per instance (e.g. spectrum), one column per feature (e.g. principal component).
     \item The weight matrix $\mathbf{W}$ contains all the connection weights except for the ones from the bias neuron. It has one row per input neuron, for the first layer it corresponds to the number of features, and one column per artificial neuron in the layer.
     \item The bias vector $\mathbf{b}$ contains all the connection weights between the bias neuron and the artificial neurons. It has one bias term per artificial neuron.
     \item The function $\phi$ is the activation function (e.g. step, sigmoid or ReLU).
@@ -115,7 +115,7 @@ Finally, the full gradient can be rewritten in short form as follows
 \begin{equation}
     \frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(r)}} = \mathbf{h}^{(r-1)\top} \boldsymbol{\delta}^{(r)}
 \end{equation}
-where $\boldsymbol{\delta}^{(r)}$ is the \textit{backpropagated error signal} at layer $r$, which compresses all the intermediate derivatives ad is computed recursively, while $\mathbf{h}^{(r-1)\top}$ comes from the last term in \eqref{eq:chain_rule}.
+where $\boldsymbol{\delta}^{(r)}$ is the \textit{backpropagated error signal} at layer $r$, which compresses all the intermediate derivatives in one term and is computed recursively, while $\mathbf{h}^{(r-1)\top}$ comes from the last term in \eqref{eq:chain_rule}.
 
 Once the gradient is available, each weight matrix is updated by a step in the negative gradient direction:
 \begin{equation}
@@ -250,7 +250,7 @@ where $\mathbf{m}_t$ is the momentum at iteration $t$, $\beta \in [0,1)$ a hyper
 
 The gradient step is an exponentially-weighted sum of all the previous gradients, where the weights get smaller moving back in time. The overall effect is a smoother trajectory and reduced oscillatory behavior in valleys.
 
-To further speed up the convergence in cases where the surface is much steeper in one direction than another (e.g.elongated bowl problem), it's possible to perform a pointwise \textit{normalization} of the gradient, in order to descend more directly towards the minimum (\cref{fig:gd_small_lr_grid,fig:gd_large_lr_grid,fig:norm_grad_grid}). However, since gradients are normalized, this method progresses with a fixed step, $\eta$, bouncing back and forth when near the minimum.
+To further speed up the convergence in cases where the surface is much steeper in one direction than another (e.g. elongated bowl problem), it's possible to perform a pointwise \textit{normalization} of the gradient, in order to descend more directly towards the minimum (\cref{fig:gd_small_lr_grid,fig:gd_large_lr_grid,fig:norm_grad_grid}). However, since gradients are normalized, this method progresses with a fixed step, $\eta$, bouncing back and forth when near the minimum.
 
 The combination of normalization and momentum gives the \textit{Adam Optimizer} \cite{geron2022hands, prince2023understanding}. The momentum term $\mathbf{m}_t$ from \cref{eq:momentum} is kept, and a second statistic $\mathbf{v}_t$ evolves in the same way, using another friction hyperparameter $\gamma \in [0,1)$. Rather than normalizing by the instantaneous gradient as above, Adam divides by a running estimate of its magnitude.
 
@@ -295,7 +295,7 @@ The result of \textit{Adam} is shown in \cref{fig:adam_grid}.
 \section{Network architectures}
 \label{sec:architectures}
 
-The classification stage was based on three model architectures (S, M, L) that varied in width (\cref{tab:architectures}). A grid search was performed by varying model size and multiple hyperparameters to determine the best possible combination. Too small of a model would be expected to underfit, not learning enough relevant patterns to be able to categorize well enough, while too big would overfit, memorizing the dataset rather than generalizing.
+The classification stage was based on three model architectures (S, M, L) that varied in width (\cref{tab:architectures}). A grid search was performed by varying model size and multiple hyperparameters to determine the best possible combination. A model that is too small would be expected to underfit, not learning enough relevant patterns to categorize well enough, whereas an overly large one would overfit, memorizing the dataset rather than generalizing.
 
 \begin{table}[ht]
     \centering
@@ -313,25 +313,31 @@ The classification stage was based on three model architectures (S, M, L) that v
     \label{tab:architectures}
 \end{table}
 
-The models all consisted of \textit{dense} (fully connected) layers, with \textit{dropout} rate of 0.4 to reduce overfitting. \textit{Dropout} is a regularization technique such that at every training step, every neuron (excluding the output neurons) has a probability p of being temporarily ignored, though it may be active during the next step. Neurons trained with \textit{dropout} cannot co-adapt with their neighboring neurons; they have to be as useful as possible on their own. They also cannot rely excessively on just a few input neurons and must pay attention to each of their input neurons \cite{geron2022hands}.
+The models all consisted of \textit{dense} (fully connected) layers, with a \textit{dropout} rate of 0.4 to reduce overfitting. \textit{Dropout} is a regularization technique such that at every training step, every neuron (excluding the output neurons) has a probability $p=0.4$ of being temporarily ignored, though it may be active during the next step. Neurons trained with \textit{dropout} cannot co-adapt with their neighboring neurons; they have to be as useful as possible on their own. They also cannot rely excessively on just a few input neurons and must pay attention to each of their input neurons \cite{geron2022hands}.
 
-All the hidden layers used ReLU as activtion functions and the number of input units is set to the number of retained PC components, while the output neurons had a sigmoid activation.
+All the hidden layers used ReLU as activation functions and the number of input units is set to the number of retained PC components, while the output neurons had a sigmoid activation.
 
-The best result was observed for the small (S) architecture, yielding similar results to the medium (M) one but with lesser computational cost and risk of overfitting, while the large (L) model showed clear overfitting.
+The best result was observed for the small (S) architecture, yielding similar results to the medium (M) one but with lower computational cost and risk of overfitting, while the large (L) model showed clear overfitting.
 
 
-\section{Data Splitting And Cross Validation}
+\section{Data Splitting and Cross Validation}
 \label{sec:data_splitting}
 
-The spectra in the dataset are spatially correlated: neighbouring pixels show similar patterns and peaks. Therefore, a simple random split of the whole dataset in training, validation and test sets would result in spectra from the same map or sample to be present in all the divisions. Such a split would let the model memorize sample specific signatures and give misleading results due to the data leakage in the test set.
+The spectra in the dataset are spatially correlated: neighboring pixels show similar patterns and peaks. Therefore, a simple random split of the whole dataset into training, validation and test sets would result in spectra from the same map or sample being present in multiple divisions. Such a split would let the model memorize sample-specific signatures and give misleading results due to data leakage.
 
-Furthermore, due to the difference across maps and samples regarding the presence of different biological tissues, the performance of the model in testing and validation is heavily dependent on the samples present in the sets.
+Furthermore, because different maps and samples contain different mixes of biological tissue, the performance of the model in testing and validation is heavily dependent on which samples happen to fall in each set.
 
-A splitting protocol based on Sample IDs was thus impemented to solve the two problems:
-\begin{itemize}
-    \item \textit{Data splitting} in train/validation/test so that results were realistic and trustworthy.
-    \item \textit{Cross validation} on multiple test sets in order to obtain an average and well representative result.
-\end{itemize}
+A splitting protocol based on Sample IDs was implemented to solve both problems at once, combining a Sample-ID-based split with cross validation into a single pipeline:
+\begin{enumerate}
+    \item The dataset is divided by Sample ID into $k$ stratified folds (\textit{Stratified Group K-Fold}), keeping the ratio of the two labels close to 1:1 in each fold and ensuring that no Sample ID is split across folds.
+    \item At each of the $k$ iterations, one fold is held out as the \textit{test} set, while the remaining $k-1$ folds form the training pool.
+    \item An internal \textit{validation} set is then carved out of that training pool (again split by Sample ID, to avoid leakage), leaving the rest as the actual training set. The validation set is used to monitor the model during training (e.g. for early stopping), while the test fold is reserved for final evaluation only.
+\end{enumerate}
 
-Regarding data splitting, the Sample IDs are considered when performing the train/validation/test split in order to prevent the same sample from appearing in both training and testing. A stratified split is performed while keeping this constraint and mantaining the ratio of the two labels close to 1:1 during training. 
+This is repeated for all $k$ folds, so that every sample is used exactly once for testing. Results are saved for each fold and then averaged, to balance out 'easy' and 'difficult' folds and obtain a representative estimate of performance rather than one dependent on a single, possibly lucky, split.
 
+For this dataset, cross validation was performed with $k=5$ folds, maintaining roughly 5 sample IDs per fold ($\sim20\%$ of the dataset).
+
+
+\section{Grid Search}
+\label{sec:grid_search}
