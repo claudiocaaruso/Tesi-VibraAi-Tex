@@ -1,0 +1,89 @@
+\chapter{Materials and methods}
+\label{ch:materials_methods}
+
+\section{Data provenance}
+\label{sec:data_provenance}
+
+The Raman data used in this project were not acquired as part of the present thesis.
+The analyses start from spectra that had already been collected, calibrated and
+preprocessed before being provided in dataset form. 
+\subsection{Experimental setup}
+\label{sec:experimental_setup}
+
+The measurements were performed with a home-built Raman microspectroscopy system
+developed for biological samples. The excitation source is a continuous-wave
+diode-pumped laser operating in the red spectral region, around \(660~\mathrm{nm}\),
+providing the monochromatic radiation required for Raman measurements.
+The Raman scattering efficiency increases strongly at shorter wavelengths, approximately as
+\begin{equation}
+    I_R \propto \frac{1}{\lambda_0^4},
+    \label{eq:lambda_dependence}
+\end{equation}
+where \(\lambda_0\) is the excitation wavelength.
+Shorter wavelengths can therefore increase the Raman signal and can also improve spatial resolution. However, they may also increase the risk of photodamage and can enhance unwanted fluorescence background. A red excitation wavelength provides a practical balance between signal intensity, spatial resolution and sample preservation.
+
+Along the excitation path, the laser beam is first filtered to remove unwanted spectral
+components and then attenuated by neutral-density filters. The beam is then expanded by
+a \(5\times\) beam expander, from an initial diameter of about \(0.7~\mathrm{mm}\) to
+about \(3.5~\mathrm{mm}\), in order to better match the back aperture of the microscope
+objective and ensure proper focusing on the sample plane.
+
+Inside the inverted microscope, the excitation beam is focused onto the tissue section
+using a \(50\times\) dry objective with numerical aperture \(\mathrm{NA}=0.8\) and
+working distance of \(1~\mathrm{mm}\). The same objective collects the backscattered
+light from each illuminated region, while the motorized stage scans the sample point by
+point to associate each spatial position with a Raman spectrum.
+
+The collected light contains both the weak Raman signal and a much stronger Rayleigh
+component with the same wavelength as the excitation laser. Since Rayleigh scattering is
+several orders of magnitude more intense than Raman scattering, it must be rejected
+before detection, because it could hide the Raman signal and saturate the detector. In
+the detection path, the dichroic beamsplitter separates these contributions, while a
+\(664~\mathrm{nm}\) long-pass edge filter suppresses residual Rayleigh components
+before detection.
+
+After filtering, the Raman signal is focused by a lens into the spectrometer, where it is
+dispersed by a diffraction grating. A \(600~\mathrm{grooves/mm}\) grating is typically
+used to cover both the fingerprint and the CH regions. The dispersed light
+is recorded by a CCD detector with a \(1024\times256\) pixel sensor. Vertical binning
+along the \(256\)-pixel axis is used, so that the raw spectral information is recorded
+along the \(1024\)-pixel horizontal axis. Through calibration, this pixel axis is
+converted into Raman shift, producing the final spectrum expressed as intensity versus
+Raman shift.
+
+For Raman hyperspectral maps, spectra were acquired point by point with a spatial step
+of \(5~\mu\mathrm{m}\), using an exposure time of \(500~\mathrm{ms}\) and a laser power
+of \(120~\mathrm{mW}\) at the source. These acquisition parameters reflect a compromise
+between signal quality, acquisition time and preservation of the biological specimen.
+
+\subsection{Preprocessing}
+\label{sec:preprocessing_before_analysis}
+
+The raw spectral
+data underwent a preprocessing workflow aimed at making the spectra comparable and
+suitable for computational analysis. 
+
+The detector pixel axis was calibrated and converted
+into Raman shift, and the spectra were interpolated onto a common wavenumber axis.
+
+Unwanted experimental contributions were then corrected or removed, including
+spike-like artifacts due to cosmic rays, the quartz substrate/background contribution and
+baseline distortions. Normalization steps were applied where required to reduce intensity
+variations not directly related to tissue composition.
+
+The silent region \(1800\)--\(2800~\mathrm{cm}^{-1}\), where biological Raman spectra usually contain few relevant bands, was excluded. After these
+operations, each spectrum is represented by \(483\)
+Raman-shift variables spanning the fingerprint and CH regions.
+
+dirlo qui o nella sezione sul dataset?
+***Non-informative
+or unreliable pixels, such as transparent regions and acquisition artifacts, were removed
+from the computational dataset. ***
+
+This preparation is important for machine learning, because the spectra used as input to
+the classification model are shaped not only by tissue biochemistry, but also by
+acquisition conditions and experimental noise. If these effects are not properly
+controlled or corrected, the model may learn patterns related to measurement variability
+rather than tissue class.
+
+\section{Dataset}
