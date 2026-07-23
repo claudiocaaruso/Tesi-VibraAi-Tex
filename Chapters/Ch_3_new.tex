@@ -1,33 +1,48 @@
+
 \chapter{Aim of the thesis}
 \label{sec:aim_thesis}
 
-The present work is based on a dataset of spontaneous Raman spectra acquired from head and neck
-tumour biopsy samples and organized as hyperspectral maps. 
-Each map point is
-associated with both a complete spectrum and a spatial position within the tissue region.
-The analyses will be carried out on
-spectra already organized in a computationally usable form.
+The present work is based on spontaneous Raman hyperspectral maps acquired from
+patient-derived tumour slice cultures of head and neck squamous cell carcinoma
+(HNSCC). These samples are ex vivo tissue sections obtained from surgical tumour
+specimens and preserve, at least in part, the morphological and biochemical heterogeneity
+of the original tissue. 
 
-The work will be developed through three main steps:
+The acquisition of the Raman maps and the preprocessing of the raw
+spectra were not performed as part of this thesis; the analysis starts from spectra already
+calibrated, preprocessed and organized in a form suitable for computational processing.
+
+***(la parte sopra potrebbe sostituire completamente il paragrafo su data provenence?)***
+
+
+Each measured point of a Raman map is associated with a complete Raman spectrum and
+with a spatial position within the tissue section. The available data therefore combine
+spectral information, related to the biochemical composition of the measured region, and
+spatial information, related to the arrangement of the sampled points within the map.
+
+The aim of this thesis is to evaluate a machine learning approach for the binary
+classification of Raman spectra, with particular attention to the recognition of tumour
+tissue. The analysis combines an exploratory study based on Principal Component
+Analysis (PCA) with the implementation of an artificial neural network (ANN) classifier.
+Two binary classification settings are considered: the discrimination between tumour and
+stroma, and the discrimination between tumour and all non-tumour tissue classes included
+in the available annotations.
+
+The work will be developed through three main computational steps:
 \begin{itemize}
-    \item An exploratory analysis of the available dataset;
-    \item The application of Principal Component Analysis (PCA) to inspect the spectral
+    \item an exploratory analysis of the available dataset;
+    \item the application of Principal Component Analysis (PCA) to inspect the spectral
     variability and obtain a reduced representation of the spectra;
-    \item The implementation of an artificial neural network (ANN) for binary
+    \item the implementation of an artificial neural network (ANN) for binary
     classification.
 \end{itemize}
 
-The final objective is to evaluate a machine learning approach for the binary
-classification of Raman spectra, with particular attention to the recognition of tumour
-tissue. The analysis will combine an exploratory PCA study with the implementation of an
-ANN classifier. Two binary classification experiments will be considered: one aimed at
-distinguishing tumour from stroma, and one aimed at distinguishing tumour from all
-non-tumour tissue classes included in the available annotations.
-
 necessario dire questa cosa?--->
-***The results should be interpreted as an assessment of this machine learning pipeline on
+***The results should be interpreted as an assessment of this computational pipeline on
 the available Raman dataset. They do not constitute a clinical validation of Raman
 spectroscopy as a diagnostic tool. Such a validation would require a larger and
 independent cohort of samples, a predefined clinical protocol and systematic comparison
 with established diagnostic procedures.***
+
+
 
