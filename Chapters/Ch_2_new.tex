@@ -10,22 +10,19 @@
 \chapter{Machine learning theory}
 \label{ch:ml_theory}
 
-\section{Machine learning framework and problem setting}
-\label{sec:ml_framework}
+\section{Introduction to machine learning}
+\label{sec:introduction_to_ml}
 
 Machine learning is the field of study that gives computers the ability to learn from data without being explicitly programmed. In this context, a model is a mathematical function or computational structure that transforms input data into an output, following rules that are not explicitly defined but inferred from examples. The data are represented through numerical features, and the model uses them to learn relationships, trends or structures that are relevant for a given task, such as classification or dimensionality reduction. During training, the model adjusts its internal parameters according to the examples it receives, in order to capture patterns that remain informative when new observations are presented.
 
-This approach is well suited to Raman spectroscopy of biological tissues. As discussed in \Cref{ch:introduction}, the complexity of biological Raman spectra makes it difficult to reduce the classification problem to a few manually selected bands. For this reason, the entire spectrum is treated as a numerical object whose overall profile may contain information relevant to the classification task. In the dataset used in this work, the Raman measurements are already organized in a computationally suitable tabular form. Starting from the structure described in \Cref{ch:Dataset}, the input data for the machine learning analysis are obtained from the spectral columns \texttt{band\_}n. These columns contain the Raman intensity values at the 483 selected shifts; from a machine learning perspective, they form the feature vector associated with each pixel-level spectrum acquired from a Raman map. When all spectra are considered together, the corresponding feature vectors are arranged into a data matrix, whose rows represent spectra and whose columns represent Raman-shift variables.
+This approach is well suited to Raman spectroscopy of biological tissues. As discussed in \Cref{ch:introduction}, the complexity of biological Raman spectra makes it difficult to reduce the classification problem to a few manually selected bands. For this reason, the entire spectra are treated as a numerical objects, as described in \cref{ch:Dataset}, whose overall profile may contain information relevant to the classification task.
 
-Machine learning methods are commonly distinguished according to the information available during training. When the aim is to train a classifier, the learning process is supervised: the model is shown both the input data and the correct output associated with each example. In this way, it can learn how spectral information is related to tissue classes and use this relation to assign a class to new spectra. In the present work, this corresponds to using each Raman spectrum as input and its associated tissue label as the target output for binary classification.
+Machine learning methods are commonly distinguished into \textit{supervised} and \textit{unsupervised}, according to the information available during training:
 
-When labels are not part of the learning process, the analysis becomes unsupervised: the algorithm only receives the input data and searches for structure within them. This approach is useful when the goal is not to assign a class directly, but to explore the organization of the data, visualize similarities between spectra or reduce the number of variables.
-
-This chapter focuses on Principal Component Analysis (PCA), an unsupervised
-dimensionality-reduction method that identifies the directions along which the spectra show the largest variance. PCA projects the original spectral variables onto a new set of components, providing a more compact representation of the data. This transformation is useful because dimensionality reduction can be performed by retaining only the first principal components, which account for most of the spectral variance, and discarding later components associated with smaller contributions. In this way, each spectrum is represented by a reduced set of PCA scores instead of the full set of original Raman-shift variables. This compact representation can reduce redundancy and may limit the influence of weak or noisy variations before classification.
-
-In this work, PCA is therefore first used as an
-exploratory analysis of the dataset. Its theoretical formulation is presented with particular attention to the identification of the principal components, the amount of variance retained after projection, and the interpretation of the spectra in the transformed PCA space. When PCA is later used inside the classification pipeline, however, it must be fitted only on the training data of each split or fold and then applied to the corresponding validation or test data. This preserves the separation between training and evaluation data, preventing information from the validation or test set from influencing the learned representation.
+\begin{itemize}
+    \item \textit{supervised}: the model is shown both the input data and the correct output associated with each example. In this way, it can learn how spectral information is related to tissue classes and use this relation to assign a class to new spectra. The aim is usually to train a classifier.
+    \item \textit{unsupervised}: labels are not part of the learning process. The algorithm only receives the input data and searches for structure within them. This is useful when the goal is not to assign a class directly, but to explore the organization of the data, visualize similarities between spectra or reduce the number of variables.
+\end{itemize}
 
 % CLAUDIO: the last two paragraphs above ("This chapter focuses on..." and
 % "In this work, PCA is therefore first used...") were written as the
@@ -44,20 +41,20 @@ exploratory analysis of the dataset. Its theoretical formulation is presented wi
 \section{Dimensionality reduction}
 \label{sec:dimensionality_reduction}
 
-The spectral dataset can be represented as a numerical matrix
+The dataset can be represented as a numerical matrix
 
 \begin{equation}
     \mathbf{X} \in \mathbb{R}^{n \times p},
     \label{eq:pca_data_matrix}
 \end{equation}
 
-where \(n\) is the number of spectra and \(p\) is the number of spectral variables. In the dataset described in \Cref{ch:Dataset}, each spectrum is represented by \(p = 483\) Raman-shift intensity values after the removal of the silent region. Thus, each spectrum can be interpreted not only as a curve, but also as a point in a \(483\)-dimensional feature space, where each coordinate corresponds to the intensity measured at one Raman shift.
+where \(n\) is the number of observations and \(p\) is the number of variables. Each observation can therefore be interpreted not only as a curve or signal, but also as a point in a \(p\)-dimensional feature space, where each coordinate corresponds to one variable. In this work, each observation is a Raman spectrum and \(p = 483\), as described in \Cref{ch:Dataset}.
 
-Working directly with all the original variables is possible, but it is not always the most convenient representation. In Raman spectra, nearby variables are often correlated because spectral bands are broad and can overlap. Therefore, the \(483\) spectral variables do not necessarily correspond to \(483\) independent sources of information. Dimensionality reduction addresses this situation by replacing the original variables with a smaller number of new variables designed to retain the main structure of the dataset.
+Working directly with all the original variables is possible, but it is not always the most convenient representation. Nearby variables are often correlated, for instance because of overlapping physical signals (as is the case for Raman spectra, where spectral bands are broad and can overlap). Therefore, the \(p\) variables do not necessarily correspond to \(p\) independent sources of information. Dimensionality reduction addresses this situation by replacing the original variables with a smaller number of new variables designed to retain the main structure of the dataset.
 
-The motivation for this step is also connected to the so-called curse of dimensionality. In low-dimensional spaces, data points can be relatively close to one another, so local neighbourhoods and similarities are easier to identify. When the number of dimensions increases, the volume of the feature space grows exponentially with the number of variables. Therefore, keeping the same density of samples would require an exponentially larger number of training observations. If the number of available spectra remains fixed, the dataset becomes sparse: the points are spread across a much larger space and tend to be far from one another. This has an important consequence for learning algorithms: if a new observation is far from the training examples, the model has less direct evidence on which to base its prediction, and the risk of learning patterns that are specific to the training set increases.
+The motivation for this step is also connected to the so-called \textit{curse of dimensionality} \cite{geron2022hands}. In low-dimensional spaces, data points can be relatively close to one another, so local neighbourhoods and similarities are easier to identify. When the number of dimensions increases, the volume of the feature space grows exponentially with the number of variables. Therefore, keeping the same density of samples would require an exponentially larger number of training observations. If the number of available observations remains fixed, the dataset becomes sparse: the points are spread across a much larger space and tend to be far from one another. This has an important consequence for learning algorithms: if a new observation is far from the training examples, the model has less direct evidence on which to base its prediction, and the risk of learning patterns that are specific to the training set increases.
 
-This does not mean that dimensionality reduction is automatically beneficial. Removing dimensions inevitably removes part of the original information, and the discarded variation may include subtle class-related spectral differences. For this reason, dimensionality reduction does not necessarily lead to an improvement. Its effect must be interpreted together with the downstream classification performance and with the amount of variance retained in the reduced representation.
+This does not mean that dimensionality reduction is automatically beneficial. Removing dimensions inevitably removes part of the original information, and the discarded variation may include subtle class-related differences. For this reason, dimensionality reduction does not necessarily lead to an improvement. Its effect must be interpreted together with the downstream classification performance and with the amount of variance retained in the reduced representation.
 
 One common way to reduce dimensionality is projection. In projection-based methods, the original data are represented in a lower-dimensional subspace by projecting each sample onto a new set of axes. These axes define new variables, which are combinations of the original features. If the data lie close to a lower-dimensional linear subspace, this projection can preserve much of the relevant structure while using fewer coordinates. PCA belongs to this projection-based family of methods.
 
@@ -69,15 +66,15 @@ One common way to reduce dimensionality is projection. In projection-based metho
 \section{Principal Component Analysis}
 \label{sec:pca_theory}
 
-Principal Component Analysis (PCA) searches for a new orthogonal coordinate system in which the variability of the data is represented as efficiently as possible. Starting from centered observations, the first principal component is chosen as the direction along which the projected data have maximum variance. The second component describes the largest remaining variance under the constraint of being orthogonal to the first, and the same criterion is applied to the following components. In this way, PCA orders the new axes from the most to the least informative in terms of variance.
+Principal Component Analysis (PCA), identifies the directions along which the data show the largest variance in a new orthogonal coordinate system. Starting from centered observations, the first principal component is chosen as the direction along which the projected data have maximum variance. The second component describes the largest remaining variance under the constraint of being orthogonal to the first, and the same criterion is applied to the following components. In this way, PCA orders the new axes from the most to the least informative in terms of variance. Dimensionality reduction can then be performed by retaining only the first principal components, which account for most of the variance, and discarding later components. In this way, each observation is represented by a reduced set of PCA scores instead of the full set of original variables. This compact representation can reduce redundancy and may limit the influence of weak or noisy variations before classification.
 
-Since PCA is unsupervised, class labels are not involved in the computation of these axes. The method therefore identifies directions that summarize the dominant variability of the spectra, not necessarily the directions that best separate tissue classes. For this reason, when PCA is used before a classifier, the usefulness of the reduced representation must be assessed through the performance of the complete classification pipeline.
+PCA is an unsupervised ML method, therefore it identifies directions that summarize the dominant variability of the data, not necessarily the directions that best separate the classes. For this reason, when PCA is used before a classifier, the usefulness of the reduced representation must be assessed through the performance of the complete classification pipeline.
 
 
 \subsection{Data centering}
 \label{subsec:pca_centering_covariance}
 
-Let \(\mathbf{X} \in \mathbb{R}^{n \times p}\) be the data matrix, where each row \(\mathbf{x}_i^{T}\) is one spectrum and each column is one spectral variable. PCA is applied to centered data. The mean vector is
+Let \(\mathbf{X} \in \mathbb{R}^{n \times p}\) be the data matrix, where each row \(\mathbf{x}_i^{T}\) is one observation and each column is one variable. PCA is applied to centered data. The mean vector is
 
 \begin{equation}
     \bar{\mathbf{x}} =
@@ -91,7 +88,7 @@ the centered data matrix is
     \label{eq:pca_centered_matrix}
 \end{equation}
 
-where \(\mathbf{1}\) is a column vector of ones. Centering subtracts the average spectrum from each observation, so PCA describes variations around the mean profile rather than absolute intensity levels.
+where \(\mathbf{1}\) is a column vector of ones. Centering subtracts the mean vector from each observation, so PCA describes variations around the mean profile rather than absolute levels.
 
 % -----------------------------------------------------------------
 % NEW §2.3.2 "Principal directions and Singular Value Decomposition"
@@ -101,14 +98,7 @@ where \(\mathbf{1}\) is a column vector of ones. Centering subtracts the average
 \subsection{Principal directions and Singular Value Decomposition}
 \label{subsec:pca_svd}
 
-% >>> BEGIN NEW TEXT (not from Ch_3_pca.tex — copied verbatim from
-% >>> Thesis_restructuring_guide_OptionA.md §3.5, "condensed remark").
-% >>> Review this carefully before keeping it, this is the one place in
-% >>> this file where I inserted prose rather than relocating it.
-The maximum-variance criterion is formally expressed through the sample covariance matrix $\mathbf{C}=(n-1)^{-1}\mathbf{X}_c^{T}\mathbf{X}_c$, whose orthonormal eigenvectors define the principal directions and whose eigenvalues quantify the variance along them. The same directions are obtained more stably from the singular value decomposition of $\mathbf{X}_c$: substituting $\mathbf{X}_c=\mathbf{U\Sigma V}^{T}$ and using $\mathbf{U}^{T}\mathbf{U}=\mathbf{I}$ gives $\mathbf{C}=\mathbf{V}\,\mathbf{\Sigma}^{2}(n-1)^{-1}\mathbf{V}^{T}$, so that the right singular vectors coincide with the eigenvectors of $\mathbf{C}$ and $\lambda_j=\sigma_j^{2}/(n-1)$. Forming $\mathbf{C}$ explicitly is avoided in practice because it squares the condition number of the problem.
-% >>> END NEW TEXT
-
-The same directions can also be obtained from the Singular Value Decomposition (SVD) of the centered data matrix. The SVD is a stable matrix factorization that represents the data in terms of directions adapted to the dataset itself. Applied to \(\mathbf{X}_c\), it writes
+The principal directions can be obtained from the Singular Value Decomposition (SVD) \cite{brunton2019datadriven} of the centered data matrix. The SVD is a stable matrix factorization that represents the data in terms of directions adapted to the dataset itself. Applied to \(\mathbf{X}_c\), it writes
 
 \begin{equation}
     \mathbf{X}_c =
@@ -127,7 +117,7 @@ where \(\mathbf{U}\) and \(\mathbf{V}\) have orthonormal columns and \(\boldsymb
     \label{eq:pca_v_matrix}
 \end{equation}
 
-The columns of \(\mathbf{V}\) are the right singular vectors; each of them specifies how the original Raman-shift variables are weighted to form one principal component. In the PCA terminology, these are the loading vectors.
+The columns of \(\mathbf{V}\) are the right singular vectors; each of them specifies how the original variables are weighted to form one principal component. In the PCA terminology, these are the loading vectors.
 
 The diagonal entries of \(\boldsymbol{\Sigma}\) are the singular values:
 
@@ -156,7 +146,7 @@ The columns of \(\mathbf{U}\) are the corresponding left singular vectors, which
     \label{eq:pca_u_matrix}
 \end{equation}
 
-When these coordinates are scaled by the singular values in \(\boldsymbol{\Sigma}\), they give the projection of the original spectra onto the principal components. These projected coordinates are the PCA scores.
+When these coordinates are scaled by the singular values in \(\boldsymbol{\Sigma}\), they give the projection of the original observations onto the principal components. These projected coordinates are the PCA scores.
 
 Let \(\mathbf{W}_d\) be the matrix containing the first \(d\) columns of \(\mathbf{V}\). Following the notation used for projection, \(\mathbf{W}_d\) contains the first \(d\) principal directions. For \(d\) retained components, the projected data matrix is
 
@@ -167,7 +157,7 @@ Let \(\mathbf{W}_d\) be the matrix containing the first \(d\) columns of \(\math
     \label{eq:pca_scores_svd}
 \end{equation}
 
-where \(\mathbf{X}_{d\text{-proj}} \in \mathbb{R}^{n \times d}\). Each row corresponds to one spectrum expressed in the PCA space.
+where \(\mathbf{X}_{d\text{-proj}} \in \mathbb{R}^{n \times d}\). Each row corresponds to one observation expressed in the PCA space.
 
 Keeping only the first \(d\) directions gives a rank-\(d\) approximation of the centered data:
 
@@ -177,8 +167,9 @@ Keeping only the first \(d\) directions gives a rank-\(d\) approximation of the 
     \label{eq:pca_low_rank}
 \end{equation}
 
-This truncated representation is the basis of dimensionality reduction in PCA: each spectrum is described by \(d\) scores instead of all \(p\) original variables. The choice of \(d\) is guided by the explained variance. Each principal component accounts for a fraction of the total variability in the data; the cumulative explained variance is the progressive sum of these fractions up to the \(d\)-th component and indicates how much of the original variability is retained after projection.
+This truncated representation is the basis of dimensionality reduction in PCA: each observation is described by \(d\) scores instead of all \(p\) original variables. The choice of \(d\) is guided by the explained variance. Each principal component accounts for a fraction of the total variability in the data; the cumulative explained variance is the progressive sum of these fractions up to the \(d\)-th component and indicates how much of the original variability is retained after projection.
 
+In this work, PCA is therefore first used as an exploratory analysis of the dataset. Its theoretical formulation is presented with particular attention to the identification of the principal components, the amount of variance retained after projection, and the interpretation of the spectra in the transformed PCA space. When PCA is later used inside the classification pipeline, however, it must be fitted only on the training data of each split or fold and then applied to the corresponding validation or test data. This preserves the separation between training and evaluation data, preventing information from the validation or test set from influencing the learned representation.
 
 \section{Artificial neural networks}
 \label{sec:ann_fundamentals}
