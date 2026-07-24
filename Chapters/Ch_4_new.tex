@@ -11,10 +11,12 @@ The Raman data used in this project were not acquired as part of the present the
 \label{sec:experimental_setup}
 
 The measurements were performed with a home-built Raman microspectroscopy system developed for biological samples. The excitation source is a continuous-wave diode-pumped laser operating in the red spectral region, around \(660~\mathrm{nm}\), providing the monochromatic radiation required for Raman measurements. The Raman scattering efficiency increases strongly at shorter wavelengths, approximately as
+
 \begin{equation}
     I_R \propto \frac{1}{\lambda_0^4},
     \label{eq:lambda_dependence}
 \end{equation}
+
 where \(\lambda_0\) is the excitation wavelength. Shorter wavelengths can therefore increase the Raman signal and can also improve spatial resolution. However, they may also increase the risk of photodamage and can enhance unwanted fluorescence background. A red excitation wavelength provides a practical balance between signal intensity, spatial resolution and sample preservation.
 
 Along the excitation path, the laser beam is first filtered to remove unwanted spectral components and then attenuated by neutral-density filters. The beam is then expanded by a \(5\times\) beam expander, from an initial diameter of about \(0.7~\mathrm{mm}\) to about \(3.5~\mathrm{mm}\), in order to better match the back aperture of the microscope objective and ensure proper focusing on the sample plane.
@@ -30,29 +32,24 @@ For Raman hyperspectral maps, spectra were acquired point by point with a spatia
 \subsection{Preprocessing}
 \label{sec:preprocessing_before_analysis}
 
-The raw spectral data underwent a preprocessing workflow aimed at making the spectra comparable and suitable for computational analysis.
+After acquisition, the raw Raman spectra underwent a stage of preprocessing which was not part of the work for this thesis, but will be briefly illustraded for completeness.
 
-The detector pixel axis was calibrated and converted into Raman shift, and the spectra were interpolated onto a common wavenumber axis.
+The detector pixel axis was calibrated and converted into Raman shift, and the spectra were interpolated onto a common wavenumber axis. The pipeline then included cosmic-ray (spike) removal, subtraction of the quartz-substrate contribution and baseline correction to remove the background.
 
-Unwanted experimental contributions were then corrected or removed, including spike-like artifacts due to cosmic rays, the quartz substrate/background contribution and baseline distortions. Normalization steps were applied where required to reduce intensity variations not directly related to tissue composition.
-
-The silent region \(1800\)--\(2800~\mathrm{cm}^{-1}\), where biological Raman spectra usually contain few relevant bands, was excluded. After these operations, each spectrum is represented by \(483\) Raman-shift variables spanning the fingerprint and CH regions.
-
-dirlo qui o nella sezione sul dataset? ***Non-informative or unreliable pixels, such as transparent regions and acquisition artifacts, were removed from the computational dataset. ***
+The spectra, acquired over a broader Raman-shift range, have been stripped of the \textit{silent region} (1800--2800 $\mathrm{cm}^{-1}$) (\cref{sec:raman_biological_tissues}), where no useful biological information is found, reducing number of bands from 888 to 483. The remaining \textit{fingerprint} and \textit{CH} regions were normalized separately and then joined.
 
 This preparation is important for machine learning, because the spectra used as input to the classification model are shaped not only by tissue biochemistry, but also by acquisition conditions and experimental noise. If these effects are not properly controlled or corrected, the model may learn patterns related to measurement variability rather than tissue class.
 
 \section{Dataset: origin and structure}
 \label{sec:origin-structure-ch4}
 
-The Raman spectra in the dataset have been stored in a \textit{.parquet} file, which is a column-based format designed for efficient data storage and retrieval.
+The Raman spectra in the dataset have been stored in a \textit{.parquet} file, which is a column-based format designed for efficient data storage and retrieval and widely used in clinical data analytics, medical research, and machine learning.
 
-The analyzed biological tissue consisted of head and neck squamous cell carcinoma (HNSCC). It was taken from 25 \textit{samples}, one from each of 25 different patients.
+The analyzed biological tissue was taken from 25 \textit{samples}, one from each of 25 different patients.
 
 Two to five areas, called \textit{maps}, were then selected from each sample for the Raman spectra acquisition.
-A spectrum was acquired for each pixel in the map. Each map has a size of 120$\times$120 pixels.
-Finally, each spectrum ranged across 483 bands, equivalent to wavenumbers (Raman shift).
-Each spectrum (i.e.\ pixel) has an associated \textit{label}, indicating the type of biological tissue it belongs to.
+A spectrum was acquired for each pixel in the map. Each map has a size of $600\times600 \ \mu m$, acquired as $120\times120$ pixels.
+Finally, each spectrum ranges across 483 bands and has an associated \textit{label}, indicating the type of biological tissue it belongs to.
 
 \begin{table}[ht]
     \centering
@@ -95,19 +92,16 @@ With 25 samples and 2 to 5 maps each, the total number of maps is 78, thus amoun
 
 Each pixel (spectrum) has been assigned a label, corresponding to a specific type of biological tissue, by a histopathologist.
 The classification pipeline started with the preparation of the samples as $12\mu m$ slices of tumoral tissue.
-Raman spectroscopy was then performed on a slice, while the contiguous slice was treated with H\&E staining.
-Classification was then performed on the stained slice by the histopathologist.
-Finally the classification was applied to the Raman image.
+Raman spectroscopy was first performed on each slice. The slices were then treated through H\&E staining to allow the histopathologist to assign the labels. Finally, the annotations from the H\&E were directly transferred into the Raman Map.
 
-This process includes multiple critical points:
+This process includes two critical points:
 
 \begin{itemize}
-    \item Differences in composition for contiguous slices, leading to incorrect classification.
-    \item Human annotation is region-based rather than pixel-wise, unlike automated classification; errors are therefore particularly common at boundaries between tissues.
+    \item Human annotation is region-based rather than pixel-exact, unlike automated classification; errors are therefore particularly common at boundaries between tissues.
     \item Human misclassification of entire areas.
 \end{itemize}
 
-The provided labels have, however, been considered correct, as no other means of comparison is available in current conditions.
+However, the provided labels have been considered correct, as is accepted in the state of the art of these studies.
 
 
 Biological tissues were divided into 13 classes, the most represented of which was the \textit{tumor} class (46,71\%). Occurrences for each class are shown in \Cref{fig:label_distribution-ch4} and detailed in \Cref{tab:label-distribution-ch4}.
@@ -140,16 +134,7 @@ Biological tissues were divided into 13 classes, the most represented of which w
     \label{tab:label-distribution-ch4}
 \end{table}
 
-Among the classes, two do not correspond to any biological tissue and were removed before further analysis: the \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifact} pixels result from acquisition issues (e.g.\ cosmic-rays, contamination) and would only introduce noise. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded-ch4}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset.
-
-% [MIGRATION NOTE] This is the natural home for the open author question left
-% unresolved above, at "Preprocessing" (lines ~80-83 of this same file,
-% marked with *** ***: "dirlo qui o nella sezione sul dataset?" about removing
-% non-informative/unreliable pixels such as transparent regions and acquisition
-% artifacts). That sentence describes exactly the exclusion of the
-% unlabeled/transparent (-1) and artifact (15) classes documented in this
-% paragraph. Suggestion: resolve the *** *** marker by cross-referencing this
-% Labels section instead of duplicating the explanation in Preprocessing.
+Among the classes, two do not correspond to any biological tissue and were removed before further analysis: the \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifacts} from the H\&E staining. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded-ch4}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset.
 
 \begin{figure}[H]
     \centering
@@ -164,33 +149,22 @@ Among the classes, two do not correspond to any biological tissue and were remov
     \label{fig:label_distributions-ch4}
 \end{figure}
 
-% [MIGRATION NOTE] Possible overlap: the "Preprocessing" subsection under
-% Data provenance (above, in this same file) already describes part of the
-% pre-delivery Raman preprocessing pipeline. This section repeats/expands on
-% cosmic-ray removal, quartz-substrate subtraction, baseline correction, SNV
-% normalization and silent-region removal. Suggestion: reconcile the two
-% during review to avoid duplicated content (e.g. keep the acquisition-level
-% description in Preprocessing and keep only the class-comparison analysis
-% here, or merge the two).
 
 \section{Spectra}
 \label{sec:spectra-ch4}
-
-Before being provided for this work, the spectra had undergone a standard Raman preprocessing pipeline, including cosmic-ray (spike) removal, subtraction of the quartz-substrate contribution and baseline correction to remove the background. For the cross-class comparisons reported below, the averaged spectra were further normalized with the standard normal variate (SNV) transform, which centers each spectrum and scales it to unit standard deviation, so that band shapes can be compared independently of overall intensity.
-
-The spectra, acquired over a broader Raman-shift range, have been stripped of the ``silent region'' (1800--2800 $\mathrm{cm}^{-1}$), where no useful biological information is found, leaving the 483 bands described above, which span the fingerprint and CH regions.
+For the cross-class comparisons reported below, the averaged spectra were further normalized with the standard normal variate (SNV) transform, which centers each spectrum and scales it to unit standard deviation, so that band shapes can be compared independently of overall intensity.
 
 In a preliminary visual analysis, the average spectrum for each class has been computed. At the major Raman peaks the standard deviation across individual spectra corresponds to 12–20\% of the peak height. Relative to the local signal intensity, this dispersion is small near the peaks, although it grows noticeably in the weak baseline regions (bands 30--200), where the standard deviation becomes roughly 30\% of the local mean.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.5\linewidth]{Images/Images_ch_2/spectrum_avg_tumor.png}
-    \caption{Average spectrum for the \textit{tumor} label. The shaded band shows $\pm1$ standard deviation across spectra.}
+    \caption{Average spectrum for the \textit{tumor} label. The shaded band shows $\pm1$ standard deviation across spectra. The \textit{fingerprint region} and \textit{CH region} are joined at band n.390, where the intensity is 0.}
     \label{fig:spectrum_avg_tumor-ch4}
 \end{figure}
 
 
-All classes appear to have the same trends, with multiple similar peaks in the ``fingerprint region'' (500--1800 $\mathrm{cm}^{-1}$) and a major peak in the ``CH region'' (2800--3000 $\mathrm{cm}^{-1}$). The only exceptions are represented by \textit{unlabeled/transparent}, \textit{artifact} and \textit{necrosis} pixels, which differ from the others mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded-ch4}).
+All classes appear to have the same trends, with multiple similar peaks in the \textit{fingerprint region} (bands 0--382, or equivalently 500--1800 $\mathrm{cm}^{-1}$) and a major peak in the \textit{CH region} (bands 383--483, or equivalently 2800--3000 $\mathrm{cm}^{-1}$). The only exceptions are represented by \textit{unlabeled/transparent}, \textit{artifact} and \textit{necrosis} pixels, which differ from the others mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded-ch4}).
 
 
 \begin{figure}[H]
@@ -206,8 +180,6 @@ All classes appear to have the same trends, with multiple similar peaks in the `
     \label{fig:spectra_comparisons-ch4}
 \end{figure}
 
-
-% This section should eventually be SPLIT: the operational definition of the two binary problems stays here in Methods, while the reasoning/evidence for the choice (intra-class variance argument, necrosis discussion, similarity comparison) moves to a future Results section (\S5.1). That split requires rewording (tense changes, "will reduce" -> "reduced", etc.) and is left for the review pass; the section below is copied whole, unsplit, for now.
 
 \section{Definition of the binary classification problems}
 \label{sec:binary_classification-ch4}
@@ -227,11 +199,11 @@ Two strategies were considered for this task:
 The choice had to account for the following criteria:
 \begin{itemize}
     \item \textbf{Biological relevance:} the distinction needs to have useful applications.
-    \item \textbf{Numerosity:} the two groups had to be comparable in size.
+    \item \textbf{Numerosity:} the two groups had to be comparable in size for the ANN to train and perform inference correctly.
     \item \textbf{Discernability:} the average spectral differences between classes change classification performance and usefulness.
 \end{itemize}
 
-The first approach is the one with the most clinical relevance. Successful classification of tumoral areas against general healthy tissue would be the most versatile result possible, with further single-class distinction to be performed later depending on need. The balance between the two classes would also be close to 50/50, allowing to use the whole dataset for training and testing. This approach presents however multiple critical points.
+The first approach is the one with the most clinical relevance. Successful classification of tumoral areas against general healthy tissue would be the most versatile result possible, with further single-class distinction to be performed later depending on need. The balance between the two classes would also be close to 50/50, allowing to use the whole dataset for training and testing of the ANN. This approach presents however multiple critical points.
 The \textit{healthy} macro-class, including numerous tissue types, is very heterogeneous (high intra-class variance), leading to poor feature individuation or bias towards the major class.
 The \textit{tumor} macro-class, which always includes the \textit{tumor (2)} label, could also comprise the \textit{tumor with necrosis (20)} and the \textit{necrosis (0)} labels, since necrotic tissue is expected to be adjacent to tumors; necrotic tissue, however, shows high variance (\Cref{fig:spectra_comparison_discarded-ch4}) due to structural degradation of the cells, leading to problems similar to the ones of the \textit{healthy} macro-class.
 
@@ -298,13 +270,6 @@ The models all consisted of \textit{dense} (fully connected) layers, with a \tex
 
 All the hidden layers used ReLU as activation functions and the number of input units is set to the number of retained PC components, while the output neurons had a sigmoid activation.
 
-% The following sentence was omitted because it belongs to section 5.3 
-% "Hyperparameter selection"):
-%   "The best result was observed for the small (S) architecture, yielding
-%   similar results to the medium (M) one but with lower computational cost
-%   and risk of overfitting, while the large (L) model showed clear
-%   overfitting."
-
 
 \section{Data splitting and cross validation}
 \label{sec:data_splitting-ch4}
@@ -355,20 +320,25 @@ All stochastic parts of the pipeline (i.e. fold assignment, the split within eac
 
 The network outputs one probability for each spectrum. Since spectra are acquired on a regular Raman map, each probability is associated with spatial coordinates \((x,y)\). Adjacent pixels correspond to spatially close measurements and are therefore likely to contain related biological information.
 
-Spatial post-processing is applied after the network has produced its predicted probabilities, without modifying the architecture, the training procedure or the learned parameters. In particular, smoothing is applied to the continuous class-1 probabilities before converting them into binary labels through the classification threshold. The operation is performed independently within each Raman map, identified by \texttt{Sample\_ID} and \texttt{Map\_ID}. Borders are handled by replacing the missing neighbouring values with the nearest available pixel values of the same map.
+Spatial post-processing is applied after the network has produced its predicted probabilities, without modifying the architecture, the training procedure or the learned parameters. In particular, smoothing is applied to the probabilities before converting them into binary labels through a \textit{decision threshold} $\tau$. Borders are handled by replacing the missing neighbouring values with the nearest available pixel values of the same map.
 
 Let \(p(x,y)\) be the probability predicted by the model for the positive class at the pixel located at coordinates \((x,y)\). With a \(k \times k\) mean filter, the smoothed probability \(\tilde{p}(x,y)\) can be written as
 
 \begin{equation}
     \tilde{p}(x,y) =
-    \frac{1}{|\mathcal{N}_{k \times k}(x,y)|}
-    \sum_{(i,j)\in \mathcal{N}_{k \times k}(x,y)} p(i,j),
+    \frac{1}{k^2}
+    \sum_{(i,j)\in(x,y)} p(i,j)
     \label{eq:spatial_smoothing-ch4}
 \end{equation}
 
-where \(\mathcal{N}_{k \times k}(x,y)\) is the local neighbourhood centered on \((x,y)\). The kernel size \(k\) is a configurable parameter; in the experiments, different neighbourhood sizes, such as \(3 \times 3\) and \(5 \times 5\), were considered.
 
-After smoothing, the final binary prediction is obtained by applying the same classification threshold used for the raw probabilities:
+
+%compiling problem
+
+
+The kernel size $k$ is a configurable parameter; in the experiments, two neighbourhood sizes were considered: \(3 \times 3\) and \(5 \times 5\).
+
+After smoothing, the final binary prediction is obtained by applying the same \textit{decision threshold} used for the raw probabilities:
 
 \begin{equation}
     \hat{y}(x,y) =
