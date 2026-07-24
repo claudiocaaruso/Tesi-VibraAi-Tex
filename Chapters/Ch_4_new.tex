@@ -331,14 +331,9 @@ Let \(p(x,y)\) be the probability predicted by the model for the positive class 
     \label{eq:spatial_smoothing-ch4}
 \end{equation}
 
-
-
-%compiling problem
-
-
 The kernel size $k$ is a configurable parameter; in the experiments, two neighbourhood sizes were considered: \(3 \times 3\) and \(5 \times 5\).
 
-After smoothing, the final binary prediction is obtained by applying the same \textit{decision threshold} used for the raw probabilities:
+The final binary prediction is then obtained through \textit{decision threshold}:
 
 \begin{equation}
     \hat{y}(x,y) =
@@ -348,28 +343,6 @@ After smoothing, the final binary prediction is obtained by applying the same \t
     \end{cases}
     \label{eq:threshold_after_smoothing-ch4}
 \end{equation}
-
-% [MIGRATION NOTE / EXCLUDED] The clause stating the numeric threshold value
-% (below) was intentionally omitted here, per the restructuring guide: it is
-% a Results value, not a Methods definition, and belongs in the future
-% Results chapter (guide's \S5.3), where it should also be justified (fixed
-% a priori vs. tuned on validation -- see also the discrepancy note further
-% below). Original clause, preserved here for reference:
-%   "where \(\tau = 0.47\) in the experiments considered in this work."
-%
-% [ACTION ITEM -- flagged by the restructuring guide itself] The guide's own
-% outline mentions a threshold value of 0.5 ("soglia 0.5") elsewhere, and
-% refers to a parameter "sigma", apparently in conflict with this section.
-% However, nothing in the old chapters (Ch_4_ann.tex, Ch_2_new.tex,
-% Ch_4_new.tex) defines a "sigma" smoothing parameter -- every \sigma found
-% in this thesis's sources is either the sigmoid function or the SVD
-% singular-value matrix Sigma, unrelated to post-processing. The only
-% smoothing parameter that actually exists is the mean-filter kernel size k
-% (3x3 / 5x5 tested), and the only threshold that exists is tau = 0.47.
-% Please confirm which value/parameter is correct, and whether tau was fixed
-% a priori or tuned on validation, before writing it into the Results
-% chapter -- this determines whether it belongs in \S5.3 as a tuned result
-% or in \S5.10 as a stated limitation.
 
 The objective is to reduce isolated noisy predictions and obtain spatially more coherent probability maps. This operation can also remove small true regions or propagate local errors; for this reason, raw and smoothed predictions are compared separately in the experimental results.
 
