@@ -71,18 +71,25 @@ representations.
     \label{fig:pca_cumulative_variance}
 \end{figure}
 
-\Cref{fig:pca_reconstructed_89} shows the effect of retaining these \(89\) components on
-a single spectrum and provides a visual
-interpretation of the dimensionality reduction. The reconstructed curve preserves the
-main spectral profile.
+\Cref{fig:pca_reconstruction_comparison} shows the effect of reconstructing the same
+spectrum with a very small number of components and with the \(89\) components selected
+from the cumulative explained variance. The comparison provides a visual interpretation
+of the dimensionality reduction: a single component captures only the dominant trend,
+whereas the reconstruction with \(89\) components preserves the main spectral profile.
 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{Images/images_ch_3/12_original_vs_reconstructed_89_components.png}
-    \caption{Comparison between an original Raman spectrum and its reconstruction using
-    the first \(89\) principal components.}
-    \label{fig:pca_reconstructed_89}
+    \subfloat[Reconstruction using the first principal component.\label{fig:pca_reconstructed_1}]{
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_3/12_original_vs_reconstructed_1_components.png}
+    }
+    \hfill
+    \subfloat[Reconstruction using the first \(89\) principal components.\label{fig:pca_reconstructed_89}]{
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_3/12_original_vs_reconstructed_89_components.png}
+    }
+    \caption{Comparison between an original Raman spectrum and its PCA reconstruction
+    using different numbers of retained principal components.}
+    \label{fig:pca_reconstruction_comparison}
 \end{figure}
 
 \subsection{Projection of spectra in PCA space}
