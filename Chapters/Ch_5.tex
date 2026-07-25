@@ -1,36 +1,33 @@
 \chapter{Results and discussion}
 \label{ch:results}
 
-This chapter presents the experimental results obtained with the computational pipeline defined in the previous chapter. The analysis first examines the spectral structure of the data through ***preliminary spectral comparisons***(da decidere) and exploratory PCA. The final ANN experiments are then evaluated in terms of training behaviour, aggregate performance, per-sample variability and the effect of spatial post-processing.
-
-\section{Exploratory Analysis of the Spectra and Class Selection}
- NOTA***da mettere qui o nel capitolo precedente?
- 
-distribuzione della label (più esplorativa), rimozione di unlabeled/transparent e artifact (è più una scelta metodologica), confronto spettri medi tra classi (più eplorativa), osservazioni su classi più/meno simili, motivazione della scelta delle classi da usare negli esperimenti (è più metodologica?)***
- 
-
+This chapter presents the experimental results obtained with the computational pipeline previously defined. 
 \section{Exploratory PCA of the dataset}
 \label{sec:pca_dataset}
 
-In this work, PCA was first used as an exploratory tool to inspect the structure of the Raman dataset before building the classification model. This analysis should be interpreted as descriptive. PCA is unsupervised: it does not use
-the tissue labels to determine the components, and therefore it is not expected to find
-directions that are optimal for classification. Nevertheless, it is useful before
+In this work, PCA was first used as an exploratory tool to inspect the structure of the Raman dataset before building the classification model. This analysis should be interpreted as descriptive: since PCA is unsupervised, it does
+not use the tissue labels to determine the components and is therefore not expected to
+find directions that are optimal for classification. Nevertheless, it is useful before
 training a predictive model because it shows whether the spectral dataset contains
 dominant variance patterns and how many components may be needed to obtain a compact representation of the
 spectra.
 
 
-NOTE***For this exploratory stage, PCA was applied to the available cleaned dataset after the
-exclusion choices described in \Cref{ch:Dataset}. *** da cambiare il riferimento alla sezione
+For this exploratory stage, PCA was applied to the cleaned dataset after removing
+non-informative or unreliable labels, namely unlabeled/transparent pixels and artifacts,
+as described in \Cref{sec:labels-ch4}. Therefore, the PCA included all valid biological
+tissue classes, independently of the later binary groupings used for ANN classification.
 
 \subsection{Spectral input and centering}
 \label{subsec:pca_input_centering}
 
-NOTE***nel capitolo materials and methods si descrive brevemente come è fatta la matrice co contiene gli spettri, poiché nel capitolo ML theory la matrice viene introdotta solo per dati generici e non ancora applicata al nostro caso***
+PCA was applied to the data matrix \(\mathbf{X}\) introduced in
+\Cref{sec:dimensionality_reduction}. Each row of \(\mathbf{X}\) corresponds to one
+spectrum and each column corresponds to one of the \(483\) retained Raman-shift
+variables. 
 
-PCA was applied to the previously described matrix \(\mathbf{X}\), using the Raman
-intensity columns as input variables. The effect of the centering step on a single
-spectrum is shown in \Cref{fig:original_centered_spectrum}.
+The effect of the centering step, introduced in \Cref{subsec:pca_centering_covariance},
+on a single spectrum is shown in \Cref{fig:original_centered_spectrum}.
 
 \begin{figure}[H]
     \centering
@@ -51,7 +48,7 @@ while the contribution of later components rapidly becomes smaller.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{Images/images_ch_3/07_scree_plot_explained_variance.png}
-    \caption{Explained variance associated with the first principal components.  NOTA(grafico poco leggibile?)}
+    \caption{Explained variance associated with the first principal components.}
     \label{fig:pca_scree_plot}
 \end{figure}
 
@@ -128,12 +125,47 @@ much smaller variance explained by the last component: in this projection, the s
 of the point cloud is therefore mainly determined by PC1.
 
 
+\section{Configuration of the final experiments}
+\label{sec:final_experiments_configuration}
+
+The final ANN models were trained for the two binary tasks reported in
+\Cref{tab:final_binary_experiments}.
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{0.28\textwidth}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Experiment} & \textbf{Positive class} & \textbf{Negative class} \\
+        \hline
+        \begin{tabular}[t]{@{}c@{}}Tumour-related class\\vs\\stroma\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumour (2)\\Tumour with necrosis (20)\end{tabular} & Tumour stroma (6) \\
+        \hline
+        \begin{tabular}[t]{@{}c@{}}Tumour-related class\\vs\\non-tumour\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumour (2)\\Tumour with necrosis (20)\end{tabular} & \begin{tabular}[t]{@{}c@{}}Valid non-tumour classes\\(0, 3, 4, 5, 6, 8, 10, 19, 23)\end{tabular} \\
+        \hline
+    \end{tabularx}
+    \renewcommand{\arraystretch}{1}
+    \caption{Binary classification experiments evaluated in the final analysis.}
+    \label{tab:final_binary_experiments}
+\end{table}
+
+
+In both experiments, the positive class includes tumour and tumour with necrosis,
+consistently with the definition of the binary classification problems in
+\Cref{sec:binary_classification-ch4}. The first experiment compares this tumour-related
+class with tumour stroma, whereas the second compares it with all valid non-tumour tissue
+classes available in the dataset. The latter setting is broader and more heterogeneous,
+since its negative class includes multiple histopathological labels.
+
+The final ANN experiments are evaluated in terms of
+training behaviour, aggregate performance, per-sample variability and the effect of spatial
+post-processing.
+
 \section{Hyperparameter selection}
 \label{sec:hyperparameter_selection}
 
-The configuration adopted in the final classification experiments was selected through
-the grid search described in ***NOTA:vengono introdotte le due modalità grid e single?***, which compared different model
-sizes, numbers of retained PCA components and batch sizes.
+The configuration adopted for the final classification experiments was selected through
+the hyperparameter search described in \Cref{sec:training-ch4}, which compared different
+model sizes, numbers of retained PCA components and batch sizes.
 
 The comparison of the tested configurations showed that the best trade-off was obtained
 with the small architecture (S), \(50\) retained PCA components and a batch size of
@@ -149,10 +181,23 @@ validation performance. The small model was therefore preferred because it provi
 more regular learning behaviour with lower computational cost and reduced risk of
 overfitting.
 
-The maximum number of epochs was set to \textbf{[check value]}, with early stopping based
+***NOTA: si può mettere tabella/figura della grid search con comparazione di risultati per auc/recall/f1 dei diversi modelli/diverse configurazioni***
+
+The maximum number of epochs was set to \(100\), with early stopping based
 on validation AUC and learning-rate reduction on plateau, as described in
-\Cref{sec:training-ch4}. The classification threshold used to convert the predicted
-probability into a binary label was set to \(\tau=\textbf{[check value]}\).
+\Cref{sec:training-ch4}. 
+
+The classification threshold used to convert the predicted probability into a binary
+label was fixed a priori at \(\tau=0.49\), slightly below the standard value of
+\(0.50\). This choice was made to favour sensitivity to the positive class. In this
+application, a false negative, corresponding to a tumour-related spectrum classified as
+non-tumour, is considered more critical than a false positive, corresponding to a
+non-tumour spectrum classified as tumour-related. 
+Lowering the threshold increases the
+tendency of the classifier to assign spectra to the positive class, thereby prioritizing
+recall over accuracy alone.
+
+***NOTA: è giusto dire che è una scelta fatta a priori (per le motivazioni sopra) o meglio dire che emerge anche dai risultati? se è una scelta fatta a priori, non è più un aspetto metodologico da includere in ch4?***
 
 \begin{table}[H]
     \centering
@@ -166,45 +211,14 @@ probability into a binary label was set to \(\tau=\textbf{[check value]}\).
         \hline
         Batch size & \(8192\) \\
         \hline
-        Maximum epochs & \textbf{[check value]} \\
+        Maximum epochs & \(100\) \\
         \hline
-        Classification threshold & \(\tau=\textbf{[check value]}\) \\
+        Classification threshold & \(\tau=0.49\) \\
         \hline
     \end{tabular}
     \caption{Selected configuration used for the final ANN experiments.}
     \label{tab:selected_hyperparameters}
 \end{table}
-
-\section{Configuration of the final experiments}
-\label{sec:final_experiments_configuration}
-
-The selected configuration in \Cref{tab:selected_hyperparameters} was used to train the
-final models on the two binary classification problems defined in
-\Cref{sec:binary_classification-ch4}. 
-
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|l|c|c|}
-        \hline
-        \textbf{Experiment} & \textbf{Positive class} & \textbf{Negative class} \\
-        \hline
-        Tumour vs stroma & Tumour & Tumour stroma \\
-        \hline
-        Tumour vs non-tumour & Tumour & Valid non-tumour classes \\
-        \hline
-    \end{tabular}
-    \caption{Binary classification experiments evaluated with the selected ANN configuration.}
-    \label{tab:final_binary_experiments}
-\end{table}
-
-The first experiment focuses on the distinction between tumour and tumour stroma. This is
-a more specific binary problem, in which the negative class is restricted to a single
-histopathological label. The second experiment evaluates a broader tumour detection
-setting, where tumour spectra are compared against the valid non-tumour tissue classes
-available in the dataset. This second task is expected to be more complex, because the negative class is not formed
-by a single tissue type, but groups together spectra from different non-tumour tissues.
-
-For both experiments, the same evaluation strategy was adopted.
 
 \section{Training behaviour}
 \label{sec:training_behaviour}
