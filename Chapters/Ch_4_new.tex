@@ -252,16 +252,16 @@ The classification stage was based on three model architectures (S, M, L) that v
         \hline
         \textbf{Model} & \textbf{Hidden layers} & \textbf{Neurons/layer} & \textbf{Dropout} & \textbf{Output} \\
         \hline
-        Small (S)  & 2 & 16, 8      & 0.4 & 1 (sigmoid) \\
-        Medium (M) & 2 & 64, 32      & 0.4 & 1 (sigmoid) \\
-        Large (L)  & 3 & 128, 64, 16 & 0.4  & 1 (sigmoid) \\
+        Small (S)  & 2 & 16, 8      & 0.2 (just for first layer) & 1 (sigmoid) \\
+        Medium (M) & 2 & 64, 32      & 0.2 & 1 (sigmoid) \\
+        Large (L)  & 3 & 128, 64, 16 & 0.2  & 1 (sigmoid) \\
         \hline
     \end{tabular}
     \caption{Architecture of the three model sizes (S, M, L). All hidden layers use ReLU activation (\cref{subsec:activation_functions}); the output layer is a single sigmoid unit for binary classification (\cref{subsec:bce}).}
     \label{tab:architectures-ch4}
 \end{table}
 
-The models all consisted of \textit{dense} (fully connected) layers, with a \textit{dropout} rate of 0.4 to reduce overfitting. \textit{Dropout} is a regularization technique such that at every training step, every neuron (excluding the output neurons) has a probability $p=0.4$ of being temporarily ignored, though it may be active during the next step. Neurons trained with \textit{dropout} cannot co-adapt with their neighboring neurons; they have to be as useful as possible on their own. They also cannot rely excessively on just a few input neurons and must pay attention to each of their input neurons \cite{geron2022hands}.
+The models all consisted of \textit{dense} (fully connected) layers, with a \textit{dropout} rate of 0.2 to reduce overfitting, except for the S model, where \textit{dropout} was applied just to the first layer due to the small size of the network. \textit{Dropout} is a regularization technique such that at every training step, every neuron in a dropout layer has a probability $p=0.2$ of being temporarily ignored, though it may be active during the next step. Neurons trained with \textit{dropout} cannot co-adapt with their neighboring neurons; they have to be as useful as possible on their own. They also cannot rely excessively on just a few input neurons and must pay attention to each of their input neurons \cite{geron2022hands}.
 
 All the hidden layers used ReLU as activation functions and the number of input units is set to the number of retained PC components (itself a hyperparameter, selected jointly with the architecture, see \cref{sec:training-ch4}), while the output neurons had a sigmoid activation.
 
