@@ -93,9 +93,9 @@ The final ANN models were trained for the two binary tasks reported in \Cref{tab
         \hline
         \textbf{Experiment} & \textbf{Positive class} & \textbf{Negative class} \\
         \hline
-        \begin{tabular}[t]{@{}c@{}}Tumour-related class\\vs\\stroma\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumour (2)\\Tumour with necrosis (20)\end{tabular} & Tumour stroma (6) \\
-        \hline
         \begin{tabular}[t]{@{}c@{}}Tumour-related class\\vs\\non-tumour\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumour (2)\\Tumour with necrosis (20)\end{tabular} & \begin{tabular}[t]{@{}c@{}}Valid non-tumour classes\\(0, 3, 4, 5, 6, 8, 10, 19, 23)\end{tabular} \\
+        \hline
+        \begin{tabular}[t]{@{}c@{}}Tumour-related class\\vs\\stroma\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumour (2)\\Tumour with necrosis (20)\end{tabular} & Tumour stroma (6) \\
         \hline
     \end{tabularx}
     \renewcommand{\arraystretch}{1}
@@ -110,36 +110,55 @@ The final ANN experiments are evaluated in terms of training behaviour, aggregat
 \section{Hyperparameter selection}
 \label{sec:hyperparameter_selection}
 
+%check if the title is good or it must be changed
+
 The configuration adopted for the final classification experiments was selected through the hyperparameter search described in \Cref{sec:training-ch4}, which compared different model sizes, numbers of retained PCA components and batch sizes.
 
-The comparison of the tested configurations showed that the best trade-off was obtained with the small architecture (S), \(50\) retained PCA components and a batch size of \(8192\). This configuration achieved the most favourable behaviour according to the evaluation metrics introduced in \Cref{sec:evaluation_metrics-ch4}, while keeping both the model and the input representation relatively compact.
+The comparison of the tested configurations showed comparable results for all three architectures at equal number of retained PCs. A substantial improvement in the metrics was registered when raising the number of PCs from 1 to 20 for the macro-class problem (\textit{tumor} vs. \textit{healthy}), and a plateau from 20 to 483 PCs. In the single-class problem (\textit{tumor} vs. \textit{tumor stroma}), the metrics improved from 1 to 10, flattening out for bigger dimensionalities, as shown in \cref{fig:heatmap_auc_macroclass,fig:heatmap_auc_singleclass} respectively.
 
-The comparison between architectures also showed that larger models did not provide a clear advantage for the present dataset. Although some configurations with more components or larger networks could still obtain good numerical scores, their training curves showed less stable behaviour and a larger discrepancy between training and validation performance. The small model was therefore preferred because it provided a more regular learning behaviour with lower computational cost and reduced risk of overfitting.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Images/images_ch_5/heatmap_auc_macroclass.png}
+    \caption{AUC across the grid of network architectures and number of retained PCs components for the macro-class problem.  AUC stabilizes for numbers of PCs greater than 20.(\textit{tumor} vs. \textit{healthy}).}
+    \label{fig:heatmap_auc_macroclass}
+\end{figure}
 
-***NOTA: si può mettere tabella/figura della grid search con comparazione di risultati per auc/recall/f1 dei diversi modelli/diverse configurazioni***
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Images/images_ch_5/heatmap_auc_singleclass.png}
+    \caption{AUC across the grid of network architectures and number of retained PCs components for the single-class problem. AUC stabilizes for numbers of PCs greater than 10.(\textit{tumor} vs. \textit{tumor stroma}).}
+    \label{fig:heatmap_auc_singleclass}
+\end{figure}
 
-The maximum number of epochs was set to \(100\), with early stopping based on validation AUC and learning-rate reduction on plateau, as described in \Cref{sec:training-ch4}.
+Although some configurations with more components or larger networks obtained equally good scores for AUC, their training curves showed less stable behaviour and a larger discrepancy between training and validation performance which also increased with the epochs. These behavior, exemplified by \cref{fig:overfitting_example_L200} is a clear sign of overfitting. The small model, on the contrary, showed similar training and validation curves for all the considered metrics (loss, recall and AUC). These curves improved regularly in the early stages of training until reaching a plateau after $\sim15$ epochs on average
 
-The classification threshold used to convert the predicted probability into a binary label was selected empirically by comparing threshold values between \(0.45\) and \(0.50\). The final value was set to \(\tau=0.49\), slightly below the standard threshold of \(0.50\), as it provided a practical compromise between favouring recall for the positive class and maintaining balanced overall performance. In this application, a false negative, corresponding to a tumour-related spectrum classified as non-tumour, is considered more critical than a false positive, corresponding to a non-tumour spectrum classified as tumour-related. A slightly lower threshold increases the tendency of the classifier to assign spectra to the positive class, thereby supporting sensitivity to tumour-related spectra without excessively penalizing accuracy.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{Images/images_ch_5/overfitting_example_L200.png}
+    \caption{Training and validation curves for the large architecture (L) with \(200\) retained PCA components on the macro-class problem (\textit{tumor} vs. \textit{healthy}). The lines show the average value of the metric across 5 folds, while shaded areas display $\pm\sigma$ from the average. The growing separation between training and validation curves is a sign of overfitting.}
+    \label{fig:overfitting_example_L200}
+\end{figure}
+
+The maximum number of epochs was set to \(100\), although \textit{early stopping} \cref{sec:training-ch4} often halted the training as soon as at epoch 20 due to validation already plateauing. \textit{Early stopping} often acted when prematurely due to noise in the validation curves when working with small batch sizes smaller than 2048. Increasing batch size does in fact average the gradient descent step over more observations, smoothing out the curve and speeding up training, although raising the risk of converging towards sharp minima, which would lead to poor generalization. The final value for the batch size was set as 4096, found to be a good compromise for this task.
+
+The decision threshold used to convert the predicted probability into a binary label was selected empirically by comparing threshold values between \(0.45\) and \(0.50\). The final value was set to \(\tau=0.49\), slightly below the standard threshold of \(0.50\), as it provided a compromise between favouring recall for the positive class and maintaining balanced overall performance. In this application, a false negative, corresponding to a tumour-related spectrum classified as non-tumour, is considered more critical than a false positive, corresponding to a non-tumour spectrum classified as tumour-related. A slightly lower threshold increases the tendency of the classifier to assign spectra to the positive class, supporting recall to tumour-related spectra without excessively penalizing accuracy, as seen in \cref{sec:evaluation_metrics-ch4}.
 
 \begin{table}[H]
     \centering
-    \begin{tabular}{|l|c|}
+    \begin{tabular}{|l|c|c|}
         \hline
-        \textbf{Hyperparameter} & \textbf{Selected value} \\
+        \textbf{Hyperparameter} & \textbf{Macro-class} & \textbf{Single-class} \\
         \hline
-        Network architecture & Small (S) \\
+        Network architecture & \multicolumn{2}{c|}{Small (S)} \\
         \hline
-        Retained PCA components & \(50\) \\
+        Retained PCA components & \(20\) & \(10\) \\
         \hline
-        Batch size & \(8192\) \\
+        Batch size & \multicolumn{2}{c|}{\(4096\)} \\
         \hline
-        Maximum epochs & \(100\) \\
-        \hline
-        Classification threshold & \(\tau=0.49\) \\
+        Decision threshold & \multicolumn{2}{c|}{\(\tau=0.49\)} \\
         \hline
     \end{tabular}
-    \caption{Selected configuration used for the final ANN experiments.}
+    \caption{Configurations used for the final ANN experiments, for the macro-class (\textit{tumor} vs. \textit{healthy}) and single-class (\textit{tumor} vs. \textit{tumor stroma}) problems.}
     \label{tab:selected_hyperparameters}
 \end{table}
 
@@ -157,19 +176,6 @@ The classification threshold used to convert the predicted probability into a bi
     \item Highlight whether the broader tumour vs non-tumour task is harder than the more specific tumour vs stroma task.
 \end{itemize}
 
-
-\section{Training behaviour}
-\label{sec:training_behaviour}
-
-\textbf{Writing notes.} This section should describe how the selected ANN configuration behaves during training for the two final experiments. The two experiments can be discussed together, using the same criteria for comparison, rather than creating two separate subsections.
-
-\begin{itemize}
-    \item Insert the training curves for both experiments, preferably with loss, accuracy and AUC shown for training and validation sets.
-    \item Comment on convergence: whether the curves stabilize and after how many epochs the main improvement occurs.
-    \item Compare training and validation trends to identify possible overfitting or instability.
-    \item Point out whether one experiment appears more stable or more difficult to train.
-    \item If useful, mention that the final model is selected according to validation behaviour, consistently with the training protocol described in \Cref{sec:training-ch4}.
-\end{itemize}
 
 \section{Per-sample analysis}
 \label{sec:per_sample_analysis}
