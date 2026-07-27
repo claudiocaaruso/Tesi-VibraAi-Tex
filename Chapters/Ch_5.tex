@@ -143,18 +143,6 @@ The classification threshold used to convert the predicted probability into a bi
     \label{tab:selected_hyperparameters}
 \end{table}
 
-\section{Training behaviour}
-\label{sec:training_behaviour}
-
-\textbf{Writing notes.} This section should describe how the selected ANN configuration behaves during training for the two final experiments. The two experiments can be discussed together, using the same criteria for comparison, rather than creating two separate subsections.
-
-\begin{itemize}
-    \item Insert the training curves for both experiments, preferably with loss, accuracy and AUC shown for training and validation sets.
-    \item Comment on convergence: whether the curves stabilize and after how many epochs the main improvement occurs.
-    \item Compare training and validation trends to identify possible overfitting or instability.
-    \item Point out whether one experiment appears more stable or more difficult to train.
-    \item If useful, mention that the final model is selected according to validation behaviour, consistently with the training protocol described in \Cref{sec:training-ch4}.
-\end{itemize}
 
 \section{Aggregated classification results}
 \label{sec:aggregated_classification_results}
@@ -167,6 +155,20 @@ The classification threshold used to convert the predicted probability into a bi
     \item Insert the aggregated confusion matrix for each experiment.
     \item Discuss the variability across folds, not only the average values.
     \item Highlight whether the broader tumour vs non-tumour task is harder than the more specific tumour vs stroma task.
+\end{itemize}
+
+
+\section{Training behaviour}
+\label{sec:training_behaviour}
+
+\textbf{Writing notes.} This section should describe how the selected ANN configuration behaves during training for the two final experiments. The two experiments can be discussed together, using the same criteria for comparison, rather than creating two separate subsections.
+
+\begin{itemize}
+    \item Insert the training curves for both experiments, preferably with loss, accuracy and AUC shown for training and validation sets.
+    \item Comment on convergence: whether the curves stabilize and after how many epochs the main improvement occurs.
+    \item Compare training and validation trends to identify possible overfitting or instability.
+    \item Point out whether one experiment appears more stable or more difficult to train.
+    \item If useful, mention that the final model is selected according to validation behaviour, consistently with the training protocol described in \Cref{sec:training-ch4}.
 \end{itemize}
 
 \section{Per-sample analysis}
