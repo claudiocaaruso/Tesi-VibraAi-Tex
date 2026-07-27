@@ -130,11 +130,11 @@ The comparison of the tested configurations showed comparable results for all th
     \label{fig:heatmap_auc_singleclass}
 \end{figure}
 
-Although some configurations with more components or larger networks obtained equally good scores for AUC, their training curves showed less stable behaviour and a larger discrepancy between training and validation performance which also increased with the epochs. These behavior, exemplified by \cref{fig:overfitting_example_L200} is a clear sign of overfitting. The small model, on the contrary, showed similar training and validation curves for all the considered metrics (loss, recall and AUC). These curves improved regularly in the early stages of training until reaching a plateau after $\sim15$ epochs on average
+Although some configurations with more components or larger networks obtained equally good scores for AUC, their training curves showed less stable behaviour and a larger discrepancy between training and validation performance which also increased with the epochs. These behavior, exemplified by \cref{fig:overfitting_example_L200} is a clear sign of overfitting. The small model, on the contrary, showed similar behaviors in training and validation for all the considered metrics (\cref{sec:aggregated_classification_results}) and was therefore prefered as a final choice.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{Images/images_ch_5/overfitting_example_L200.png}
+    \includegraphics[width=0.7\textwidth]{Images/images_ch_5/overfitting_example_L200.png}
     \caption{Training and validation curves for the large architecture (L) with \(200\) retained PCA components on the macro-class problem (\textit{tumor} vs. \textit{healthy}). The lines show the average value of the metric across 5 folds, while shaded areas display $\pm\sigma$ from the average. The growing separation between training and validation curves is a sign of overfitting.}
     \label{fig:overfitting_example_L200}
 \end{figure}
@@ -165,6 +165,20 @@ The decision threshold used to convert the predicted probability into a binary l
 
 \section{Aggregated classification results}
 \label{sec:aggregated_classification_results}
+
+The configurations chosen for the two approaches, listed in \cref{tab:selected_hyperparameters} were further analized to asses their effectiveness.
+
+The confusion matrixes and ROC curves showed good results for both problems. The macro-class approach performed slightly below the single-class one, especially in non-tumoral classification (True negatives scores equaled 0.71 and 0.75 respectively). This is a direct consequence of the internal heterogeneity for the healthy class.
+
+%talk about roc and auc per sample
+
+%show graphs of CM, roc, auc
+
+
+The training behavior was observed to be 
+The curves for the single class improved regularly in the early stages of training until reaching a plateau after $\sim20$ epochs on average.
+
+%talk more about curves and show curves
 
 \textbf{Writing notes.} This section should report the quantitative performance obtained across folds. Here the two experiments should probably be compared in parallel, using the same metrics.
 
