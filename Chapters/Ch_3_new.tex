@@ -2,17 +2,12 @@
 \chapter{Aim of the thesis}
 \label{sec:aim_thesis}
 
-This thesis was carried out within the VIBRA research group, which poses as its primary aim to develop a next-generation microscopy system capable of inspecting in two dimensions the chemical content of a biological specimen using Raman scattering techniques, more specifically to identify tumors in human biopsies with accuracy and reproducibility.
+This thesis was carried out within the VIBRA research group, which poses as its primary aim to develop a next-generation microscopy system capable of inspecting in two dimensions the chemical content of a biological specimen using Raman scattering techniques, more specifically to identify tumours in human biopsies with accuracy and reproducibility.
 
 The object of this work consist of hyperspectral maps acquired from
-patient-derived head and neck squamous cell carcinoma (HNSCC) slice cultures and already prepared for computation. Each pixel of the map is associated with a Raman spectrum composed of 483 Raman-shift variables containing relevant biological information and a label indicating the type of associated tissue.
-%HNSCC constitutes the vast majority of the
-%broader category of head and neck tumors; it develops from the mucosal epithelium in
-%the oral cavity, pharynx, larynx and sinonasal tract and is classified as the sixth most
-%common cancer worldwide, with estimates foreseeing an increasing trend in incidence and
-%occurrences in the upcoming years.
+patient-derived head and neck squamous cell carcinoma (HNSCC) slice cultures and already prepared for computation. Each pixel of the map is associated with a Raman spectrum comprising 483 Raman-shift variables that contain relevant biological information, along with a label indicating the associated tissue type.
 
-The aim pursued in this thesis is to use machine learning methods, in particular Principal Component Analysis and an Artificial Neural Network implemented in Python, on available data to classify the biological composition of the samples, with particular interest in binary classification to identify a defined tumor class among the tissue types present in the maps.
+The aim pursued in this thesis is to use machine learning methods, in particular Principal Component Analysis and an Artificial Neural Network implemented in Python, on available data to classify the biological composition of the samples, with particular interest in binary classification to identify a defined tumour class among the tissue types present in the maps.
 
 In detail, the work will focus on the following steps:
 \begin{itemize}
@@ -20,9 +15,7 @@ In detail, the work will focus on the following steps:
 
     \item The data are then subjected to PCA application with the aim of achieving a dimensional reduction of the representation space and capturing the variance of the dataset along the spectral bands, to inspect whether a reduced representation is appropriate. Moreover, this enables the identification of important features that can be used for data separation and inspection;
 
-    \item Three different artificial neural network models are implemented, and their performance is evaluated by testing them on two distinct binary classification tasks, both of which classify data into tumor and healthy classes. The aim is to determine which of the tested architectures performs best in terms of prediction results and computational complexity;
+    \item Three different artificial neural network models are implemented, and their performance is evaluated by testing them on two distinct binary classification tasks, both of which classify data into tumour and healthy classes. The aim is to determine which of the tested architectures performs best in terms of prediction results and computational complexity;
 \end{itemize}
 
-The acquisition of the maps and the preparation of the raw spectra were not part of the work undertaken in this thesis: a home-built Raman microspectroscopy system was employed to acquire hyperspectral maps of HNSCC samples subjected to different treatment conditions on different time points. A dedicated preprocessing workflow was designed, together with custom Python
-tools for background subtraction and pixel-wise annotation of maps. This analysis starts with Raman data already organized and pre-processed for computational exploration and characterization.
 
