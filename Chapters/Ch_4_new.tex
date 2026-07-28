@@ -4,10 +4,18 @@
 \section{Data provenance}
 \label{sec:data_provenance}
 
-The dataset analyzed in this thesis consists of spontaneous Raman hyperspectral maps acquired from patient-derived tumour slice cultures (PDTSCs) of head and neck squamous cell carcinoma (HNSCC). PDTSCs are ex vivo tissue slices obtained from surgical tumour specimens that preserve the native tissue architecture and cellular heterogeneity, making them a valuable model for studying tumour biology and therapeutic response. 
+The dataset analysed in this thesis consists of spontaneous Raman hyperspectral maps acquired from patient-derived tumour slice cultures (PDTSCs) of head and neck squamous cell carcinoma (HNSCC). 
+PDTSCs are ex vivo samples obtained from tumour tissue removed from patients, sliced into thin sections, and maintained in culture. They are useful because they preserve, at least in part, the structure, cellular heterogeneity, and microenvironment of the original tumour, making them a valuable solution for studying tumour biology and therapeutic response.
+HNSCC constitutes the vast majority of the
+broader category of head and neck tumours; it develops from the mucosal epithelium in
+the oral cavity, pharynx, larynx and sinonasal tract and is classified as the sixth most
+common cancer worldwide, with estimates foreseeing an increasing trend in incidence and
+occurrences in the upcoming years.
+ 
+The acquisition of the maps and the preparation of the raw spectra were not part of the work undertaken in this thesis: a home-built Raman microspectroscopy system was employed to acquire hyperspectral maps of HNSCC samples subjected to different treatment conditions at different time points. A dedicated preprocessing workflow was designed, together with custom Python
+tools for background subtraction and pixel-wise annotation of maps. This analysis starts with Raman data already organised and pre-processed for computational exploration and characterisation.
 
-The Raman data used in this project were not acquired as part of the present thesis. The analyses start from spectra that had already been collected, calibrated and preprocessed before being provided in dataset form.
-\subsection{Experimental setup}
+\subsection{Experimental setup} 
 \label{sec:experimental_setup}
 
 The measurements were performed with a home-built Raman microspectroscopy system developed for biological samples. The excitation source is a continuous-wave diode-pumped laser operating in the red spectral region, around \(660~\mathrm{nm}\), providing the monochromatic radiation required for Raman measurements. The Raman scattering efficiency increases strongly at shorter wavelengths, approximately as
@@ -312,14 +320,16 @@ Two callbacks were implemented to control training:
 All stochastic parts of the pipeline (i.e.\ fold assignment, the split within each fold, and majority-class downsampling) use a fixed random seed, so that results are deterministic and comparable across the grid, although the model's weight initialization done by keras is not fixed. Differences in metrics between configurations reflect the architecture/$N_{PC}$ choice itself, not casual variation from a different random split. The variations caused by the different initializations are negligible ($\sim1\%$ on AUC) compared to those given by the split.
 
 
+
 \section{Spatial post-processing}
 \label{sec:spatial_post_processing-ch4}
 
-The network outputs one probability for each spectrum. Since spectra are acquired on a regular Raman map, each probability is associated with spatial coordinates \((x,y)\). Adjacent pixels correspond to spatially close measurements and are therefore likely to contain related biological information.
+The network classifies each pixel in isolation, learning to recognise its composition solely from the corresponding spectrum and not accounting for spatial structure. However, since the spectra are acquired within maps, they are also associated with spatial coordinates \((x,y)\) and consequently adjacent pixels are correlated, as they often belong to the same biological region.
 
-Spatial post-processing is applied after the network has produced its predicted probabilities, without modifying the architecture, the training procedure or the learned parameters. In particular, smoothing is applied to the probabilities before converting them into binary labels through a \textit{decision threshold} $\tau$ (its role in the precision/recall tradeoff is discussed in \cref{sec:evaluation_metrics-ch4}). Borders are handled by replacing the missing neighbouring values with the nearest available pixel values of the same map.
+To introduce the spatial classification problem and test if these correlations are actually relevant in order to improve predictions, a spatial filter is used. Starting from the probabilities predicted by the model for each pixel, this filter computes the average on a spatially arbitrary window, correcting it on the basis of the context of the predicted neighbouring probabilities.
+This step does not alter the neural network's intrinsic capacity, since spatial information never enters the network's training phase and is applied only after inference.
 
-Let \(p(x,y)\) be the probability predicted by the model for the positive class at the pixel located at coordinates \((x,y)\). With a \(w \times w\) mean filter, the smoothed probability \(\tilde{p}(x,y)\) can be written as
+Let \(p(x,y)\) be the probability predicted by the model for the positive class at the pixel located at coordinates \((x,y)\). Using a \(w \times w\) average filter, the smoothed probability \(\tilde{p}(x,y)\) can be written as
 
 \begin{equation}
     \tilde{p}(x,y) =
@@ -328,10 +338,9 @@ Let \(p(x,y)\) be the probability predicted by the model for the positive class 
     \label{eq:spatial_smoothing-ch4}
 \end{equation}
 
-The kernel size $w$ (not to be confused with the number of cross-validation folds $k$, \cref{sec:data_splitting-ch4}) is a configurable parameter; in the experiments, two neighbourhood sizes were considered: \(3 \times 3\) and \(5 \times 5\).
+The kernel size $w$ (not to be confused with the number of cross-validation folds $k$, \cref{sec:data_splitting-ch4}) is a configurable parameter and different sizes were tested such as \(3 \times 3\), \(5 \times 5\), \(7 \times 7\), \(10 \times 10\), \(15 \times 15\).
 
-The final binary prediction is then obtained through \textit{decision threshold}:
-
+After smoothing, the probabilities are converted into binary labels based on the \textit{decision threshold} $\tau$ (its role in the precision/recall tradeoff is discussed in \cref{sec:evaluation_metrics-ch4}):
 \begin{equation}
     \hat{y}(x,y) =
     \begin{cases}
@@ -341,8 +350,7 @@ The final binary prediction is then obtained through \textit{decision threshold}
     \label{eq:threshold_after_smoothing-ch4}
 \end{equation}
 
-The objective is to reduce isolated noisy predictions and obtain spatially more coherent probability maps. This operation can also remove small true regions or propagate local errors; for this reason, raw and smoothed predictions are compared separately in the experimental results.
-
+The result to be obtained is a reduction in isolated and inconsistent predictions due to the instability of the classifier or noise in favor of greater spatial coherence. Among the limitations of this implementation is definitely the risk of propagating incorrect local predictions if an area that has produced incorrect probabilities is large enough to influence neighboring pixels. Overall, raw and smoothed predictions must be compared based on global metrics and prediction maps.
 
 \section{Evaluation metrics}
 \label{sec:evaluation_metrics-ch4}

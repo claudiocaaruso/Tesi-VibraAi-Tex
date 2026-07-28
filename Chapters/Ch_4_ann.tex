@@ -366,24 +366,28 @@ All stochastic parts of the pipeline (i.e. fold assignment, the split within eac
 
 
 \section{Spatial post-processing}
-\label{sec:spatial_post_processing}
+\label{sec:spatial_post_processing-ch4}
 
-The network outputs one probability for each spectrum. Since spectra are acquired on a regular Raman map, each probability is associated with spatial coordinates \((x,y)\). Adjacent pixels correspond to spatially close measurements and are therefore likely to contain related biological information. 
+The network classifies each pixel in isolation, learning to recognize its composition solely from the corresponding spectrum and not accounting for spatial structure. However, since the spectra are acquired within maps, they are also associated with spatial coordinates \((x,y)\) and consequently adjacent pixels are correlated, as they often belong to the same biological region.
 
-Spatial post-processing is applied after the network has produced its predicted probabilities, without modifying the architecture, the training procedure or the learned parameters. In particular, smoothing is applied to the continuous class-1 probabilities before converting them into binary labels through the classification threshold. The operation is performed independently within each Raman map, identified by \texttt{Sample\_ID} and \texttt{Map\_ID}. Borders are handled by replacing the missing neighbouring values with the nearest available pixel values of the same map.
 
-Let \(p(x,y)\) be the probability predicted by the model for the positive class at the pixel located at coordinates \((x,y)\). With a \(k \times k\) mean filter, the smoothed probability \(\tilde{p}(x,y)\) can be written as
+Spatial post-processing is applied after the network has produced its predicted probabilities, without modifying the architecture, the training procedure or the learned parameters. In particular, smoothing is applied to the probabilities before converting them into binary labels through a \textit{decision threshold} $\tau$ (its role in the precision/recall tradeoff is discussed in \cref{sec:evaluation_metrics-ch4}). Borders are handled by replacing the missing neighbouring values with the nearest available pixel values of the same map.
+
+To introduce the spatial classification problem and test if these correlations are actually relevant in order to improve predictions, a spatial filter is used. Starting from the probabilities predicted by the model for each pixel, this filter calculates the average on a spatial window of arbitrary size, correcting it on the basis of the context of the predicted neighbouring probabilities.
+This step does not alter the neural network's behavior or intrinsic capacity, since spatial information never enters the network's training phase and is applied only after inference.
+
+Let \(p(x,y)\) be the probability predicted by the model for the positive class at the pixel located at coordinates \((x,y)\). Using a \(w \times w\) average filter, the smoothed probability \(\tilde{p}(x,y)\) can be written as
 
 \begin{equation}
     \tilde{p}(x,y) =
-    \frac{1}{|\mathcal{N}_{k \times k}(x,y)|}
-    \sum_{(i,j)\in \mathcal{N}_{k \times k}(x,y)} p(i,j),
-    \label{eq:spatial_smoothing}
+    \frac{1}{w^2}
+    \sum_{(i,j)\in(x,y)} p(i,j)
+    \label{eq:spatial_smoothing-ch4}
 \end{equation}
 
-where \(\mathcal{N}_{k \times k}(x,y)\) is the local neighbourhood centered on \((x,y)\). The kernel size \(k\) is a configurable parameter; in the experiments, different neighbourhood sizes, such as \(3 \times 3\) and \(5 \times 5\), were considered.
+The kernel size $w$ (not to be confused with the number of cross-validation folds $k$, \cref{sec:data_splitting-ch4}) is a configurable parameter and different sizes were tested such as \(3 \times 3\), \(5 \times 5\), \(7 \times 7\), \(10 \times 10\), \(15 \times 15\).
 
-After smoothing, the final binary prediction is obtained by applying the same classification threshold used for the raw probabilities:
+After smoothing, the probabilities are converted into binary labels based on the \textit{decision threshold}:
 
 \begin{equation}
     \hat{y}(x,y) =
@@ -391,11 +395,10 @@ After smoothing, the final binary prediction is obtained by applying the same cl
         1, & \tilde{p}(x,y) > \tau,\\
         0, & \tilde{p}(x,y) \leq \tau,
     \end{cases}
-    \label{eq:threshold_after_smoothing}
+    \label{eq:threshold_after_smoothing-ch4}
 \end{equation}
 
-where \(\tau = 0.47\) in the experiments considered in this work. The objective is to reduce isolated noisy predictions and obtain spatially more coherent probability maps. This operation can also remove small true regions or propagate local errors; for this reason, raw and smoothed predictions are compared separately in the experimental results.
-
+The result to be obtained is a reduction in isolated and inconsistent predictions due to the instability of the classifier or noise in favor of greater spatial coherence. Among the limitations of this implementation is definitely the risk of propagating incorrect local predictions if an area that has produced incorrect probabilities is large enough to influence neighboring pixels. Overall, raw and smoothed predictions must be compared based on global metrics and prediction maps.
 
 \section{Evaluation Metrics}
 \label{sec:evaluation_metrics}

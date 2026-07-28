@@ -1,20 +1,23 @@
 \chapter{Results and discussion}
 \label{ch:results}
 
-This chapter presents the experimental results obtained with the computational pipeline previously defined.
+This chapter presents the experimental results obtained with the computational pipeline previously defined. 
 \section{Exploratory PCA of the dataset}
 \label{sec:pca_dataset}
 
-In this work, PCA was first used as an exploratory tool to inspect the structure of the Raman dataset before building the classification model. This analysis should be interpreted as descriptive: since PCA is unsupervised, it does not use the tissue labels to determine the components and is therefore not expected to find directions that are optimal for classification. Nevertheless, it is useful before training a predictive model because it shows whether the spectral dataset contains dominant variance patterns and how many components may be needed to obtain a compact representation of the spectra.
+In this work, PCA was first used as an exploratory tool to inspect the structure of the Raman dataset before building the classification model. To perform this step, PCA was calculated on the entire dataset after removing the non-informative labels, namely unlabelled/transparent pixels and artefacts, as described in \Cref{sec:labels-ch4}.
 
-For this exploratory stage, PCA was applied to the cleaned dataset after removing non-informative or unreliable labels, namely unlabeled/transparent pixels and artifacts, as described in \Cref{sec:labels-ch4}. Therefore, the PCA included all valid biological tissue classes, independently of the later binary groupings used for ANN classification.
+As discussed previously, PCA is an unsupervised machine learning method. The final objective of this analysis is therefore not to decide which spectral components are more relevant to distinguish different biological samples or to classify them according to their composition, but rather to investigate the content of the spectra in terms of explained variance to understand whether they contain particularly relevant directions and whether a more compact representation may be adequate for our dataset. If this were the case, it would be possible to reduce the dimensionality of our data to the number of components most suitable for training the artificial neural network, for the reasons explained in \Cref{sec:dimensionality_reduction}. 
+
 
 \subsection{Spectral input and centering}
 \label{subsec:pca_input_centering}
 
-PCA was applied to the data matrix \(\mathbf{X}\) introduced in \Cref{sec:dimensionality_reduction}. Each row of \(\mathbf{X}\) corresponds to one spectrum and each column corresponds to one of the \(483\) retained Raman-shift variables.
+The data was oranized in matrix \(\mathbf{X}\) introduced in
+\Cref{sec:dimensionality_reduction}.
+The matrix was constructed so that each column corresponds to one of the 483 bands and each row contains the intensities of each spectrum.
 
-The effect of the centering step, introduced in \Cref{subsec:pca_centering_covariance}, on a single spectrum is shown in \Cref{fig:original_centered_spectrum}.
+\Cref{fig:original_centered_spectrum} represents the centering of one single spectrum as described in \Cref{subsec:pca_centering_covariance}. This step is applied to all spectra in the dataset, and the new principal directions are calculated on the centered matrix \(\mathbf{X}_c\).
 
 \begin{figure}[H]
     \centering
@@ -26,7 +29,8 @@ The effect of the centering step, introduced in \Cref{subsec:pca_centering_covar
 \subsection{Explained variance of the principal components}
 \label{subsec:pca_explained_variance_vibra}
 
-The explained variance was first inspected to evaluate how the information in \(\mathbf{X}\) is distributed across the principal components. The scree plot in \Cref{fig:pca_scree_plot} shows that the first components explain most of the variance, while the contribution of later components rapidly becomes smaller.
+After the computation of the new principal components, the most interesting parameter that has been evaluated is the percentage of variance explained by each of these components, related to the singular values as explained in \Cref{subsec:pca_svd}. The scree plot in 
+\Cref{fig:pca_scree_plot} shows how most of the variance is retained by the first components, as expected from the theory, while the contribution of later components rapidly becomes smaller.
 
 \begin{figure}[H]
     \centering
@@ -35,7 +39,7 @@ The explained variance was first inspected to evaluate how the information in \(
     \label{fig:pca_scree_plot}
 \end{figure}
 
-The cumulative explained variance, shown in \Cref{fig:pca_cumulative_variance}, gives the corresponding global view. The curve has a steep initial increase and then gradually flattens, indicating that the first components retain a large part of the total variance, whereas additional components provide progressively smaller contributions. In this analysis, the \(95\%\) threshold is reached by retaining the first \(89\) principal components; this value was used as a practical reference for comparing reduced PCA representations.
+The cumulative explained variance illustrated in \Cref{fig:pca_cumulative_variance} shows a steep initial increase and a progressive flattening of the curve. This proves how the last components are significantly less relevant considering the amount of information they contain; more specifically, we observe that keeping a representation made by the first 89 components only allows us to reach a 95 percent explained variance threshold.
 
 \begin{figure}[H]
     \centering
@@ -44,7 +48,8 @@ The cumulative explained variance, shown in \Cref{fig:pca_cumulative_variance}, 
     \label{fig:pca_cumulative_variance}
 \end{figure}
 
-\Cref{fig:pca_reconstruction_comparison} shows the effect of reconstructing the same spectrum with a very small number of components and with the \(89\) components selected from the cumulative explained variance. The comparison provides a visual interpretation of the dimensionality reduction: a single component captures only the dominant trend, whereas the reconstruction with \(89\) components preserves the main spectral profile.
+\Cref{fig:pca_reconstruction_comparison} shows the effect of reconstructing the same
+spectrum with just one component and with \(89\) components. The first component is able to capture the dominant trend, whereas the reconstruction using \(89\) components preserves the main spectral profile while providing a more compact representation; for this reason, it is of particular interest.
 
 \begin{figure}[H]
     \centering
@@ -62,7 +67,10 @@ The cumulative explained variance, shown in \Cref{fig:pca_cumulative_variance}, 
 \subsection{Projection of spectra in PCA space}
 \label{subsec:pca_projection_vibra}
 
-After inspecting the variance distribution, the spectra were visualized in the PCA space using score plots. For readability, the plots were generated on a random subset of \(10000\) spectra, with points coloured according to the associated tissue label. In these plots, PC1, PC2 and PC483 denote the scores of each spectrum along the corresponding principal components, ordered from the largest to the smallest explained variance.
+In the PCA space, each spectrum can be visualised as a point in a 483-dimensional space if all principal directions are considered, and the Raman dataset is therefore a point cloud.  Reducing the representation to fewer components also reduces the dimensionality of this space, projecting the data onto the directions along which the data cloud extends the most, which are equivalent to the first principal directions. 
+
+The score plots in \Cref{fig:pca_score_pc1_pc2} and \Cref{fig:pca_score_pc1_pc483} were generated on a random subset of
+\(10000\) spectra.
 
 \begin{figure}[H]
     \centering
@@ -77,9 +85,9 @@ After inspecting the variance distribution, the spectra were visualized in the P
     \label{fig:pca_score_plots}
 \end{figure}
 
-\Cref{fig:pca_score_pc1_pc2} shows that the data cloud is distributed along both axes, although its spatial extension is larger along PC1. This is consistent with the larger variance associated with the first principal component, while PC2 still describes a visible part of the variability of the dataset. The coloured labels remain largely overlapped in this plane, indicating that the first two components do not isolate the tissue classes by themselves.
-
-\Cref{fig:pca_score_pc1_pc483} makes the contrast between a dominant component and a late component more evident. The points preserve a wide spread along PC1, whereas their coordinates along PC483 are compressed close to zero. This visual difference reflects the much smaller variance explained by the last component: in this projection, the structure of the point cloud is therefore mainly determined by PC1.
+\Cref{fig:pca_score_pc1_pc2} shows how the cloud is distributed along both the PC1 and PC2 axes, with a wider spatial extent along the former, consistent with the fact that the former component explains a greater variance. Points associated with spectra labelled differently, depicted in different colours, overlap, indicating that the biological classes are not distinguishable in this examination. More specifically, it is relevant to point the attention on the distribution of the tumoral classes: label 2 (\textit{tumor}) appears widely distributed, suggesting a strong spectral similarity to several of the tissues under consideration; label 20 (\textit{tumor with necrosis}) seems to be concentrated more on the right side of the cloud, but it still overlaps too much with other labels to allow for definitive conclusions. Since PCA is unsupervised, it is not necessarily expected to find a criterion for classification
+ 
+\Cref{fig:pca_score_.pc1_pc483} highlights the large difference in the distribution of data along the first and last components calculated by PCA. The cloud is particularly wide along the first component and compressed almost to zero along PC483, with few exceptions with respect to the number of data. 
 
 \section{Configuration of the final experiments}
 \label{sec:final_experiments_configuration}
