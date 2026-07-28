@@ -228,15 +228,34 @@ The curves for the single-class problem, on the other hand, improved regularly i
 \section{Per-sample analysis}
 \label{sec:per_sample_analysis}
 
-\textbf{Writing notes.} This section should move from global pixel-wise performance to the behaviour observed on individual samples.
+For a more critical analysis, it is important to understand whether errors are evenly distributed across the dataset or are concentrated in specific samples. Despite the large number of spectra in the dataset, they are derived from only \(25\) patients, so many of the spectra do not count as independent observations because they may exhibit similarities. In our specific case, it is crucial to carry out this type of investigation instead of assessing performance across all pixels together, whose overall average may not be sufficiently representative of the model's real capabilities. The per-sample analysis highlights the internal instability of the test and the model's ability to generalise across different patients and specimens.
 
-\begin{itemize}
-    \item Report per-sample metrics or rankings, if available.
-    \item Identify representative easy and difficult samples.
-    \item Comment on whether errors are concentrated in specific samples or distributed across the dataset.
-    \item When prediction maps are shown, use them to connect numerical performance with spatial behaviour inside the Raman maps.
-    \item Keep the comparison between the two experiments focused on differences that are visible at sample level.
-\end{itemize}
+\Cref{fig:sample_f1_comparison} shows the \textit{F1-score}, which combines \textit{precision} and \textit{recall}, calculated by partitioning the test set pixels by sample and comparing model predictions with the actual labels for each group. A high \textit{F1} means that the model recognises the \textit{tumour} class well within the same sample. On the contrary, a low value indicates that the specific sample is difficult and the prediction contains many \textit{false positives}, \textit{false negatives}, or both.
+
+First of all, the result of this comparison confirms what has already been observed in \Cref{sec:aggregated_classification_results}, namely that the macro-class problem is more complicated and unstable because it introduces greater intra-class heterogeneity, with an average \textit{F1} per sample of \(0.70\), compared with \(0.78\) for the single-class problem.
+Some of the most difficult classified samples in the \textit{tumour} vs \textit{healthy} experiment improve in the \textit{tumour} vs \textit{stroma} problem. The most obvious case is \(3535\_019\) which goes from \textit{F1} approximately \(0.43\) to about \(0.77\) between the two experiments. This supports the thesis that the difficulty in predictions is closely linked to the definition of the negative class.
+
+VALORI DA CONTROLLARE
+
+Other cases, instead, show critical trends in both experiments, as in \(3439\_009\). The sample-specific difficulty could be related to spectral differences typical of an individual patient or specimen. In these cases, the model fails to generalise adequately due to the high biological variance found.
+Furthermore, it is not excluded that, in some cases, a very poor performance on a sample may depend on the quality of the annotations.
+
+
+\begin{figure}[H]
+    \centering
+    \subfloat[\textit{tumour} vs. \textit{healthy}.\label{fig:sample_f1_tumour_healthy}]{
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_5/sample_f1_tumour_healthy.png}
+    }
+    \hfill
+    \subfloat[\textit{tumour} vs. \textit{tumour stroma}.\label{fig:sample_f1_tumour_stroma}]{
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_5/sample_f1_tumour_stroma.png}
+    }
+    \caption{Per-sample \textit{F1-score} for the two binary classification experiments.}
+    \label{fig:sample_f1_comparison}
+\end{figure}
+
+GRAFICO DA SOSTITUIRE
+
 
 \section{Effect of spatial smoothing}
 \label{sec:effect_spatial_smoothing}
