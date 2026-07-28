@@ -258,30 +258,30 @@ The comparison of raw and smoothed results for both binary problems, presented i
     \label{tab:smoothing_heatmap}
     \begin{tabular}{c c c c c c c}
         \hline
-        & \multicolumn{3}{c}{\textit{tumour} vs. \textit{tumour stroma}} 
-        & \multicolumn{3}{c}{\textit{tumour} vs. \textit{healthy}} \\
+        & \multicolumn{3}{c}{\textit{tumour} vs. \textit{healthy}} 
+        & \multicolumn{3}{c}{\textit{tumour} vs. \textit{tumour stroma}} \\
         \hline
         Kernel size & \textit{AUC} & \textit{TPR} & \textit{TNR} & \textit{AUC} & \textit{TPR} & \textit{TNR} \\
         \hline
         No smoothing 
-        & \cellcolor{pastelblue1}0.8154 & \cellcolor{pastelblue1}0.7623 & \cellcolor{pastelblue3}0.7068
-        & \cellcolor{pastelblue1}0.7745 & \cellcolor{pastelblue1}0.7419 & \cellcolor{pastelblue1}0.6688 \\
+        & \cellcolor{pastelblue1}0.7745 & \cellcolor{pastelblue1}0.7419 & \cellcolor{pastelblue1}0.6688
+        & \cellcolor{pastelblue1}0.8154 & \cellcolor{pastelblue1}0.7623 & \cellcolor{pastelblue3}0.7068 \\
         
         \(3 \times 3\)
-        & \cellcolor{pastelblue3}0.8688 & \cellcolor{pastelblue3}0.8167 & \cellcolor{pastelblue4}0.7343
-        & \cellcolor{pastelblue3}0.8269 & \cellcolor{pastelblue3}0.7914 & \cellcolor{pastelblue4}0.7029 \\
+        & \cellcolor{pastelblue3}0.8269 & \cellcolor{pastelblue3}0.7914 & \cellcolor{pastelblue4}0.7029
+        & \cellcolor{pastelblue3}0.8688 & \cellcolor{pastelblue3}0.8167 & \cellcolor{pastelblue4}0.7343 \\
         
         \(5 \times 5\)
-        & \cellcolor{pastelblue4}0.8797 & \cellcolor{pastelblue3}0.8298 & \cellcolor{pastelblue5}0.7383
-        & \cellcolor{pastelblue4}0.8373 & \cellcolor{pastelblue4}0.7997 & \cellcolor{pastelblue5}0.7134 \\
+        & \cellcolor{pastelblue4}0.8373 & \cellcolor{pastelblue4}0.7997 & \cellcolor{pastelblue5}0.7134
+        & \cellcolor{pastelblue4}0.8797 & \cellcolor{pastelblue3}0.8298 & \cellcolor{pastelblue5}0.7383 \\
         
         \(10 \times 10\)
-        & \cellcolor{pastelblue5}0.8824 & \cellcolor{pastelblue4}0.8423 & \cellcolor{pastelblue3}0.7166
-        & \cellcolor{pastelblue5}0.8417 & \cellcolor{pastelblue5}0.8047 & \cellcolor{pastelblue5}0.7114 \\
+        & \cellcolor{pastelblue5}0.8417 & \cellcolor{pastelblue5}0.8047 & \cellcolor{pastelblue5}0.7114
+        & \cellcolor{pastelblue5}0.8824 & \cellcolor{pastelblue4}0.8423 & \cellcolor{pastelblue3}0.7166 \\
         
         \(15 \times 15\)
-        & \cellcolor{pastelblue4}0.8757 & \cellcolor{pastelblue5}0.8473 & \cellcolor{pastelblue2}0.6888
-        & \cellcolor{pastelblue4}0.8376 & \cellcolor{pastelblue5}0.8033 & \cellcolor{pastelblue3}0.6984 \\
+        & \cellcolor{pastelblue4}0.8376 & \cellcolor{pastelblue5}0.8033 & \cellcolor{pastelblue3}0.6984
+        & \cellcolor{pastelblue4}0.8757 & \cellcolor{pastelblue5}0.8473 & \cellcolor{pastelblue2}0.6888 \\
         \hline
     \end{tabular}
 \end{table}
@@ -293,14 +293,14 @@ The results of applying a too-large filter (\(15 \times 15\)) make it clear that
 
 \begin{figure}[H]
     \centering
-    \subfloat[\textit{tumour} vs. \textit{tumour stroma}.\label{fig:confusion_matrix_tumour_stroma_smoothed}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_troma_smoothed.jpeg}
-    }
-    \hfill
     \subfloat[\textit{tumour} vs. \textit{healthy}.\label{fig:confusion_matrix_tumour_healthy_smoothed}]{
         \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_healty_smoothed.jpeg}
     }
-    \caption{Confusion matrices obtained after spatial post-processing with the \(5 \times 5\) smoothing filter. Compared to the raw results shown in FIGURE? the \textit{TPR} and \textit{TNR} rise.}
+    \hfill
+    \subfloat[\textit{tumour} vs. \textit{tumour stroma}.\label{fig:confusion_matrix_tumour_stroma_smoothed}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_troma_smoothed.jpeg}
+    }
+    \caption{Confusion matrices obtained after spatial post-processing with the \(5 \times 5\) smoothing filter. Compared to the raw results shown in \Cref{fig:results_S20_macroclass,fig:results_S10_singleclass} the \textit{TPR} and \textit{TNR} rise.}
     \label{fig:confusion_matrices_smoothed}
 \end{figure}
 
