@@ -1,8 +1,33 @@
 \cleardoublepage
 \addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
 \appendix
-\chapter{Appendix A}
-If you need to include an appendix to support the research in your thesis, you can place it at the end of the manuscript.
-An appendix contains supplementary material (figures, tables, data, codes, mathematical proofs, surveys, \dots)
-which supplement the main results contained in the previous chapters.
+\chapter{Dataset file format}
+\label{app:dataset-format}
 
+The dataset described in \Cref{sec:origin-structure} was stored as a single \texttt{.parquet} file. \Cref{tab:dataset-columns} details the exact column layout of that file, as used by the data-loading code.
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|l|X|}
+        \hline
+        \textbf{Column} & \textbf{Format / Range} & \textbf{Description} \\
+        \hline
+        \texttt{Sample\_ID} & e.g. \texttt{1234\_567} & The first 4 digits identify the patient, the
+                              last 3 the sample from that patient. \\
+        \hline
+        \texttt{Map\_ID}    & e.g. \texttt{Map\_1} & Acquisition map; 2 to 5 maps were
+                              analysed per sample. \\
+        \hline
+        \texttt{x} & $x\in [0, 119]$ & Pixel coordinates on the horizontal axis\\
+         \hline
+        \texttt{y} & $y\in [0, 119]$ & Pixel coordinates on the vertical axis\\
+        \hline
+        \texttt{band\_}$n$  & $n \in [0, 482]$ & Raman intensity at the $n$-th spectral band,
+                              for the 483 Raman shifts ($\mathrm{cm}^{-1}$). \\
+        \hline
+        \texttt{Label}      & integer & Tissue-class identifier of the pixel (see \Cref{sec:labels}). \\
+        \hline
+    \end{tabularx}
+    \caption{Column layout of the dataset's \texttt{.parquet} file.}
+    \label{tab:dataset-columns}
+\end{table}

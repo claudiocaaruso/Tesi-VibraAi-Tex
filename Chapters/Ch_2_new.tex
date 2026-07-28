@@ -15,7 +15,7 @@
 
 Machine learning is the field of study that gives computers the ability to learn from data without being explicitly programmed. In this context, a model is a mathematical function or computational structure that transforms input data into an output, following rules that are not explicitly defined but inferred from examples. The data are represented through numerical features, and the model uses them to learn relationships, trends or structures that are relevant for a given task, such as classification or dimensionality reduction. During training, the model adjusts its internal parameters according to the examples it receives, in order to capture patterns that remain informative when new observations are presented.
 
-This approach is well suited to Raman spectroscopy of biological tissues. As discussed in \Cref{ch:introduction}, the complexity of biological Raman spectra makes it difficult to reduce the classification problem to a few manually selected bands. For this reason, the entire spectra are treated as a numerical objects, as described in \cref{ch:Dataset}, whose overall profile may contain information relevant to the classification task.
+This approach is well suited to Raman spectroscopy of biological tissues. As discussed in \Cref{ch:introduction}, the complexity of biological Raman spectra makes it difficult to reduce the classification problem to a few manually selected bands. For this reason, the entire spectra are treated as a numerical objects, as described in \cref{ch:materials_methods}, whose overall profile may contain information relevant to the classification task.
 
 Machine learning methods are commonly distinguished into \textit{supervised} and \textit{unsupervised}, according to the information available during training:
 
@@ -48,7 +48,7 @@ The dataset can be represented as a numerical matrix
     \label{eq:pca_data_matrix}
 \end{equation}
 
-where \(n\) is the number of observations and \(p\) is the number of variables. Each observation can therefore be interpreted not only as a curve or signal, but also as a point in a \(p\)-dimensional feature space, where each coordinate corresponds to one variable. In this work, each observation is a Raman spectrum and \(p = 483\), as described in \Cref{ch:Dataset}.
+where \(n\) is the number of observations and \(p\) is the number of variables. Each observation can therefore be interpreted not only as a curve or signal, but also as a point in a \(p\)-dimensional feature space, where each coordinate corresponds to one variable. In this work, each observation is a Raman spectrum and \(p = 483\), as described in \Cref{ch:materials_methods}.
 
 Working directly with all the original variables is possible, but it is not always the most convenient representation. Nearby variables are often correlated, for instance because of overlapping physical signals (as is the case for Raman spectra, where spectral bands are broad and can overlap). Therefore, the \(p\) variables do not necessarily correspond to \(p\) independent sources of information. Dimensionality reduction addresses this situation by replacing the original variables with a smaller number of new variables designed to retain the main structure of the dataset.
 
@@ -204,11 +204,11 @@ A Perceptron is simply composed of a single layer of TLUs, with each TLU connect
 \begin{figure}[ht]
     \centering
     \subfloat[Single Perceptron: inputs are combined via a weighted sum then passed through a step function.\label{fig:perceptron}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/perceptron.png}
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_2/perceptron.png}
     }
     \hfill
     \subfloat[Two-layer Perceptron: multiple TLUs stacked into an input and an output layer.\label{fig:two_layer_perceptron}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/two_layer_perceptron.png}
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_2/two_layer_perceptron.png}
     }
     \caption{Perceptron architectures~\cite{geron2022hands}.}
     \label{fig:perceptrons}
@@ -328,7 +328,7 @@ It closely represents the firing rates of biological neurons and, due to squashi
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{Images/images_ch_4/sigmoid.png}
+    \includegraphics[width=0.8\textwidth]{Images/images_ch_2/sigmoid.png}
     \caption{Sigmoid function $\sigma(z)$ (left) and its derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$ (right). The shaded regions show the saturation zones where the gradient is nearly zero, slowing down learning through backpropagation.}
     \label{fig:sigmoid}
 \end{figure}
@@ -349,7 +349,7 @@ This has been the choice for the hidden layers for the ANN used for this thesis.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{Images/images_ch_4/relu.png}
+    \includegraphics[width=0.8\textwidth]{Images/images_ch_2/relu.png}
     \caption{ReLU function (left) and its derivative (right). For $z < 0$ the output and gradient are both exactly zero --- the so-called \textit{dying ReLU} problem --- while for $z > 0$ the gradient is a constant 1, avoiding saturation.}
     \label{fig:relu}
 \end{figure}
@@ -361,14 +361,6 @@ To solve it, functions such as LeakyReLU (slightly tilted for $z<0$) exist, but 
 % NEW §2.4.4 "Binary cross-entropy loss"
 % <- OLD: Ch_4_ann.tex \subsection{Binary Cross-Entropy Loss} (same
 %    title, capitalization style only; old 4.1.4 -> new 2.4.4).
-% CLAUDIO: this subsection contains \cref{sec:binary_classification},
-% which currently points at Ch_2_dataset.tex's "Binary labelling"
-% section. Per the guide's migration map, that content splits into new
-% §4.4 (operational definition) and §5.1 (the argument/results). You
-% will need to decide which of the two this reference should now point
-% to (guide item 4 flags exactly this: "due to the binary classification
-% approach discussed in section 2.4 -> for the binary problems defined
-% in §4.4"). Left as \cref{sec:binary_classification} verbatim, unresolved.
 % -----------------------------------------------------------------
 \subsection{Binary cross-entropy loss}
 \label{subsec:bce}
@@ -472,18 +464,18 @@ The result of \textit{Adam} is shown in \cref{fig:adam_grid}.
 \begin{figure}[ht]
     \centering
     \subfloat[GD, $\eta=0.05$.\label{fig:gd_small_lr_grid}]{
-        \includegraphics[width=0.4\textwidth]{Images/images_ch_4/grad_desc_1.png}
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_2/grad_desc_1.png}
     }
     \hfill
     \subfloat[GD, $\eta=1.0$.\label{fig:gd_large_lr_grid}]{
-        \includegraphics[width=0.4\textwidth]{Images/images_ch_4/grad_desc_2.png}
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_2/grad_desc_2.png}
     }\\[1ex]
     \subfloat[Normalized gradients.\label{fig:norm_grad_grid}]{
-        \includegraphics[width=0.4\textwidth]{Images/images_ch_4/norm_grad.png}
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_2/norm_grad.png}
     }
     \hfill
     \subfloat[Adam.\label{fig:adam_grid}]{
-        \includegraphics[width=0.4\textwidth]{Images/images_ch_4/adam.png}
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_2/adam.png}
     }
     \caption{Optimizer trajectories on an elongated bowl-shaped loss surface~\cite{prince2023understanding}.}
     \label{fig:optimizers_grid}

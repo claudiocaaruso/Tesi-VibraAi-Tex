@@ -51,9 +51,7 @@ The spectra, acquired over a broader Raman-shift range, have been stripped of th
 This preparation is important for machine learning, because the spectra used as input to the classification model are shaped not only by tissue biochemistry, but also by acquisition conditions and experimental noise. If these effects are not properly controlled or corrected, the model may learn patterns related to measurement variability rather than tissue class.
 
 \section{Dataset: origin and structure}
-\label{sec:origin-structure-ch4}
-
-The Raman spectra in the dataset have been stored in a \textit{.parquet} file, which is a column-based format designed for efficient data storage and retrieval and widely used in clinical data analytics, medical research, and machine learning.
+\label{sec:origin-structure}
 
 The analyzed biological tissue was taken from 25 \textit{samples}, one from each of 25 different patients.
 
@@ -61,44 +59,39 @@ Two to five areas, called \textit{maps}, were then selected from each sample for
 A spectrum was acquired for each pixel in the map. Each map has a size of $600\times600~\mu\mathrm{m}$, acquired as $120\times120$ pixels.
 Finally, each spectrum ranges across 483 bands and has an associated \textit{label}, indicating the type of biological tissue it belongs to.
 
-\begin{table}[ht]
+\begin{table}[H]
     \centering
     \begin{tabularx}{\textwidth}{|l|l|X|}
         \hline
-        \textbf{Column} & \textbf{Format / Range} & \textbf{Description} \\
+        \textbf{Field} & \textbf{Range / Values} & \textbf{Description} \\
         \hline
-        \texttt{Sample\_ID} & e.g. \texttt{1234\_567} & The first 4 digits identify the patient, the
-                              last 3 the sample from that patient. \\
+        Sample ID & 25 & Patient and sample identifier \\
         \hline
-        \texttt{Map\_ID}    & e.g. \texttt{Map\_1} & Acquisition map; 2 to 5 maps were
-                              analysed per sample. \\
+        Map ID & 2--5 per sample & Acquisition map within a sample \\
         \hline
-        \texttt{x} & $x\in [0, 119]$ & Pixel coordinates on the horizontal axis\\
-         \hline
-        \texttt{y} & $y\in [0, 119]$ & Pixel coordinates on the vertical axis\\
+        Pixel position (x, y) & $[0, 119]$ each & Coordinates within the $120\times120$ map grid \\
         \hline
-        \texttt{band\_}$n$  & $n \in [0, 482]$ & Raman intensity at the $n$-th spectral band,
-                              for the 483 Raman shifts ($\mathrm{cm}^{-1}$). \\
+        Spectral band number & 483 & Raman intensity at each spectral shift \\
         \hline
-        \texttt{Label}      & integer & Tissue-class identifier of the pixel (see \Cref{sec:labels-ch4}). \\
+        Label & integer & Tissue-class identifier of the pixel (see \Cref{sec:labels}) \\
         \hline
     \end{tabularx}
-    \caption{Structure of the dataset columns.}
-    \label{tab:dataset-structure-ch4}
+    \caption{Structure of a single data point in the dataset.}
+    \label{tab:dataset-structure}
 \end{table}
 
 With 25 samples and 2 to 5 maps each, the total number of maps is 78, thus amounting to 1\,123\,200 spectra.
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{Images/logo_polimi_scritta.eps}
-    \caption{Relationship between samples, maps and spectra}
-    \label{fig:placeholder-ch4}
+    \includegraphics[width=0.8\linewidth]{Images/images_ch_4/stained_sample.png}
+    \caption{\textit{Sample} treated with H\&E staining. Two \textit{maps} are magnified and displayed as heatmaps based on Raman data.}
+    \label{fig:placeholder}
 \end{figure}
 
 
 \section{Labels}
-\label{sec:labels-ch4}
+\label{sec:labels}
 
 Each pixel (spectrum) has been assigned a label, corresponding to a specific type of biological tissue, by a histopathologist.
 The classification pipeline started with the preparation of the samples as $12~\mu\mathrm{m}$ slices of tumoral tissue.
@@ -114,7 +107,7 @@ This process includes two critical points:
 However, the provided labels have been considered correct, as is accepted in the state of the art of these studies.
 
 
-Biological tissues were divided into 13 classes, the most represented of which was the \textit{tumor} class (46,71\%). Occurrences for each class are shown in \Cref{fig:label_distribution-ch4} and detailed in \Cref{tab:label-distribution-ch4}.
+Biological tissues were divided into 13 classes, the most represented of which was the \textit{tumor} class (46,71\%). Occurrences for each class are shown in \Cref{fig:label_distribution} and detailed in \Cref{tab:label-distribution}.
 
 
 \begin{table}[ht]
@@ -141,57 +134,57 @@ Biological tissues were divided into 13 classes, the most represented of which w
         \hline
     \end{tabular}
     \caption{Per-class composition of the dataset, ordered by abundance. The \textit{unlabeled/transparent} and \textit{artifact} classes are non-tissue classes that are excluded before further analysis.}
-    \label{tab:label-distribution-ch4}
+    \label{tab:label-distribution}
 \end{table}
 
-Among the classes, two do not correspond to any biological tissue and were removed before further analysis: the \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifacts} from the H\&E staining. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded-ch4}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset.
+Among the classes, two do not correspond to any biological tissue and were removed before further analysis: the \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifacts} from the H\&E staining. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset.
 
 \begin{figure}[H]
     \centering
-    \subfloat[Occurrences for each label in the dataset.\label{fig:label_distribution-ch4}]{
-        \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/label_distributions.png}
+    \subfloat[Occurrences for each label in the dataset.\label{fig:label_distribution}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/label_distributions.png}
     }
     \hfill
-    \subfloat[Binary grouping by tumoral and healthy spectra after discarding unlabeled, transparent pixels and artifacts.\label{fig:binary_label_distribution-ch4}]{
-        \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/binary_label_distribution.png}
+    \subfloat[Binary grouping by tumoral and healthy spectra after discarding unlabeled, transparent pixels and artifacts.\label{fig:binary_label_distribution}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/binary_label_distribution.png}
     }
     \caption{Distribution of labels in the dataset.}
-    \label{fig:label_distributions-ch4}
+    \label{fig:label_distributions}
 \end{figure}
 
 
 \section{Spectra}
-\label{sec:spectra-ch4}
+\label{sec:spectra}
 For the cross-class comparisons reported below, the averaged spectra were further normalized with the standard normal variate (SNV) transform, which centers each spectrum and scales it to unit standard deviation, so that band shapes can be compared independently of overall intensity.
 
 In a preliminary visual analysis, the average spectrum for each class has been computed. At the major Raman peaks the standard deviation across individual spectra corresponds to 12–20\% of the peak height. Relative to the local signal intensity, this dispersion is small near the peaks, although it grows noticeably in the weak baseline regions (bands 30--200), where the standard deviation becomes roughly 30\% of the local mean.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.65\linewidth]{Images/Images_ch_2/spectrum_avg_tumor.png}
+    \includegraphics[width=0.65\linewidth]{Images/images_ch_4/spectrum_avg_tumor.png}
     \caption{Average spectrum for the \textit{tumor} label. The shaded band shows $\pm1$ standard deviation across spectra. The \textit{fingerprint region} and \textit{CH region} are joined at band n.390, where the intensity is 0.}
     \label{fig:spectrum_avg_tumor}
 \end{figure}
 
-All classes appear to have the same trends, with multiple similar peaks in the \textit{fingerprint region} (bands 0--382, or equivalently 500--1800 $\mathrm{cm}^{-1}$) and a major peak in the \textit{CH region} (bands 383--483, or equivalently 2800--3000 $\mathrm{cm}^{-1}$). The only exceptions are represented by \textit{unlabeled/transparent}, \textit{artifact} and \textit{necrosis} pixels, which differ from the others mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded-ch4}).
+All classes appear to have the same trends, with multiple similar peaks in the \textit{fingerprint region} (bands 0--382, or equivalently 500--1800 $\mathrm{cm}^{-1}$) and a major peak in the \textit{CH region} (bands 383--483, or equivalently 2800--3000 $\mathrm{cm}^{-1}$). The only exceptions are represented by \textit{unlabeled/transparent}, \textit{artifact} and \textit{necrosis} pixels, which differ from the others mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded}).
 
 
 \begin{figure}[H]
     \centering
-    \subfloat[\textit{tumor} spectrum against the excluded non-tissue classes (\textit{unlabeled/transparent}, \textit{artifact}) and \textit{necrosis}.\label{fig:spectra_comparison_discarded-ch4}]{
-        \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/spectra_comparison_discarded.png}
+    \subfloat[\textit{tumor} spectrum against the excluded non-tissue classes (\textit{unlabeled/transparent}, \textit{artifact}) and \textit{necrosis}.\label{fig:spectra_comparison_discarded}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/spectra_comparison_discarded.png}
     }
     \hfill
-    \subfloat[\textit{tumor} spectrum against the most represented healthy classes.\label{fig:spectra_comparison_similar-ch4}]{
-        \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/spectra_comparison_similar.png}
+    \subfloat[\textit{tumor} spectrum against the most represented healthy classes.\label{fig:spectra_comparison_similar}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/spectra_comparison_similar.png}
     }
     \caption{Comparison of spectra for different classes. The spectra are averaged across each label and SNV-normalized.}
-    \label{fig:spectra_comparisons-ch4}
+    \label{fig:spectra_comparisons}
 \end{figure}
 
 
 \section{Definition of the binary classification problems}
-\label{sec:binary_classification-ch4}
+\label{sec:binary_classification}
 
 In the prospect of training a binary classification ANN it was necessary to set a choice for the binary labeling to be used as ground truth for training and performance verification.
 
@@ -214,16 +207,16 @@ The choice had to account for the following criteria:
 
 The first approach is the one with the most clinical relevance. Successful classification of tumoral areas against general healthy tissue would be the most versatile result possible, with further single-class distinction to be performed later depending on need. The balance between the two classes would also be close to 50/50, allowing to use the whole dataset for training and testing of the ANN. This approach presents however multiple critical points.
 The \textit{healthy} macro-class, including numerous tissue types, is very heterogeneous (high intra-class variance), leading to poor feature individuation or bias towards the major class.
-The \textit{tumor} macro-class, which always includes the \textit{tumor (2)} label, could also comprise the \textit{tumor with necrosis (20)} and the \textit{necrosis (0)} labels, since necrotic tissue is expected to be adjacent to tumors; necrotic tissue, however, shows high variance (\Cref{fig:spectra_comparison_discarded-ch4}) due to structural degradation of the cells, leading to problems similar to the ones of the \textit{healthy} macro-class.
+The \textit{tumor} macro-class, which always includes the \textit{tumor (2)} label, could also comprise the \textit{tumor with necrosis (20)} and the \textit{necrosis (0)} labels, since necrotic tissue is expected to be adjacent to tumors; necrotic tissue, however, shows high variance (\Cref{fig:spectra_comparison_discarded}) due to structural degradation of the cells, leading to problems similar to the ones of the \textit{healthy} macro-class.
 
 
 The second approach, using isolated classes, will reduce intra-class variance and allow the model to learn the class-specific patterns, thus improving performance.
-Due to the class imbalance (tumor alone being 46,71\% of the dataset), the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the available training data. The model is then trained on a reduced number of spectra. Due to the size of the dataset ($>$1\,000\,000 spectra) and the strong spatial correlation between adjacent pixels, which makes neighbouring spectra highly redundant, the data can be substantially subsampled with little loss of information, provided that spectra from every sample are retained. This reduces the possible choices for \textit{healthy} labels to the most numerous ones, i.e.\ \textit{tumor stroma (6)}, \textit{stroma with inflammation (4)} and \textit{connective tissue (5)} (\Cref{fig:label_distribution-ch4}).
+Due to the class imbalance (tumor alone being 46,71\% of the dataset), the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the available training data. The model is then trained on a reduced number of spectra. Due to the size of the dataset ($>$1\,000\,000 spectra) and the strong spatial correlation between adjacent pixels, which makes neighbouring spectra highly redundant, the data can be substantially subsampled with little loss of information, provided that spectra from every sample are retained. This reduces the possible choices for \textit{healthy} labels to the most numerous ones, i.e.\ \textit{tumor stroma (6)}, \textit{stroma with inflammation (4)} and \textit{connective tissue (5)} (\Cref{fig:label_distribution}).
 % TODO (optional, for a stronger quantitative claim): validate the subsampling empirically instead of stating it qualitatively.
 % Sweep the training-set fraction (e.g. 5/10/25/50/100%) using the SUBSAMPLE knob in scripts/train.py of the VibraAI repo, keeping the leakage-free per-patient split, and plot AUC/accuracy vs fraction.
 % If performance stays flat down to a small fraction, replace the sentence above with the measured number (e.g. "down to X\% with no significant performance loss") and add the plot as a figure.
 
-Regarding discernability, the most similar tissues are also the most clinically confusable. Being able to discriminate would then be the most valuable result. The three possible healthy classes show a comparable degree of similarity to the tumor (\Cref{fig:spectra_comparison_similar-ch4}); each therefore constitutes an equally valid choice, with no class being a priori better suited than the rest from a separability standpoint.
+Regarding discernability, the most similar tissues are also the most clinically confusable. Being able to discriminate would then be the most valuable result. The three possible healthy classes show a comparable degree of similarity to the tumor (\Cref{fig:spectra_comparison_similar}); each therefore constitutes an equally valid choice, with no class being a priori better suited than the rest from a separability standpoint.
 
 Clinically, each label can be relevant in different ways:
 \begin{itemize}
@@ -237,23 +230,23 @@ Two binary problems are therefore taken forward to the classification stage. The
 
 \begin{figure}[H]
     \centering
-    \subfloat[\textit{Tumor} vs. \textit{healthy} classification (1st approach).\label{fig:heatmap-tumor-vs-healthy-ch4}]{
-        \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/heatmap_tumor_vs_healthy.png}
+    \subfloat[\textit{Tumor} vs. \textit{healthy} classification (1st approach).\label{fig:heatmap-tumor-vs-healthy}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/heatmap_tumor_vs_healthy.png}
     }
     \hfill
-    \subfloat[\textit{Tumor} vs. \textit{stroma with inflammation} classification (2nd approach).\label{fig:heatmap-tumor-vs-stroma-ch4}]{
-        \includegraphics[width=0.45\textwidth]{Images/Images_ch_2/heatmap_tumor_vs_stroma.png}
+    \subfloat[\textit{Tumor} vs. \textit{stroma with inflammation} classification (2nd approach).\label{fig:heatmap-tumor-vs-stroma}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/heatmap_tumor_vs_stroma.png}
     }
     \caption{Maps with highlighted labels based on classification approach. \textit{Stroma with inflammation} is shown instead of \textit{tumor stroma} (the actual training target) for illustrative purposes, because no map in the dataset contained \textit{tumor stroma} together with other labels.}
-    \label{fig:heatmap_classification-ch4}
+    \label{fig:heatmap_classification}
 \end{figure}
 
 
 
 \section{Network architectures}
-\label{sec:architectures-ch4}
+\label{sec:architectures}
 
-The classification stage was based on three model architectures (S, M, L) that varied in width (\cref{tab:architectures-ch4}). A grid search was performed by varying model size and multiple hyperparameters to determine the best possible combination. A model that is too small would be expected to underfit, not learning enough relevant patterns to categorize well enough, whereas an overly large one would overfit, memorizing the dataset rather than generalizing.
+The classification stage was based on three model architectures (S, M, L) that varied in width (\cref{tab:architectures}). A grid search was performed by varying model size and multiple hyperparameters to determine the best possible combination. A model that is too small would be expected to underfit, not learning enough relevant patterns to categorize well enough, whereas an overly large one would overfit, memorizing the dataset rather than generalizing.
 
 \begin{table}[ht]
     \centering
@@ -268,16 +261,16 @@ The classification stage was based on three model architectures (S, M, L) that v
         \hline
     \end{tabular}
     \caption{Architecture of the three model sizes (S, M, L). All hidden layers use ReLU activation (\cref{subsec:activation_functions}); the output layer is a single sigmoid unit for binary classification (\cref{subsec:bce}).}
-    \label{tab:architectures-ch4}
+    \label{tab:architectures}
 \end{table}
 
 The models all consisted of \textit{dense} (fully connected) layers, with a \textit{dropout} rate of 0.2 to reduce overfitting, except for the S model, where \textit{dropout} was applied just to the first layer due to the small size of the network. \textit{Dropout} is a regularization technique such that at every training step, every neuron in a dropout layer has a probability $p=0.2$ of being temporarily ignored, though it may be active during the next step. Neurons trained with \textit{dropout} cannot co-adapt with their neighboring neurons; they have to be as useful as possible on their own. They also cannot rely excessively on just a few input neurons and must pay attention to each of their input neurons \cite{geron2022hands}.
 
-All the hidden layers used ReLU as activation functions and the number of input units is set to the number of retained PC components (itself a hyperparameter, selected jointly with the architecture, see \cref{sec:training-ch4}), while the output neurons had a sigmoid activation.
+All the hidden layers used ReLU as activation functions and the number of input units is set to the number of retained PC components (itself a hyperparameter, selected jointly with the architecture, see \cref{sec:training}), while the output neurons had a sigmoid activation.
 
 
 \section{Data splitting and cross validation}
-\label{sec:data_splitting-ch4}
+\label{sec:data_splitting}
 
 The spectra in the dataset are spatially correlated: neighboring pixels show similar patterns and peaks. Therefore, a simple random split of the whole dataset into training, validation and test sets would result in spectra from the same map or sample being present in multiple divisions. Such a split would let the model memorize sample-specific signatures and give misleading results due to data leakage.
 
@@ -300,13 +293,13 @@ For this dataset, cross validation was performed with $k=5$ folds, maintaining r
 
 
 \section{Training protocol and hyperparameter search}
-\label{sec:training-ch4}
+\label{sec:training}
 
 There are multiple hyperparameters that are not fixed a priori, for which an optimal value has to be found to make the model perform best. Those parameters comprise: network size, number of retained PCs and batch size.
 To choose between them, a grid search was performed. For each hyperparameter, a list of possible values was chosen, then the model was trained and tested for every possible combination of those values (said combinations are called the \textit{search space}).
 
-Network size and number of retained PCs were searched jointly first, over the three possible network sizes S, M, L (\cref{sec:architectures-ch4}) and thirteen values for the number of retained principal components $N_{PC} \in \{1, 2, 3, 5, 10, 20, 30, 50, 75, 100, 200, 300, 483\}$, where the last value corresponds to full dimensionality (equivalent to training on the full Raman spectra).
-The full search, using 5-fold cross validation (\cref{sec:data_splitting-ch4}), meant training $3\times 13\times 5 = 195$ models and comparing the $3\times 13 = 39$ results.
+Network size and number of retained PCs were searched jointly first, over the three possible network sizes S, M, L (\cref{sec:architectures}) and thirteen values for the number of retained principal components $N_{PC} \in \{1, 2, 3, 5, 10, 20, 30, 50, 100, 200, 300, 400, 483\}$, where the last value corresponds to full dimensionality (equivalent to training on the full Raman spectra).
+The full search, using 5-fold cross validation (\cref{sec:data_splitting}), meant training $3\times 13\times 5 = 195$ models and comparing the $3\times 13 = 39$ results.
 
 To reduce computational complexity, once the best architecture and $N_{PC}$ combination was selected, batch size was tuned separately on this fixed configuration, over six values of the batch size $N_\mathcal{B} \in \{512, 1024, 2048, 4096, 8192, 16384\}$. Batch sizes were chosen as powers of 2 due to convention and minor optimization in computer memory.
 
@@ -315,16 +308,16 @@ As explained in \cref{subsec:pca_svd}, PCA is fitted on the full dimensional spe
 Two callbacks were implemented to control training:
 
 \begin{itemize}
-    \item \textit{Early stopping:} training stops when the validation AUC (Area Under the Curve, explained in \cref{sec:evaluation_metrics-ch4}) doesn't improve for 10 consecutive epochs, restoring the weights to the best epoch.
+    \item \textit{Early stopping:} training stops when the validation AUC (Area Under the Curve, explained in \cref{sec:evaluation_metrics}) doesn't improve for 10 consecutive epochs, restoring the weights to the best epoch.
     \item \textit{Learning rate reduction on plateau:} when validation loss fails to improve for 4 consecutive epochs, the learning rate $\eta$ is reduced by half, down to a minimum of $\eta = 10^{-6}$. This allows for finer tuning compared to the relatively coarse \textit{Adam} steps.
 \end{itemize}
 
-All stochastic parts of the pipeline (i.e.\ fold assignment, the split within each fold, and majority-class downsampling) use a fixed random seed, so that results are deterministic and comparable across the grid, although the model's weight initialization done by keras is not fixed. Differences in metrics between configurations reflect the architecture/$N_{PC}$ choice itself, not casual variation from a different random split. The variations caused by the different initializations are negligible ($\sim1\%$ on AUC) compared to those given by the split.
+All stochastic parts of the pipeline (i.e.\ fold assignment, the split within each fold, and majority-class downsampling) use a fixed random seed, so that results are deterministic and comparable across the grid, although the model's weight initialization done by Keras is not fixed. Differences in metrics between configurations reflect the architecture/$N_{PC}$ choice itself, not casual variation from a different random split. The variations caused by the different initializations are negligible ($\sim1\%$ on AUC) compared to those given by the split.
 
 
 
 \section{Spatial post-processing}
-\label{sec:spatial_post_processing-ch4}
+\label{sec:spatial_post_processing}
 
 The network classifies each pixel in isolation, learning to recognise its composition solely from the corresponding spectrum and not accounting for spatial structure. However, since the spectra are acquired within maps, they are also associated with spatial coordinates \((x,y)\) and consequently adjacent pixels are correlated, as they often belong to the same biological region.
 
@@ -337,31 +330,31 @@ Let \(p(x,y)\) be the probability predicted by the model for the positive class 
     \tilde{p}(x,y) =
     \frac{1}{w^2}
     \sum_{(i,j)\in(x,y)} p(i,j)
-    \label{eq:spatial_smoothing-ch4}
+    \label{eq:spatial_smoothing}
 \end{equation}
 
-The kernel size $w$ (not to be confused with the number of cross-validation folds $k$, \cref{sec:data_splitting-ch4}) is a configurable parameter and different sizes were tested such as \(3 \times 3\), \(5 \times 5\), \(7 \times 7\), \(10 \times 10\), \(15 \times 15\).
+The kernel size $w$ (not to be confused with the number of cross-validation folds $k$, \cref{sec:data_splitting}) is a configurable parameter and different sizes were tested such as \(3 \times 3\), \(5 \times 5\), \(7 \times 7\), \(10 \times 10\), \(15 \times 15\).
 
-After smoothing, the probabilities are converted into binary labels based on the \textit{decision threshold} $\tau$ (its role in the precision/recall tradeoff is discussed in \cref{sec:evaluation_metrics-ch4}):
+After smoothing, the probabilities are converted into binary labels based on the \textit{decision threshold} $\tau$ (its role in the precision/recall tradeoff is discussed in \cref{sec:evaluation_metrics}):
 \begin{equation}
     \hat{y}(x,y) =
     \begin{cases}
         1, & \tilde{p}(x,y) > \tau,\\
         0, & \tilde{p}(x,y) \leq \tau,
     \end{cases}
-    \label{eq:threshold_after_smoothing-ch4}
+    \label{eq:threshold_after_smoothing}
 \end{equation}
 
 The result to be obtained is a reduction in isolated and inconsistent predictions due to the instability of the classifier or noise in favor of greater spatial coherence. Among the limitations of this implementation is definitely the risk of propagating incorrect local predictions if an area that has produced incorrect probabilities is large enough to influence neighboring pixels. Overall, raw and smoothed predictions must be compared based on global metrics and prediction maps.
 
 \section{Evaluation metrics}
-\label{sec:evaluation_metrics-ch4}
+\label{sec:evaluation_metrics}
 
 Accuracy is often not the best metric to consider in order to evaluate the performance of a model. When the dataset is not balanced, accuracy could be very high although the model does not perform well. For example, if the dataset was composed at 90\% by tumoral cells, even a model that just classifies as 'tumoral' every pixel would achieve 90\% accuracy, although not predicting anything at all.
 
 A better way to evaluate a model is through the \textit{confusion matrix}, which shows how many times instances of class A are classified as B, for every possible combination of classes. Each row in a confusion matrix represents an \textit{actual class}, while each column represents a \textit{predicted class}.
-For a binary classifier, the \textit{true positive} TP and \textit{true negative} TN lie on the main diagonal, while the off-diagonal terms represent \textit{false positives} FP and \textit{false negatives} FN (\cref{fig:confusion_matrix-ch4}).
-Since the absolute counts (TP, FP, TN, FN) can be very big numbers when dealing with large datasets, another way to represent the confusion matrix is through the classification rates (\cref{fig:confusion_matrix_rates-ch4}), defined hereafter.
+For a binary classifier, the \textit{true positive} TP and \textit{true negative} TN lie on the main diagonal, while the off-diagonal terms represent \textit{false positives} FP and \textit{false negatives} FN (\cref{fig:confusion_matrix}).
+Since the absolute counts (TP, FP, TN, FN) can be very big numbers when dealing with large datasets, another way to represent the confusion matrix is through the classification rates (\cref{fig:confusion_matrix_rates}), defined hereafter.
 
 The \textit{true positive rate} (TPR), also called \textit{recall}, is the ratio of positive instances that are correctly detected by the classifier:
 
@@ -388,7 +381,7 @@ The \textit{true negative rate} (TNR), also called \textit{specificity}, and \te
 
 \begin{figure}[ht]
     \centering
-    \subfloat[Confusion matrix expressed as absolute counts.\label{fig:confusion_matrix-ch4}]{
+    \subfloat[Confusion matrix expressed as absolute counts.\label{fig:confusion_matrix}]{
         \begin{tikzpicture}[font=\small]
             \draw (0,0) rectangle (2,2);
             \draw (2,0) rectangle (4,2);
@@ -407,7 +400,7 @@ The \textit{true negative rate} (TNR), also called \textit{specificity}, and \te
         \end{tikzpicture}
     }
     \hfill
-    \subfloat[Confusion matrix expressed as classification rates.\label{fig:confusion_matrix_rates-ch4}]{
+    \subfloat[Confusion matrix expressed as classification rates.\label{fig:confusion_matrix_rates}]{
         \begin{tikzpicture}[font=\small]
             \draw (0,0) rectangle (2,2);
             \draw (2,0) rectangle (4,2);
@@ -446,7 +439,7 @@ however, the $F_1$ score favors classifiers that have similar precision and reca
 
 In this work, recall is undoubtedly more important. Classifying a healthy pixel as tumoral has fewer consequences than failing to catch a tumoral one through low recall.
 
-The \textit{receiver operating characteristic} (ROC) curve is another common tool used with binary classifiers. It plots TPR (\textit{recall}) against FPR. The tradeoff is always present: the higher the recall, the more false positives (FPR) the classifier produces. The dashed line in \cref{fig:roc_curve-ch4} represents the ROC curve of a purely random classifier; a good classifier stays as far away from that line as possible (toward the top-left corner). One way to compare classifiers is to measure the area under the curve (AUC). A perfect classifier will have a ROC AUC equal to 1, whereas a purely random classifier will have a ROC AUC equal to 0.5.
+The \textit{receiver operating characteristic} (ROC) curve is another common tool used with binary classifiers. It plots TPR (\textit{recall}) against FPR. The tradeoff is always present: the higher the recall, the more false positives (FPR) the classifier produces. The dashed line in \cref{fig:roc_curve} represents the ROC curve of a purely random classifier; a good classifier stays as far away from that line as possible (toward the top-left corner). One way to compare classifiers is to measure the area under the curve (AUC). A perfect classifier will have a ROC AUC equal to 1, whereas a purely random classifier will have a ROC AUC equal to 0.5.
 
 \begin{figure}[H]
     \centering
@@ -463,29 +456,28 @@ The \textit{receiver operating characteristic} (ROC) curve is another common too
             .. controls (0.4,0.96) and (0.6,0.99) .. (1,1);
     \end{tikzpicture}
     \caption{General shape of a ROC curve (solid) compared to a random classifier (dashed diagonal).}
-    \label{fig:roc_curve-ch4}
+    \label{fig:roc_curve}
 \end{figure}
 
 
 \section{Software and computational tools}
-\label{sec:software_tools-ch4}
+\label{sec:software_tools}
 
-% this paragraph is unfinished
+The code for this work was written in Python (version 3.11) and made use of multiple libraries for the dataset's exploration, implementation of PCA, Neural networks and plotting.
 
-In Python, PCA can be implemented using the \texttt{PCA} class provided by
-scikit-learn. The input is a numerical data matrix \(\mathbf{X}\), whose rows are the
-observations and whose columns are the original variables. Once the PCA object is fitted,
-the method \texttt{transform} projects the data onto the principal directions. The
-combined method \texttt{fit\_transform} performs both operations in a single call:
+The dataset was stored in a \texttt{.parquet} file, a column-based format designed for efficient data storage and retrieval and widely used in clinical data analytics, medical research, and machine learning. The information from the dataset was retrieved through \texttt{PyArrow}, an engine optimized for managing large datasets (in this case more than one million rows). Once the dataset was loaded into a data frame, manipulations such as filtering and label mapping were performed with \texttt{Pandas}, while numerical array operations relied on \texttt{NumPy}.
 
-\begin{verbatim}
-from sklearn.decomposition import PCA
+Dimensionality reduction and PCA were implemented by importing Scikit-Learn's PCA class as \texttt{sklearn.decomposition.PCA}. This import made available ad hoc functions and variables such as \texttt{.fit\_transform()} and \texttt{.explained\_variance\_ratio\_}, then used for computing SVD and the plotted data.
 
-pca = PCA(n_components=d)
-X_d_proj = pca.fit_transform(X)
-\end{verbatim}
+The dataset was divided into folds and split into training, validation and test sets using \texttt{GroupShuffleSplit} and \texttt{StratifiedGroupKFold} from Scikit-Learn's \texttt{model\_selection} module.
 
-In this code, \texttt{n\_components} is the number \(d\) of retained principal
-components, and \texttt{X\_d\_proj} is the projected data matrix. Scikit-learn centers
-the data internally before computing PCA, so the user provides the original data matrix
-and the algorithm estimates the principal axes from it.
+The ANN architectures were built through TensorFlow's Keras API as \texttt{Sequential} models of \texttt{Dense} layers. As described in \cref{sec:training}, training was controlled by two callbacks: \texttt{EarlyStopping} and \texttt{ReduceLROnPlateau}. AUC and loss were tracked during training in order to plot their values for each epoch, while test set performances on the metrics defined in \cref{sec:evaluation_metrics} were computed with Scikit-learn's \texttt{recall\_score}, \texttt{roc\_auc\_score}, \texttt{roc\_curve}, \texttt{confusion\_matrix}, \texttt{precision\_score} and \texttt{f1\_score} functions.
+The final spatial smoothing step (\cref{sec:spatial_post_processing}) was implemented with \texttt{scipy.ndimage.generic\_filter}, which allows the smoothing defined in \cref{eq:spatial_smoothing} to be applied directly.
+
+Finally, all the figures related to the dataset were generated with \texttt{Matplotlib} and \texttt{Seaborn} (a library built on top of the former, particularly useful for plotting annotated heatmaps).
+
+All the stochastic steps (fold and validation splitting, class balancing, PCA fitting, and the ANN's weight initialization) were run with a fixed seed in order to guarantee reproducibility.
+
+% LINK TO THE REPO
+
+% The full implementation is available at \url{https://github.com/claudiocaaruso/VibraAI}.
