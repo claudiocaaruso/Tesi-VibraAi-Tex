@@ -2,47 +2,27 @@
 \chapter{Aim of the thesis}
 \label{sec:aim_thesis}
 
-The present work is based on spontaneous Raman hyperspectral maps acquired from
-patient-derived tumour slice cultures of head and neck squamous cell carcinoma
-(HNSCC). These samples are ex vivo tissue sections obtained from surgical tumour
-specimens and preserve, at least in part, the morphological and biochemical heterogeneity
-of the original tissue. 
+This thesis was carried out within the VIBRA research group, which poses as its primary aim to develop a next-generation microscopy system capable of inspecting in two dimensions the chemical content of a biological specimen using Raman scattering techniques, more specifically to identify tumors in human biopsies with accuracy and reproducibility.
 
-The acquisition of the Raman maps and the preprocessing of the raw
-spectra were not performed as part of this thesis; the analysis starts from spectra already
-calibrated, preprocessed and organized in a form suitable for computational processing.
+The object of this work consist of hyperspectral maps acquired from
+patient-derived head and neck squamous cell carcinoma (HNSCC) slice cultures and already prepared for computation. Each pixel of the map is associated with a Raman spectrum composed of 483 Raman-shift variables containing relevant biological information and a label indicating the type of associated tissue.
+%HNSCC constitutes the vast majority of the
+%broader category of head and neck tumors; it develops from the mucosal epithelium in
+%the oral cavity, pharynx, larynx and sinonasal tract and is classified as the sixth most
+%common cancer worldwide, with estimates foreseeing an increasing trend in incidence and
+%occurrences in the upcoming years.
 
-***(la parte sopra potrebbe sostituire completamente il paragrafo su data provenence?)***
+The aim pursued in this thesis is to use machine learning methods, in particular Principal Component Analysis and an Artificial Neural Network implemented in Python, on available data to classify the biological composition of the samples, with particular interest in binary classification to identify a defined tumor class among the tissue types present in the maps.
 
-
-Each measured point of a Raman map is associated with a complete Raman spectrum and
-with a spatial position within the tissue section. The available data therefore combine
-spectral information, related to the biochemical composition of the measured region, and
-spatial information, related to the arrangement of the sampled points within the map.
-
-The aim of this thesis is to evaluate a machine learning approach for the binary
-classification of Raman spectra, with particular attention to the recognition of tumour
-tissue. The analysis combines an exploratory study based on Principal Component
-Analysis (PCA) with the implementation of an artificial neural network (ANN) classifier.
-Two binary classification settings are considered: the discrimination between tumour and
-stroma, and the discrimination between tumour and all non-tumour tissue classes included
-in the available annotations.
-
-The work will be developed through three main computational steps:
+In detail, the work will focus on the following steps:
 \begin{itemize}
-    \item an exploratory analysis of the available dataset;
-    \item the application of Principal Component Analysis (PCA) to inspect the spectral
-    variability and obtain a reduced representation of the spectra;
-    \item the implementation of an artificial neural network (ANN) for binary
-    classification.
+    \item First, the available data are examined both quantitatively and qualitatively; their structure and statistical distribution are investigated, and the biological relevance of the tissue classes present is assessed in preparation for defining the binary classification problem;
+
+    \item The data are then subjected to PCA application with the aim of achieving a dimensional reduction of the representation space and capturing the variance of the dataset along the spectral bands, to inspect whether a reduced representation is appropriate. Moreover, this enables the identification of important features that can be used for data separation and inspection;
+
+    \item Three different artificial neural network models are implemented, and their performance is evaluated by testing them on two distinct binary classification tasks, both of which classify data into tumor and healthy classes. The aim is to determine which of the tested architectures performs best in terms of prediction results and computational complexity;
 \end{itemize}
 
-necessario dire questa cosa?--->
-***The results should be interpreted as an assessment of this computational pipeline on
-the available Raman dataset. They do not constitute a clinical validation of Raman
-spectroscopy as a diagnostic tool. Such a validation would require a larger and
-independent cohort of samples, a predefined clinical protocol and systematic comparison
-with established diagnostic procedures.***
-
-
+The acquisition of the maps and the preparation of the raw spectra were not part of the work undertaken in this thesis: a home-built Raman microspectroscopy system was employed to acquire hyperspectral maps of HNSCC samples subjected to different treatment conditions on different time points. A dedicated preprocessing workflow was designed, together with custom Python
+tools for background subtraction and pixel-wise annotation of maps. This analysis starts with Raman data already organized and pre-processed for computational exploration and characterization.
 
