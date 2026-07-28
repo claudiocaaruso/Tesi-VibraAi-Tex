@@ -87,7 +87,7 @@ The score plots in \Cref{fig:pca_score_pc1_pc2} and \Cref{fig:pca_score_pc1_pc48
 
 \Cref{fig:pca_score_pc1_pc2} shows how the cloud is distributed along both the PC1 and PC2 axes, with a wider spatial extent along the former, consistent with the fact that the former component explains a greater variance. Points associated with spectra labelled differently, depicted in different colours, overlap, indicating that the biological classes are not distinguishable in this examination. More specifically, it is relevant to point the attention on the distribution of the tumoral classes: label 2 (\textit{tumor}) appears widely distributed, suggesting a strong spectral similarity to several of the tissues under consideration; label 20 (\textit{tumor with necrosis}) seems to be concentrated more on the right side of the cloud, but it still overlaps too much with other labels to allow for definitive conclusions. Since PCA is unsupervised, it is not necessarily expected to find a criterion for classification
  
-\Cref{fig:pca_score_.pc1_pc483} highlights the large difference in the distribution of data along the first and last components calculated by PCA. The cloud is particularly wide along the first component and compressed almost to zero along PC483, with few exceptions with respect to the number of data. 
+\Cref{fig:pca_score_pc1_pc483} highlights the large difference in the distribution of data along the first and last components calculated by PCA. The cloud is particularly wide along the first component and compressed almost to zero along PC483, with few exceptions with respect to the number of data. 
 
 \section{Configuration of the final experiments}
 \label{sec:final_experiments_configuration}
@@ -142,12 +142,14 @@ Although some configurations with more components or larger networks obtained eq
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{Images/images_ch_5/overfitting_example_L200.png}
+    \includegraphics[width=0.8\textwidth]{Images/images_ch_5/overfitting_example_L200.png}
     \caption{Training and validation curves for the large architecture (L) with \(200\) retained PCA components on the macro-class problem (\textit{tumor} vs. \textit{healthy}). The lines show the average value of the metric across 5 folds, while shaded areas display $\pm\sigma$ from the average. The growing separation between training and validation curves is a sign of overfitting.}
     \label{fig:overfitting_example_L200}
 \end{figure}
 
 The maximum number of epochs was set to \(100\), although \textit{early stopping} \cref{sec:training-ch4} often halted the training as soon as at epoch 20 due to validation already plateauing. \textit{Early stopping} often acted when prematurely due to noise in the validation curves when working with small batch sizes smaller than 2048. Increasing batch size does in fact average the gradient descent step over more observations, smoothing out the curve and speeding up training, although raising the risk of converging towards sharp minima, which would lead to poor generalization. The final value for the batch size was set as 4096, found to be a good compromise for this task.
+
+%talk about computational complexity and training times
 
 The decision threshold used to convert the predicted probability into a binary label was selected empirically by comparing threshold values between \(0.45\) and \(0.50\). The final value was set to \(\tau=0.49\), slightly below the standard threshold of \(0.50\), as it provided a compromise between favouring recall for the positive class and maintaining balanced overall performance. In this application, a false negative, corresponding to a tumour-related spectrum classified as non-tumour, is considered more critical than a false positive, corresponding to a non-tumour spectrum classified as tumour-related. A slightly lower threshold increases the tendency of the classifier to assign spectra to the positive class, supporting recall to tumour-related spectra without excessively penalizing accuracy, as seen in \cref{sec:evaluation_metrics-ch4}.
 
@@ -176,27 +178,51 @@ The decision threshold used to convert the predicted probability into a binary l
 
 The configurations chosen for the two approaches, listed in \cref{tab:selected_hyperparameters} were further analized to asses their effectiveness.
 
-The confusion matrixes and ROC curves showed good results for both problems. The macro-class approach performed slightly below the single-class one, especially in non-tumoral classification (True negatives scores equaled 0.71 and 0.75 respectively). This is a direct consequence of the internal heterogeneity for the healthy class.
-
-%talk about roc and auc per sample
-
-%show graphs of CM, roc, auc
+The confusion matrixes and ROC curves, explained in \cref{sec:evaluation_metrics-ch4}, showed good results for both problems. The macro-class approach performed slightly worse the single-class one, especially in non-tumoral classification (True negatives scores equaled 0.71 and 0.75 respectively). This is a direct consequence of the internal heterogeneity for the healthy class. The ROC curves for showed symmetrical behavior respect to the TPR and FNR, with high variability depending on the validation fold composition. Mean AUC across 5 folds achieved scores of $\text{AUC} = 0.799\pm0.064$, relative standard deviation $\sigma_{relative} = 8\%$, for the macro-class problem (\cref{fig:results_S20_macroclass}), and $\text{AUC} = 0.836\pm0.038$, $\sigma_{relative} = 4.5\%$, for the single-class problem (\cref{fig:results_S10_singleclass}). The difference in mean AUC and standard deviation once again indicates the macro-class approach as the most difficult and inconsistent.
 
 
-The training behavior was observed to be 
-The curves for the single class improved regularly in the early stages of training until reaching a plateau after $\sim20$ epochs on average.
+\begin{figure}[H]
+    \centering
+    \subfloat[Confusion matrix.\label{fig:CM_S20_macroclass}]{
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_5/CM_S20_macroclass.png}
+    }
+    \hfill
+    \subfloat[ROC curve.\label{fig:ROC_S20_macroclass}]{
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_5/ROC_S20_macroclass.png}
+    }
+    \caption{Confusion matrix and ROC curve for the macro-class problem (\textit{tumor} vs. \textit{healthy}).}
+    \label{fig:results_S20_macroclass}
+\end{figure}
 
-%talk more about curves and show curves
+\begin{figure}[H]
+    \centering
+    \subfloat[Confusion matrix.\label{fig:CM_S10_singleclass}]{
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_5/CM_S10_singleclass.png}
+    }
+    \hfill
+    \subfloat[ROC curve.\label{fig:ROC_S10_singleclass}]{
+        \includegraphics[width=0.4\textwidth]{Images/images_ch_5/ROC_S10_singleclass.png}
+    }
+    \caption{Confusion matrix and ROC curve for the single-class problem (\textit{tumor} vs. \textit{tumor stroma}).}
+    \label{fig:results_S10_singleclass}
+\end{figure}
 
-\textbf{Writing notes.} This section should report the quantitative performance obtained across folds. Here the two experiments should probably be compared in parallel, using the same metrics.
 
-\begin{itemize}
-    \item Insert a table with fold-wise results and mean \(\pm\) standard deviation for each experiment.
-    \item Report the main evaluation metrics introduced in \Cref{sec:evaluation_metrics-ch4}.
-    \item Insert the aggregated confusion matrix for each experiment.
-    \item Discuss the variability across folds, not only the average values.
-    \item Highlight whether the broader tumour vs non-tumour task is harder than the more specific tumour vs stroma task.
-\end{itemize}
+The training behavior was observed to be different between the two problems. The validation curves for the macro-class classification displahed very high variability stabilized almost immediately (\cref{fig:curves_S10_singleclass}). The model learns very quickly the basic patterns and trends succeding to achieve an AUC of 0.799, specially thanks to the homogeneity of the the tumoral class, but does not improve further and fails to generalize as well in for the healthy class.
+The curves for the single-class problem, on the other hand, improved regularly in the early stages of training until reaching a plateau after $\sim5$ epochs. All the validation curves sit above the training ones for the first epochs due to being evaluated after the weights are updated (while training is evaluated before the weight update). The two curves then intersect and validation stays below training, within acceptable margin. the random fold composition and small validation set size cause the standard deviation on validation to be greater than on training, and enough to cause the average validation to sit above training for some folds.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Macro-class problem (\textit{tumor} vs. \textit{healthy}).\label{fig:curves_S20_macroclass}]{
+        \includegraphics[width=0.8\textwidth]{Images/images_ch_5/curves_S20_macroclass.png}
+    }
+    \\
+    \subfloat[Single-class problem (\textit{tumor} vs. \textit{tumor stroma}).\label{fig:curves_S10_singleclass}]{
+        \includegraphics[width=0.8\textwidth]{Images/images_ch_5/Curves_S10_singleclass.png}
+    }
+    \caption{Training and validation curves for the macro-class and single-class problems. The lines show the average value of the metric across 5 folds, while shaded areas display $\pm\sigma$ from the average. The representation is truncated at the number of epochs used to train the fold that stopped first, although other folds took up to 80 epochs to train.}
+    \label{fig:training_curves}
+\end{figure}
 
 
 \section{Per-sample analysis}
