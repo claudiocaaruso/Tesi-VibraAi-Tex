@@ -122,23 +122,23 @@ The final ANN experiments are evaluated in terms of training behaviour, aggregat
 
 The configuration adopted for the final classification experiments was selected through the hyperparameter search described in \Cref{sec:training-ch4}, which compared different model sizes, numbers of retained PCA components and batch sizes.
 
-The comparison of the tested configurations showed comparable results for all three architectures at equal number of retained PCs. A substantial improvement in the metrics was registered when raising the number of PCs from 1 to 20 for the macro-class problem (\textit{tumor} vs. \textit{healthy}), and a plateau from 20 to 483 PCs. In the single-class problem (\textit{tumor} vs. \textit{tumor stroma}), the metrics improved from 1 to 10, flattening out for bigger dimensionalities, as shown in \cref{fig:heatmap_auc_macroclass,fig:heatmap_auc_singleclass} respectively.
+The comparison of the tested configurations showed comparable results for all three architectures (small (S), medium (M), and large (L)) at an equal number of retained PCs. A substantial improvement in the metrics was registered when raising the number of PCs from 1 to 20 for the macro-class problem (\textit{tumor} vs. \textit{healthy}), and a plateau from 20 to 483 PCs (\cref{fig:heatmap_auc_macroclass}). In the single-class problem (\textit{tumor} vs. \textit{tumor stroma}), the metrics improved from 1 to 10, flattening out for bigger dimensionalities (\cref{fig:heatmap_auc_singleclass}).
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/images_ch_5/heatmap_auc_macroclass.png}
-    \caption{AUC across the grid of network architectures and number of retained PCs components for the macro-class problem.  AUC stabilizes for numbers of PCs greater than 20.(\textit{tumor} vs. \textit{healthy}).}
+    \caption{AUC across the grid of network architectures and number of retained PCs for the macro-class problem (\textit{tumor} vs. \textit{healthy}). AUC stabilizes for numbers of PCs greater than 20.}
     \label{fig:heatmap_auc_macroclass}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/images_ch_5/heatmap_auc_singleclass.png}
-    \caption{AUC across the grid of network architectures and number of retained PCs components for the single-class problem. AUC stabilizes for numbers of PCs greater than 10.(\textit{tumor} vs. \textit{tumor stroma}).}
+    \caption{AUC across the grid of network architectures and number of retained PCs for the single-class problem (\textit{tumor} vs. \textit{tumor stroma}). AUC stabilizes for numbers of PCs greater than 10.}
     \label{fig:heatmap_auc_singleclass}
 \end{figure}
 
-Although some configurations with more components or larger networks obtained equally good scores for AUC, their training curves showed less stable behaviour and a larger discrepancy between training and validation performance which also increased with the epochs. These behavior, exemplified by \cref{fig:overfitting_example_L200} is a clear sign of overfitting. The small model, on the contrary, showed similar behaviors in training and validation for all the considered metrics (\cref{sec:aggregated_classification_results}) and was therefore prefered as a final choice.
+Although some configurations with more components or larger networks obtained equally good scores for AUC, their training curves showed less stable behavior and a larger discrepancy between training and validation performance that also increased with the number of epochs. This behavior, exemplified by \cref{fig:overfitting_example_L200}, is a clear sign of overfitting. The small model, on the contrary, showed more similarity between training and validation for the considered metrics (\cref{fig:training_curves}) and was therefore preferred as a final choice.
 
 \begin{figure}[h]
     \centering
@@ -147,11 +147,11 @@ Although some configurations with more components or larger networks obtained eq
     \label{fig:overfitting_example_L200}
 \end{figure}
 
-The maximum number of epochs was set to \(100\), although \textit{early stopping} \cref{sec:training-ch4} often halted the training as soon as at epoch 20 due to validation already plateauing. \textit{Early stopping} often acted when prematurely due to noise in the validation curves when working with small batch sizes smaller than 2048. Increasing batch size does in fact average the gradient descent step over more observations, smoothing out the curve and speeding up training, although raising the risk of converging towards sharp minima, which would lead to poor generalization. The final value for the batch size was set as 4096, found to be a good compromise for this task.
+The maximum number of epochs was set to \(100\), although \textit{early stopping} (\cref{sec:training-ch4}) often halted the training as early as epoch 20 due to validation already plateauing, with some folds training for up to 80 epochs before stopping (\cref{fig:training_curves}). \textit{Early stopping} often acted prematurely due to noise in the validation curves when working with batch sizes smaller than 2048. Increasing batch size in fact averages the gradient descent step over more observations, smoothing out the curve and speeding up training, while also raising the risk of converging towards sharp minima, which would lead to poor generalization. The final value for the batch size was set to \(4096\), found to be a good compromise for this task.
 
 %talk about computational complexity and training times
 
-The decision threshold used to convert the predicted probability into a binary label was selected empirically by comparing threshold values between \(0.45\) and \(0.50\). The final value was set to \(\tau=0.49\), slightly below the standard threshold of \(0.50\), as it provided a compromise between favouring recall for the positive class and maintaining balanced overall performance. In this application, a false negative, corresponding to a tumour-related spectrum classified as non-tumour, is considered more critical than a false positive, corresponding to a non-tumour spectrum classified as tumour-related. A slightly lower threshold increases the tendency of the classifier to assign spectra to the positive class, supporting recall to tumour-related spectra without excessively penalizing accuracy, as seen in \cref{sec:evaluation_metrics-ch4}.
+The decision threshold used to convert the predicted probability into a binary label was selected empirically by comparing threshold values between \(0.45\) and \(0.50\). The final value was set to \(\tau=0.49\), slightly below the standard threshold of \(0.50\), as it provided a compromise between favoring recall of the positive class and maintaining balanced overall performance. In this application, a false negative, corresponding to a tumor-related spectrum classified as non-tumor, is considered more critical than a false positive, corresponding to a non-tumor spectrum classified as tumor-related. A slightly lower threshold increases the tendency of the classifier to assign spectra to the positive class, supporting recall for tumor-related spectra without excessively penalizing accuracy, as seen in \cref{sec:evaluation_metrics-ch4}.
 
 \begin{table}[H]
     \centering
@@ -168,7 +168,7 @@ The decision threshold used to convert the predicted probability into a binary l
         Decision threshold & \multicolumn{2}{c|}{\(\tau=0.49\)} \\
         \hline
     \end{tabular}
-    \caption{Configurations used for the final ANN experiments, for the macro-class (\textit{tumor} vs. \textit{healthy}) and single-class (\textit{tumor} vs. \textit{tumor stroma}) problems.}
+    \caption{Configurations used in the final ANN experiments, for the macro-class (\textit{tumor} vs. \textit{healthy}) and single-class (\textit{tumor} vs. \textit{tumor stroma}) problems.}
     \label{tab:selected_hyperparameters}
 \end{table}
 
@@ -176,9 +176,9 @@ The decision threshold used to convert the predicted probability into a binary l
 \section{Aggregated classification results}
 \label{sec:aggregated_classification_results}
 
-The configurations chosen for the two approaches, listed in \cref{tab:selected_hyperparameters} were further analized to asses their effectiveness.
+The configurations chosen for the two approaches, listed in \cref{tab:selected_hyperparameters}, were further analyzed to assess their effectiveness.
 
-The confusion matrixes and ROC curves, explained in \cref{sec:evaluation_metrics-ch4}, showed good results for both problems. The macro-class approach performed slightly worse the single-class one, especially in non-tumoral classification (True negatives scores equaled 0.71 and 0.75 respectively). This is a direct consequence of the internal heterogeneity for the healthy class. The ROC curves for showed symmetrical behavior respect to the TPR and FNR, with high variability depending on the validation fold composition. Mean AUC across 5 folds achieved scores of $\text{AUC} = 0.799\pm0.064$, relative standard deviation $\sigma_{relative} = 8\%$, for the macro-class problem (\cref{fig:results_S20_macroclass}), and $\text{AUC} = 0.836\pm0.038$, $\sigma_{relative} = 4.5\%$, for the single-class problem (\cref{fig:results_S10_singleclass}). The difference in mean AUC and standard deviation once again indicates the macro-class approach as the most difficult and inconsistent.
+The confusion matrices and ROC curves, explained in \cref{sec:evaluation_metrics-ch4}, showed good results for both problems. The macro-class approach performed slightly worse than the single-class one, especially in non-tumoral classification (true negative rates equaled 0.71 and 0.75 respectively). This is a direct consequence of the internal heterogeneity of the healthy class. The ROC curves showed symmetrical behavior with respect to the TPR and FNR, with high variability depending on the validation fold composition. Mean AUC across 5 folds achieved scores of $\text{AUC} = 0.799\pm0.072$, relative standard deviation $\sigma_{relative} = 9\%$, for the macro-class problem (\cref{fig:results_S20_macroclass}), and $\text{AUC} = 0.836\pm0.043$, $\sigma_{relative} = 5.1\%$, for the single-class problem (\cref{fig:results_S10_singleclass}). The difference in mean AUC and standard deviation once again indicates that, on average, the macro-class approach is more difficult and less consistent than the single-class one.
 
 
 \begin{figure}[H]
@@ -208,8 +208,9 @@ The confusion matrixes and ROC curves, explained in \cref{sec:evaluation_metrics
 \end{figure}
 
 
-The training behavior was observed to be different between the two problems. The validation curves for the macro-class classification displahed very high variability stabilized almost immediately (\cref{fig:curves_S10_singleclass}). The model learns very quickly the basic patterns and trends succeding to achieve an AUC of 0.799, specially thanks to the homogeneity of the the tumoral class, but does not improve further and fails to generalize as well in for the healthy class.
-The curves for the single-class problem, on the other hand, improved regularly in the early stages of training until reaching a plateau after $\sim5$ epochs. All the validation curves sit above the training ones for the first epochs due to being evaluated after the weights are updated (while training is evaluated before the weight update). The two curves then intersect and validation stays below training, within acceptable margin. the random fold composition and small validation set size cause the standard deviation on validation to be greater than on training, and enough to cause the average validation to sit above training for some folds.
+The training behavior was observed to be different between the two problems. All the validation curves sit above the training ones for the first epochs due to being evaluated after the weights are updated (while training is evaluated before the weight update). The two curves then intersect, and validation stays below training.
+The validation curves for the macro-class classification displayed very high variability but stabilized after only $\sim2$ epochs (\cref{fig:curves_S20_macroclass}), causing the gap between the curves to mildly increase. The model quickly learned the basic patterns and trends, achieving an AUC of 0.799, especially thanks to the homogeneity of the tumoral class, but did not improve further and failed to generalize as well for the healthy class.
+The curves for the single-class problem, on the other hand, improved regularly in the early stages of training until reaching a plateau after $\sim5$ epochs, with validation staying within an acceptable margin below training. The random fold composition and small validation set size cause the standard deviation of the validation metric to be greater than that of training, enough for some individual folds to show validation above training, even though the average curve remains below.
 
 \begin{figure}[H]
     \centering
@@ -223,6 +224,27 @@ The curves for the single-class problem, on the other hand, improved regularly i
     \caption{Training and validation curves for the macro-class and single-class problems. The lines show the average value of the metric across 5 folds, while shaded areas display $\pm\sigma$ from the average. The representation is truncated at the number of epochs used to train the fold that stopped first, although other folds took up to 80 epochs to train.}
     \label{fig:training_curves}
 \end{figure}
+
+\Cref{tab:aggregated_metrics} summarizes the main evaluation metrics, averaged across the 5 cross-validation folds, for both experiments.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Macro-class} & \textbf{Single-class} \\
+        \hline
+        AUC & \(0.799\pm0.072\) & \(0.836\pm0.043\) \\
+        \hline
+        Recall (TPR) & \(0.738\pm0.107\) & \(0.760\pm0.098\) \\
+        \hline
+        Specificity (TNR) & \(0.712\pm0.119\) & \(0.749\pm0.073\) \\
+        \hline
+        Precision & \(0.761\pm0.069\) & \(0.893\pm0.022\) \\
+        \hline
+    \end{tabular}
+    \caption{Mean and standard deviation, across the 5 cross-validation folds, of the main evaluation metrics for the two problems.}
+    \label{tab:aggregated_metrics}
+\end{table}
 
 
 \section{Per-sample analysis}
