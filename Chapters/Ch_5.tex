@@ -5,7 +5,7 @@ This chapter presents the experimental results obtained with the computational p
 \section{Exploratory PCA of the dataset}
 \label{sec:pca_dataset}
 
-In this work, PCA was first used as an exploratory tool to inspect the structure of the Raman dataset before building the classification model. To perform this step, PCA was calculated on the entire dataset after removing the non-informative labels, namely unlabelled/transparent pixels and artefacts, as described in \Cref{sec:labels-ch4}.
+In this work, PCA was first used as an exploratory tool to inspect the structure of the Raman dataset before building the classification model. To perform this step, PCA was calculated on the entire dataset after removing the non-informative labels, namely unlabelled/transparent pixels and artefacts, as described in \Cref{sec:labels}.
 
 As discussed previously, PCA is an unsupervised machine learning method. The final objective of this analysis is therefore not to decide which spectral components are more relevant to distinguish different biological samples or to classify them according to their composition, but rather to investigate the content of the spectra in terms of explained variance to understand whether they contain particularly relevant directions and whether a more compact representation may be adequate for our dataset. If this were the case, it would be possible to reduce the dimensionality of our data to the number of components most suitable for training the artificial neural network, for the reasons explained in \Cref{sec:dimensionality_reduction}. 
 
@@ -21,7 +21,7 @@ The matrix was constructed so that each column corresponds to one of the 483 ban
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{Images/images_ch_3/05_original_vs_centered_spectrum.png}
+    \includegraphics[width=0.65\textwidth]{Images/images_ch_5/05_original_vs_centered_spectrum.png}
     \caption{Example of an original Raman spectrum and the corresponding centered spectrum used for PCA.}
     \label{fig:original_centered_spectrum}
 \end{figure}
@@ -34,7 +34,7 @@ After the computation of the new principal components, the most interesting para
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{Images/images_ch_3/07_scree_plot_explained_variance.png}
+    \includegraphics[width=0.65\textwidth]{Images/images_ch_5/07_scree_plot_explained_variance.png}
     \caption{Explained variance associated with the first principal components.}
     \label{fig:pca_scree_plot}
 \end{figure}
@@ -43,7 +43,7 @@ The cumulative explained variance illustrated in \Cref{fig:pca_cumulative_varian
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{Images/images_ch_3/06_cumulative_explained_variance.png}
+    \includegraphics[width=0.65\textwidth]{Images/images_ch_5/06_cumulative_explained_variance.png}
     \caption{Cumulative explained variance as a function of the number of retained principal components.}
     \label{fig:pca_cumulative_variance}
 \end{figure}
@@ -54,11 +54,11 @@ spectrum with just one component and with \(89\) components. The first component
 \begin{figure}[H]
     \centering
     \subfloat[Reconstruction using the first principal component.\label{fig:pca_reconstructed_1}]{
-        \includegraphics[width=0.48\textwidth]{Images/images_ch_3/12_original_vs_reconstructed_1_components.png}
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_5/12_original_vs_reconstructed_1_components.png}
     }
     \hfill
     \subfloat[Reconstruction using the first \(89\) principal components.\label{fig:pca_reconstructed_89}]{
-        \includegraphics[width=0.48\textwidth]{Images/images_ch_3/12_original_vs_reconstructed_89_components.png}
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_5/12_original_vs_reconstructed_89_components.png}
     }
     \caption{Comparison between an original Raman spectrum and its PCA reconstruction using different numbers of retained principal components.}
     \label{fig:pca_reconstruction_comparison}
@@ -75,11 +75,11 @@ The score plots in \Cref{fig:pca_score_pc1_pc2} and \Cref{fig:pca_score_pc1_pc48
 \begin{figure}[H]
     \centering
     \subfloat[Projection onto PC1 and PC2.\label{fig:pca_score_pc1_pc2}]{
-        \includegraphics[width=0.48\textwidth]{Images/images_ch_3/08_pca_score_plot_pc1_pc2.png}
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_5/08_pca_score_plot_pc1_pc2.png}
     }
     \hfill
     \subfloat[Projection onto PC1 and PC483.\label{fig:pca_score_pc1_pc483}]{
-        \includegraphics[width=0.48\textwidth]{Images/images_ch_3/09_pca_score_plot_pc1_pc483.png}
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_5/09_pca_score_plot_pc1_pc483.png}
     }
     \caption{Score plots of Raman spectra in the PCA space.}
     \label{fig:pca_score_plots}
@@ -111,7 +111,7 @@ The final ANN models were trained for the two binary tasks reported in \Cref{tab
     \label{tab:final_binary_experiments}
 \end{table}
 
-In both experiments, the positive class includes tumour and tumour with necrosis, consistently with the definition of the binary classification problems in \Cref{sec:binary_classification-ch4}. The first experiment compares this tumour-related class with tumour stroma, whereas the second compares it with all valid non-tumour tissue classes available in the dataset. The latter setting is broader and more heterogeneous, since its negative class includes multiple histopathological labels.
+In both experiments, the positive class includes tumour and tumour with necrosis, consistently with the definition of the binary classification problems in \Cref{sec:binary_classification}. The first experiment compares this tumour-related class with tumour stroma, whereas the second compares it with all valid non-tumour tissue classes available in the dataset. The latter setting is broader and more heterogeneous, since its negative class includes multiple histopathological labels.
 
 The final ANN experiments are evaluated in terms of training behaviour, aggregate performance, per-sample variability and the effect of spatial post-processing.
 
@@ -120,7 +120,7 @@ The final ANN experiments are evaluated in terms of training behaviour, aggregat
 
 %check if the title is good or it must be changed
 
-The configuration adopted for the final classification experiments was selected through the hyperparameter search described in \Cref{sec:training-ch4}, which compared different model sizes, numbers of retained PCA components and batch sizes.
+The configuration adopted for the final classification experiments was selected through the hyperparameter search described in \Cref{sec:training}, which compared different model sizes, numbers of retained PCA components and batch sizes.
 
 The comparison of the tested configurations showed comparable results for all three architectures (small (S), medium (M), and large (L)) at an equal number of retained PCs. A substantial improvement in the metrics was registered when raising the number of PCs from 1 to 20 for the macro-class problem (\textit{tumor} vs. \textit{healthy}), and a plateau from 20 to 483 PCs (\cref{fig:heatmap_auc_macroclass}). In the single-class problem (\textit{tumor} vs. \textit{tumor stroma}), the metrics improved from 1 to 10, flattening out for bigger dimensionalities (\cref{fig:heatmap_auc_singleclass}).
 
@@ -147,11 +147,11 @@ Although some configurations with more components or larger networks obtained eq
     \label{fig:overfitting_example_L200}
 \end{figure}
 
-The maximum number of epochs was set to \(100\), although \textit{early stopping} (\cref{sec:training-ch4}) often halted the training as early as epoch 20 due to validation already plateauing, with some folds training for up to 80 epochs before stopping (\cref{fig:training_curves}). \textit{Early stopping} often acted prematurely due to noise in the validation curves when working with batch sizes smaller than 2048. Increasing batch size in fact averages the gradient descent step over more observations, smoothing out the curve and speeding up training, while also raising the risk of converging towards sharp minima, which would lead to poor generalization. The final value for the batch size was set to \(4096\), found to be a good compromise for this task.
+The maximum number of epochs was set to \(100\), although \textit{early stopping} (\cref{sec:training}) often halted the training as early as epoch 20 due to validation already plateauing, with some folds training for up to 80 epochs before stopping (\cref{fig:training_curves}). \textit{Early stopping} often acted prematurely due to noise in the validation curves when working with batch sizes smaller than 2048. Increasing batch size in fact averages the gradient descent step over more observations, smoothing out the curve and speeding up training, while also raising the risk of converging towards sharp minima, which would lead to poor generalization. The final value for the batch size was set to \(4096\), found to be a good compromise for this task.
 
-%talk about computational complexity and training times
+%talk about computational complexity 
 
-The decision threshold used to convert the predicted probability into a binary label was selected empirically by comparing threshold values between \(0.45\) and \(0.50\). The final value was set to \(\tau=0.49\), slightly below the standard threshold of \(0.50\), as it provided a compromise between favoring recall of the positive class and maintaining balanced overall performance. In this application, a false negative, corresponding to a tumor-related spectrum classified as non-tumor, is considered more critical than a false positive, corresponding to a non-tumor spectrum classified as tumor-related. A slightly lower threshold increases the tendency of the classifier to assign spectra to the positive class, supporting recall for tumor-related spectra without excessively penalizing accuracy, as seen in \cref{sec:evaluation_metrics-ch4}.
+The decision threshold used to convert the predicted probability into a binary label was selected empirically by comparing threshold values between \(0.45\) and \(0.50\). The final value was set to \(\tau=0.49\), slightly below the standard threshold of \(0.50\), as it provided a compromise between favoring recall of the positive class and maintaining balanced overall performance. In this application, a false negative, corresponding to a tumor-related spectrum classified as non-tumor, is considered more critical than a false positive, corresponding to a non-tumor spectrum classified as tumor-related. A slightly lower threshold increases the tendency of the classifier to assign spectra to the positive class, supporting recall for tumor-related spectra without excessively penalizing accuracy, as seen in \cref{sec:evaluation_metrics}.
 
 \begin{table}[H]
     \centering
@@ -178,7 +178,7 @@ The decision threshold used to convert the predicted probability into a binary l
 
 The configurations chosen for the two approaches, listed in \cref{tab:selected_hyperparameters}, were further analyzed to assess their effectiveness.
 
-The confusion matrices and ROC curves, explained in \cref{sec:evaluation_metrics-ch4}, showed good results for both problems. The macro-class approach performed slightly worse than the single-class one, especially in non-tumoral classification (true negative rates equaled 0.71 and 0.75 respectively). This is a direct consequence of the internal heterogeneity of the healthy class. The ROC curves showed symmetrical behavior with respect to the TPR and FNR, with high variability depending on the validation fold composition. Mean AUC across 5 folds achieved scores of $\text{AUC} = 0.799\pm0.072$, relative standard deviation $\sigma_{relative} = 9\%$, for the macro-class problem (\cref{fig:results_S20_macroclass}), and $\text{AUC} = 0.836\pm0.043$, $\sigma_{relative} = 5.1\%$, for the single-class problem (\cref{fig:results_S10_singleclass}). The difference in mean AUC and standard deviation once again indicates that, on average, the macro-class approach is more difficult and less consistent than the single-class one.
+The confusion matrices and ROC curves, explained in \cref{sec:evaluation_metrics}, showed good results for both problems. The macro-class approach performed slightly worse than the single-class one, especially in non-tumoral classification (true negative rates equaled 0.71 and 0.75 respectively). This is a direct consequence of the internal heterogeneity of the healthy class. The ROC curves showed symmetrical behavior with respect to the TPR and FNR, with high variability depending on the validation fold composition. Mean AUC across 5 folds achieved scores of $\text{AUC} = 0.799\pm0.072$, relative standard deviation $\sigma_{relative} = 9\%$, for the macro-class problem (\cref{fig:results_S20_macroclass}), and $\text{AUC} = 0.836\pm0.043$, $\sigma_{relative} = 5.1\%$, for the single-class problem (\cref{fig:results_S10_singleclass}). The difference in mean AUC and standard deviation once again indicates that, on average, the macro-class approach is more difficult and less consistent than the single-class one.
 
 
 \begin{figure}[H]
@@ -219,7 +219,7 @@ The curves for the single-class problem, on the other hand, improved regularly i
     }
     \\
     \subfloat[Single-class problem (\textit{tumor} vs. \textit{tumor stroma}).\label{fig:curves_S10_singleclass}]{
-        \includegraphics[width=0.8\textwidth]{Images/images_ch_5/Curves_S10_singleclass.png}
+        \includegraphics[width=0.8\textwidth]{Images/images_ch_5/curves_S10_singleclass.png}
     }
     \caption{Training and validation curves for the macro-class and single-class problems. The lines show the average value of the metric across 5 folds, while shaded areas display $\pm\sigma$ from the average. The representation is truncated at the number of epochs used to train the fold that stopped first, although other folds took up to 80 epochs to train.}
     \label{fig:training_curves}
@@ -282,7 +282,7 @@ GRAFICO DA SOSTITUIRE
 \section{Effect of spatial smoothing}
 \label{sec:effect_spatial_smoothing}
 
-In this section, the results obtained by applying the spatial filter described in \Cref{sec:spatial_post_processing-ch4} to the model's predicted probabilities are evaluated to verify whether computing a local average can improve the model's predictions and to demonstrate that the spatial context contains crucial information for our purpose.
+In this section, the results obtained by applying the spatial filter described in \Cref{sec:spatial_post_processing} to the model's predicted probabilities are evaluated to verify whether computing a local average can improve the model's predictions and to demonstrate that the spatial context contains crucial information for our purpose.
 
 The comparison of raw and smoothed results for both binary problems, presented in \Cref{tab:smoothing_heatmap}, showed that the filter helps to improve the prediction as expected, but the size of the kernel can't be increased too much and must be chosen with caution based on the total discrimination capacity (\textit{AUC}), the ability to detect the positive class (\textit{TPR}/\textit{recall}) and the ability to preserve the negative one (\textit{TNR}/\textit{specificity}).
 
