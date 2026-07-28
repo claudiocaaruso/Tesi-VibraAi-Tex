@@ -241,15 +241,86 @@ The curves for the single-class problem, on the other hand, improved regularly i
 \section{Effect of spatial smoothing}
 \label{sec:effect_spatial_smoothing}
 
-\textbf{Writing notes.} This section should evaluate the post-processing step described in \Cref{sec:spatial_post_processing-ch4}.
+In this section, the results obtained by applying the spatial filter described in \Cref{sec:spatial_post_processing-ch4} to the model's predicted probabilities are evaluated to verify whether computing a local average can improve the model's predictions and to demonstrate that the spatial context contains crucial information for our purpose.
 
-\begin{itemize}
-    \item Compare raw and smoothed predictions for both experiments.
-    \item Report whether smoothing improves the selected metrics and whether the effect is consistent across folds or samples.
-    \item Insert representative prediction maps before and after smoothing.
-    \item Discuss the qualitative effect on maps: reduction of isolated noisy pixels, improved spatial coherence, possible loss of small regions or propagation of local errors.
-    \item Keep clear that smoothing is applied after inference and is not part of the ANN training.
-\end{itemize}
+The comparison of raw and smoothed results for both binary problems, presented in \Cref{tab:smoothing_heatmap}, showed that the filter helps to improve the prediction as expected, but the size of the kernel can't be increased too much and must be chosen with caution based on the total discrimination capacity (\textit{AUC}), the ability to detect the positive class (\textit{TPR}/\textit{recall}) and the ability to preserve the negative one (\textit{TNR}/\textit{specificity}).
+
+
+\definecolor{pastelblue1}{RGB}{244,248,252}
+\definecolor{pastelblue2}{RGB}{229,239,249}
+\definecolor{pastelblue3}{RGB}{211,228,244}
+\definecolor{pastelblue4}{RGB}{190,215,237}
+\definecolor{pastelblue5}{RGB}{168,201,229}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Result of spatial post-processing with different kernel sizes on \textit{AUC}, \textit{TPR} and \textit{TNR}. VALORI DA CAMBIARE}
+    \label{tab:smoothing_heatmap}
+    \begin{tabular}{c c c c c c c}
+        \hline
+        & \multicolumn{3}{c}{\textit{tumour} vs. \textit{tumour stroma}} 
+        & \multicolumn{3}{c}{\textit{tumour} vs. \textit{healthy}} \\
+        \hline
+        Kernel size & \textit{AUC} & \textit{TPR} & \textit{TNR} & \textit{AUC} & \textit{TPR} & \textit{TNR} \\
+        \hline
+        No smoothing 
+        & \cellcolor{pastelblue1}0.8154 & \cellcolor{pastelblue1}0.7623 & \cellcolor{pastelblue3}0.7068
+        & \cellcolor{pastelblue1}0.7745 & \cellcolor{pastelblue1}0.7419 & \cellcolor{pastelblue1}0.6688 \\
+        
+        \(3 \times 3\)
+        & \cellcolor{pastelblue3}0.8688 & \cellcolor{pastelblue3}0.8167 & \cellcolor{pastelblue4}0.7343
+        & \cellcolor{pastelblue3}0.8269 & \cellcolor{pastelblue3}0.7914 & \cellcolor{pastelblue4}0.7029 \\
+        
+        \(5 \times 5\)
+        & \cellcolor{pastelblue4}0.8797 & \cellcolor{pastelblue3}0.8298 & \cellcolor{pastelblue5}0.7383
+        & \cellcolor{pastelblue4}0.8373 & \cellcolor{pastelblue4}0.7997 & \cellcolor{pastelblue5}0.7134 \\
+        
+        \(10 \times 10\)
+        & \cellcolor{pastelblue5}0.8824 & \cellcolor{pastelblue4}0.8423 & \cellcolor{pastelblue3}0.7166
+        & \cellcolor{pastelblue5}0.8417 & \cellcolor{pastelblue5}0.8047 & \cellcolor{pastelblue5}0.7114 \\
+        
+        \(15 \times 15\)
+        & \cellcolor{pastelblue4}0.8757 & \cellcolor{pastelblue5}0.8473 & \cellcolor{pastelblue2}0.6888
+        & \cellcolor{pastelblue4}0.8376 & \cellcolor{pastelblue5}0.8033 & \cellcolor{pastelblue3}0.6984 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+More specifically, a result of particular merit is attributed to the \(5 \times 5\) filter. This leads to clearly better predictions than smaller filters, in terms of global metrics.
+Larger kernels tend to increase \textit{tumour} \textit{recall}, which could be desirable based on what was discussed earlier, but at the same time they lead to an overly aggressive imbalance in the confusion matrix by increasing \textit{false positives} and thus reducing the overall reliability of the classifier. This is why, although the 10x10 filter shows a higher \textit{AUC}, it is not the best compromise when evaluated against the \textit{TNR} and would represent an unwise choice.
+The results of applying a too-large filter (\(15 \times 15\)) make it clear that the benefits of smoothing are limited, and that excessively increasing the filter size leads to deterioration, "spreading" the \textit{tumour} class onto the healthy one.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[\textit{tumour} vs. \textit{tumour stroma}.\label{fig:confusion_matrix_tumour_stroma_smoothed}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_troma_smoothed.jpeg}
+    }
+    \hfill
+    \subfloat[\textit{tumour} vs. \textit{healthy}.\label{fig:confusion_matrix_tumour_healthy_smoothed}]{
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_healty_smoothed.jpeg}
+    }
+    \caption{Confusion matrices obtained after spatial post-processing with the \(5 \times 5\) smoothing filter. Compared to the raw results shown in FIGURE? the \textit{TPR} and \textit{TNR} rise.}
+    \label{fig:confusion_matrices_smoothed}
+\end{figure}
+
+Observing the smoothed prediction maps and comparing them with the raw ones, as shown in \Cref{fig:prediction_maps_raw_smoothed_tumour_stroma}, it is clear that the \(5 \times 5\) filter reduces isolated errors in favour of greater spatial consistency and does not excessively propagate the areas that produced incorrect predictions, leading to the optimal result.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Raw prediction map.\label{fig:prediction_map_raw_tumour_stroma}]{
+        \includegraphics[width=0.90\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_raw.png}
+    }
+    
+    \vspace{0.5em}
+    
+    \subfloat[Prediction map after \(5 \times 5\) smoothing.\label{fig:prediction_map_smoothed_tumour_stroma}]{
+        \includegraphics[width=0.90\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_5x5_smoothing.png}
+    }
+    \caption{Comparison between raw and smoothed prediction maps for the \textit{tumour} vs. \textit{tumour stroma} experiment. FORSE TAGLIARE IL TITOLO POCO LEGGIBILE}
+    \label{fig:prediction_maps_raw_smoothed_tumour_stroma}
+\end{figure}
+
 
 \section{Interpretation and comparison with the literature}
 \label{sec:interpretation_literature}
