@@ -101,13 +101,13 @@ The final ANN models were trained for the two binary tasks reported in \Cref{tab
         \hline
         \textbf{Experiment} & \textbf{Positive class} & \textbf{Negative class} \\
         \hline
-        \begin{tabular}[t]{@{}c@{}}Tumour-related class\\vs\\non-tumour\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumour (2)\\Tumour with necrosis (20)\end{tabular} & \begin{tabular}[t]{@{}c@{}}Valid non-tumour classes\\(0, 3, 4, 5, 6, 8, 10, 19, 23)\end{tabular} \\
+        \begin{tabular}[t]{@{}c@{}}Tumour-related class\\vs\\non-tumour\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumour (2)\\Tumour with necrosis (20)\end{tabular} & \begin{tabular}[t]{@{}c@{}}Valid non-tumour classes\\(3, 4, 5, 6, 8, 10, 19, 23)\end{tabular} \\
         \hline
         \begin{tabular}[t]{@{}c@{}}Tumour-related class\\vs\\stroma\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumour (2)\\Tumour with necrosis (20)\end{tabular} & Tumour stroma (6) \\
         \hline
     \end{tabularx}
     \renewcommand{\arraystretch}{1}
-    \caption{Binary classification experiments evaluated in the final analysis.}
+    \caption{Binary classification experiments evaluated in the final analysis. See \cref{tab:label-distribution} for label correspondences.}
     \label{tab:final_binary_experiments}
 \end{table}
 
@@ -178,7 +178,7 @@ The decision threshold used to convert the predicted probability into a binary l
 
 The configurations chosen for the two approaches, listed in \cref{tab:selected_hyperparameters}, were further analyzed to assess their effectiveness.
 
-The confusion matrices and ROC curves, explained in \cref{sec:evaluation_metrics}, showed good results for both problems. The macro-class approach performed slightly worse than the single-class one, especially in non-tumoral classification (true negative rates equaled 0.71 and 0.75 respectively). This is a direct consequence of the internal heterogeneity of the healthy class. The ROC curves showed symmetrical behavior with respect to the TPR and FNR, with high variability depending on the validation fold composition. Mean AUC across 5 folds achieved scores of $\text{AUC} = 0.799\pm0.072$, relative standard deviation $\sigma_{relative} = 9\%$, for the macro-class problem (\cref{fig:results_S20_macroclass}), and $\text{AUC} = 0.836\pm0.043$, $\sigma_{relative} = 5.1\%$, for the single-class problem (\cref{fig:results_S10_singleclass}). The difference in mean AUC and standard deviation once again indicates that, on average, the macro-class approach is more difficult and less consistent than the single-class one.
+The confusion matrices and ROC curves, explained in \cref{sec:evaluation_metrics}, showed good results for both problems. The macro-class approach performed slightly worse than the single-class one, especially in non-tumoral classification, with true negative rates equaled 0.71 and 0.75 respectively, while tumoral recall achieved 0.74 in the first problem and 0.76 for the second. The imbalance in TNR is a direct consequence of the internal heterogeneity of the healthy class. The ROC curves showed symmetrical behavior with respect to the TPR and FNR, with high variability depending on the validation fold composition. Mean AUC across 5 folds achieved scores of $\text{AUC} = 0.793\pm0.035$, relative standard deviation $\sigma_{relative} = 4.4\%$, for the macro-class problem (\cref{fig:results_S20_macroclass}), and $\text{AUC} = 0.836\pm0.043$, $\sigma_{relative} = 5.1\%$, for the single-class problem (\cref{fig:results_S10_singleclass}). The difference in mean AUC once again indicates that, on average, the macro-class approach is more difficult than the single-class one.
 
 
 \begin{figure}[H]
@@ -256,12 +256,10 @@ For a more critical analysis, it is important to understand whether errors are e
 
 \Cref{fig:sample_f1_comparison} shows the \textit{F1-score}, which combines \textit{precision} and \textit{recall}, calculated by partitioning the test set pixels by sample and comparing model predictions with the actual labels for each group. A high \textit{F1} means that the model recognises the \textit{tumour} class well within the same sample. On the contrary, a low value indicates that the specific sample is difficult and the prediction contains many \textit{false positives}, \textit{false negatives}, or both.
 
-First of all, the result of this comparison confirms what has already been observed in \Cref{sec:aggregated_classification_results}, namely that the macro-class problem is more complicated and unstable because it introduces greater intra-class heterogeneity, with an average \textit{F1} per sample of \(0.704\), compared with \(0.792\) for the single-class problem.
+First of all, the result of this comparison confirms what has already been observed in \Cref{sec:aggregated_classification_results}, namely that the macro-class problem is more complicated and unstable because it introduces greater intra-class heterogeneity, with an average \textit{F1} per sample of \(0.713\), compared with \(0.792\) for the single-class problem.
 Some of the most difficult classified samples in the \textit{tumour} vs \textit{healthy} experiment improve in the \textit{tumour} vs \textit{stroma} problem. The most obvious case is \(3535\_019\) which goes from \textit{F1} approximately \(0.43\) to about \(0.77\) between the two experiments. This supports the thesis that the difficulty in predictions is closely linked to the definition of the negative class.
 
-VALORI DA CONTROLLARE
-
-Other cases, instead, show critical trends in both experiments, as in \(3439\_009\). The sample-specific difficulty could be related to spectral differences typical of an individual patient or specimen. In these cases, the model fails to generalise adequately due to the high biological variance found.
+Other cases, instead, show poor performace in both experiments, as in \(3439\_009\). The sample-specific difficulty could be related to spectral differences typical of an individual patient or specimen. In these cases, the model fails to generalise adequately due to the high biological variance found.
 Furthermore, it is not excluded that, in some cases, a very poor performance on a sample may depend on the quality of the annotations.
 
 
@@ -292,6 +290,7 @@ The comparison of raw and smoothed results for both binary problems, presented i
 \definecolor{pastelblue3}{RGB}{211,228,244}
 \definecolor{pastelblue4}{RGB}{190,215,237}
 \definecolor{pastelblue5}{RGB}{168,201,229}
+\definecolor{pastelblue6}{RGB}{145,186,220}
 
 \begin{table}[htbp]
     \centering
@@ -303,24 +302,28 @@ The comparison of raw and smoothed results for both binary problems, presented i
         Kernel size & \textit{AUC} & \textit{TPR} & \textit{TNR} & \textit{AUC} & \textit{TPR} & \textit{TNR} \\
         \hline
         No smoothing
-        & \cellcolor{pastelblue1}0.799 & \cellcolor{pastelblue1}0.738 & \cellcolor{pastelblue1}0.712
+        & \cellcolor{pastelblue1}0.793 & \cellcolor{pastelblue1}0.741 & \cellcolor{pastelblue1}0.711
         & \cellcolor{pastelblue1}0.836 & \cellcolor{pastelblue1}0.761 & \cellcolor{pastelblue1}0.749 \\
 
         \(3 \times 3\)
-        & \cellcolor{pastelblue2}0.851 & \cellcolor{pastelblue2}0.789 & \cellcolor{pastelblue3}0.758
+        & \cellcolor{pastelblue2}0.848 & \cellcolor{pastelblue2}0.794 & \cellcolor{pastelblue3}0.756
         & \cellcolor{pastelblue2}0.892 & \cellcolor{pastelblue2}0.811 & \cellcolor{pastelblue4}0.787 \\
 
         \(5 \times 5\)
-        & \cellcolor{pastelblue3}0.862 & \cellcolor{pastelblue3}0.797 & \cellcolor{pastelblue5}0.770
-        & \cellcolor{pastelblue4}0.904 & \cellcolor{pastelblue3}0.822 & \cellcolor{pastelblue5}0.795 \\
+        & \cellcolor{pastelblue3}0.859 & \cellcolor{pastelblue3}0.803 & \cellcolor{pastelblue5}0.768
+        & \cellcolor{pastelblue4}0.904 & \cellcolor{pastelblue3}0.822 & \cellcolor{pastelblue6}0.795 \\
+
+        \(7 \times 7\)
+        & \cellcolor{pastelblue5}0.863 & \cellcolor{pastelblue5}0.806 & \cellcolor{pastelblue6}0.769
+        & \cellcolor{pastelblue6}0.907 & \cellcolor{pastelblue4}0.827 & \cellcolor{pastelblue5}0.792 \\
 
         \(10 \times 10\)
-        & \cellcolor{pastelblue5}0.866 & \cellcolor{pastelblue5}0.801 & \cellcolor{pastelblue4}0.768
-        & \cellcolor{pastelblue5}0.907 & \cellcolor{pastelblue4}0.831 & \cellcolor{pastelblue3}0.776 \\
+        & \cellcolor{pastelblue6}0.864 & \cellcolor{pastelblue6}0.807 & \cellcolor{pastelblue4}0.765
+        & \cellcolor{pastelblue6}0.907 & \cellcolor{pastelblue5}0.831 & \cellcolor{pastelblue3}0.776 \\
 
         \(15 \times 15\)
-        & \cellcolor{pastelblue4}0.864 & \cellcolor{pastelblue5}0.801 & \cellcolor{pastelblue2}0.756
-        & \cellcolor{pastelblue3}0.899 & \cellcolor{pastelblue5}0.833 & \cellcolor{pastelblue1}0.749 \\
+        & \cellcolor{pastelblue4}0.862 & \cellcolor{pastelblue4}0.805 & \cellcolor{pastelblue2}0.755
+        & \cellcolor{pastelblue3}0.899 & \cellcolor{pastelblue6}0.833 & \cellcolor{pastelblue1}0.749 \\
         \hline
     \end{tabular}
     \caption{Results of spatial post-processing with different kernel sizes on \textit{AUC}, \textit{TPR} and \textit{TNR}.}
@@ -328,8 +331,8 @@ The comparison of raw and smoothed results for both binary problems, presented i
 \end{table}
 
 
-More specifically, a result of particular merit is attributed to the \(5 \times 5\) filter. This leads to clearly better predictions than smaller filters, in terms of global metrics.
-Larger kernels tend to increase \textit{tumour} \textit{recall}, which could be desirable based on what was discussed earlier, but at the same time they lead to an overly aggressive imbalance in the confusion matrix by increasing \textit{false positives} and thus reducing the overall reliability of the classifier. This is why, although the 10x10 filter shows a higher \textit{AUC}, it is not the best compromise when evaluated against the \textit{TNR} and would represent an unwise choice.
+More specifically, a result of particular merit is interest is the one of the \(7 \times 7\) filter. This leads to clearly better predictions than smaller filters, in terms of global metrics.
+Larger kernels tend to increase \textit{tumour} \textit{recall}, which could be desirable based on what was discussed earlier, but at the same time they lead to an overly aggressive imbalance in the confusion matrix by increasing \textit{false positives} and thus reducing TNR and the overall reliability of the classifier. This is why, although the 10x10 filter shows a higher \textit{AUC}, it is not the best compromise when evaluated against the \textit{TNR} and would represent an unwise choice.
 The results of applying a filter as large as \(15 \times 15\) make clear that the benefits of smoothing are limited, and that excessively increasing the filter size leads to deterioration, "spreading" the \textit{tumour} class onto the healthy one.
 
 \begin{figure}[H]
@@ -341,11 +344,11 @@ The results of applying a filter as large as \(15 \times 15\) make clear that th
     \subfloat[\textit{tumour} vs. \textit{tumour stroma}.\label{fig:confusion_matrix_tumour_stroma_smoothed}]{
         \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_stroma_smoothed.png}
     }
-    \caption{Confusion matrices obtained after spatial post-processing with the \(5 \times 5\) smoothing filter. Compared to the raw results shown in \Cref{fig:results_S20_macroclass,fig:results_S10_singleclass} the \textit{TPR} and \textit{TNR} rise.}
+    \caption{Confusion matrices obtained after spatial post-processing with the \(7 \times 7\) smoothing filter. Compared to the raw results shown in \Cref{fig:results_S20_macroclass,fig:results_S10_singleclass} the \textit{TPR} and \textit{TNR} rise.}
     \label{fig:confusion_matrices_smoothed}
 \end{figure}
 
-Observing the smoothed prediction maps and comparing them with the raw ones, as shown in \Cref{fig:prediction_maps_raw_smoothed_tumour_stroma}, it is clear that the \(5 \times 5\) filter reduces isolated errors in favour of greater spatial consistency and does not excessively propagate the areas that produced incorrect predictions, leading to the optimal result.
+Observing the smoothed prediction maps and comparing them with the raw ones, as shown in \Cref{fig:prediction_maps_raw_smoothed_tumour_stroma}, it is clear that the \(7 \times 7\) filter reduces isolated errors in favour of greater spatial consistency and does not excessively propagate the areas that produced incorrect predictions, leading to the optimal result.
 
 \begin{figure}[H]
     \centering
@@ -356,7 +359,7 @@ Observing the smoothed prediction maps and comparing them with the raw ones, as 
     \vspace{0.5em}
     
     \subfloat[Prediction map after \(5 \times 5\) smoothing.\label{fig:prediction_map_smoothed_tumour_stroma}]{
-        \includegraphics[width=0.90\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_5x5_smoothing.png}
+        \includegraphics[width=0.90\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_7x7_smoothing.png}
     }
     \caption{Comparison between raw and smoothed prediction maps for the \textit{tumour} vs. \textit{healthy} experiment.}
     \label{fig:prediction_maps_raw_smoothed_tumour_stroma}

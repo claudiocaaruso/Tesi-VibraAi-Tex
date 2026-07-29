@@ -21,7 +21,7 @@ The spectra, acquired over a broader Raman-shift range, have been stripped of th
 The steps described above are crucial because a machine learning process requires high-quality data: noise, incorrect labels, or technical artefacts compromise the reliability of the model, which relies only on the inputs provided to it.
 This analysis starts with Raman data already organised and pre-processed for computational exploration and characterisation. 
 
-\section{Dataset: origin and structure}
+\section{Dataset structure}
 \label{sec:origin-structure}
 
 The analyzed biological tissue was taken from 25 \textit{samples}, one from each of 25 different patients.
@@ -108,7 +108,7 @@ Biological tissues were divided into 13 classes, the most represented of which w
     \label{tab:label-distribution}
 \end{table}
 
-Among the classes, two do not correspond to any biological tissue and were removed before further analysis: the \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifacts} from the H\&E staining. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\Cref{fig:spectra_comparison_discarded}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset.
+Among the classes, two do not correspond to any biological tissue and were removed before further analysis: the \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifacts} from the H\&E staining. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\cref{fig:spectra_comparison_discarded}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset. Purely \textit{necrotic (0)} tissue was also discarded from the dataset since it's average spectrum noticeably differed from the other tissue (\cref{fig:spectra_comparison_discarded}), due to biological degradation. This category was not classifiable as healthy, and including it as tumoral would skew the results.
 
 \begin{figure}[H]
     \centering
@@ -178,7 +178,7 @@ The choice had to account for the following criteria:
 
 The first approach is the one with the most clinical relevance. Successful classification of tumoral areas against general healthy tissue would be the most versatile result possible, with further single-class distinction to be performed later depending on need. The balance between the two classes would also be close to 50/50, allowing to use the whole dataset for training and testing of the ANN. This approach presents however multiple critical points.
 The \textit{healthy} macro-class, including numerous tissue types, is very heterogeneous (high intra-class variance), leading to poor feature individuation or bias towards the major class.
-The \textit{tumor} macro-class, which always includes the \textit{tumor (2)} label, could also comprise the \textit{tumor with necrosis (20)} and the \textit{necrosis (0)} labels, since necrotic tissue is expected to be adjacent to tumors; necrotic tissue, however, shows high variance (\Cref{fig:spectra_comparison_discarded}) due to structural degradation of the cells, leading to problems similar to the ones of the \textit{healthy} macro-class.
+The \textit{tumor} macro-class includes the \textit{tumor (2)} and \textit{tumor with necrosis (20)} , since necrotic tissue is expected to be adjacent to tumors and, being mixed with tumor, not to affect affect the average spectrum noticeably (pure \textit{necrosis (0)} was previously deleted from the dataset);
 
 
 The second approach, using isolated classes, will reduce intra-class variance and allow the model to learn the class-specific patterns, thus improving performance.
