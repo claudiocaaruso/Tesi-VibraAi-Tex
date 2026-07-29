@@ -1,54 +1,25 @@
 \chapter{Materials and methods}
 \label{ch:materials_methods}
 
-\section{Data provenance}
+\section{Data provenance and preprocessing}
 \label{sec:data_provenance}
 
 The dataset analysed in this thesis consists of spontaneous Raman hyperspectral maps acquired from patient-derived tumour slice cultures (PDTSCs) of head and neck squamous cell carcinoma (HNSCC). 
-PDTSCs are ex vivo samples obtained from tumour tissue removed from patients, sliced into thin sections, and maintained in culture. They are useful because they preserve, at least in part, the structure, cellular heterogeneity, and microenvironment of the original tumour, making them a valuable solution for studying tumour biology and therapeutic response.
 HNSCC constitutes the vast majority of the
 broader category of head and neck tumours; it develops from the mucosal epithelium in
 the oral cavity, pharynx, larynx and sinonasal tract and is classified as the sixth most
 common cancer worldwide, with estimates foreseeing an increasing trend in incidence and
 occurrences in the upcoming years.
- 
-The acquisition of the maps and the preparation of the raw spectra were not part of the work undertaken in this thesis: a home-built Raman microspectroscopy system was employed to acquire hyperspectral maps of HNSCC samples subjected to different treatment conditions at different time points. 
+ PDTSCs are ex vivo samples obtained from tumour tissue removed from patients, sliced into thin sections, and maintained in culture. They are useful because they preserve, at least in part, the cellular heterogeneity of the original tumour.
+
+The acquisition of the maps and the preparation of the raw spectra were not part of the work undertaken in this thesis: a home-built Raman microspectroscopy system was employed to acquire hyperspectral maps of HNSCC samples subjected to different treatment conditions at different time points.  The excitation source used is a continuous-wave diode-pumped laser operating in the red spectral region, specifically around 660 nm.
 
 A dedicated preprocessing workflow was designed, together with custom Python
-tools for background subtraction and pixel-wise annotation of maps. This analysis starts with Raman data already organised and pre-processed for computational exploration and characterisation.
+tools for background subtraction, which included cosmic-ray (spike) removal, subtraction of the quartz-substrate contribution, and pixel-wise annotation of maps. 
+The spectra, acquired over a broader Raman-shift range, have been stripped of the \textit{silent region} (1800--2800 $\mathrm{cm}^{-1}$) (\cref{sec:raman_biological_tissues}), where no useful biological information is found, reducing the number of bands from 888 to 483. The remaining \textit{fingerprint} and \textit{CH} regions were normalised separately and then joined.
 
-\subsection{Experimental setup} 
-\label{sec:experimental_setup}
-
-The measurements were performed with a home-built Raman microspectroscopy system developed for biological samples. The excitation source is a continuous-wave diode-pumped laser operating in the red spectral region, around \(660~\mathrm{nm}\), providing the monochromatic radiation required for Raman measurements. The Raman scattering efficiency increases strongly at shorter wavelengths, approximately as
-
-\begin{equation}
-    I_R \propto \frac{1}{\lambda_0^4},
-    \label{eq:lambda_dependence}
-\end{equation}
-
-where \(\lambda_0\) is the excitation wavelength. Shorter wavelengths can therefore increase the Raman signal and can also improve spatial resolution. However, they may also increase the risk of photodamage and can enhance unwanted fluorescence background. A red excitation wavelength provides a practical balance between signal intensity, spatial resolution and sample preservation.
-
-Along the excitation path, the laser beam is first filtered to remove unwanted spectral components and then attenuated by neutral-density filters. The beam is then expanded by a \(5\times\) beam expander, from an initial diameter of about \(0.7~\mathrm{mm}\) to about \(3.5~\mathrm{mm}\), in order to better match the back aperture of the microscope objective and ensure proper focusing on the sample plane.
-
-Inside the inverted microscope, the excitation beam is focused onto the tissue section using a \(50\times\) dry objective with numerical aperture \(\mathrm{NA}=0.8\) and working distance of \(1~\mathrm{mm}\). The same objective collects the backscattered light from each illuminated region, while the motorized stage scans the sample point by point to associate each spatial position with a Raman spectrum.
-
-The collected light contains both the weak Raman signal and a much stronger Rayleigh component with the same wavelength as the excitation laser. Since Rayleigh scattering is several orders of magnitude more intense than Raman scattering, it must be rejected before detection, because it could hide the Raman signal and saturate the detector. In the detection path, the dichroic beamsplitter separates these contributions, while a \(664~\mathrm{nm}\) long-pass edge filter suppresses residual Rayleigh components before detection.
-
-After filtering, the Raman signal is focused by a lens into the spectrometer, where it is dispersed by a diffraction grating. A \(600~\mathrm{grooves/mm}\) grating is typically used to cover both the fingerprint and the CH regions. The dispersed light is recorded by a CCD detector with a \(1024\times256\) pixel sensor. Vertical binning along the \(256\)-pixel axis is used, so that the raw spectral information is recorded along the \(1024\)-pixel horizontal axis. Through calibration, this pixel axis is converted into Raman shift, producing the final spectrum expressed as intensity versus Raman shift.
-
-For Raman hyperspectral maps, spectra were acquired point by point with a spatial step of \(5~\mu\mathrm{m}\), using an exposure time of \(500~\mathrm{ms}\) and a laser power of \(120~\mathrm{mW}\) at the source. These acquisition parameters reflect a compromise between signal quality, acquisition time and preservation of the biological specimen.
-
-\subsection{Preprocessing}
-\label{sec:preprocessing_before_analysis}
-
-After acquisition, the raw Raman spectra underwent a stage of preprocessing which was not part of the work for this thesis, but will be briefly illustrated for completeness.
-
-The detector pixel axis was calibrated and converted into Raman shift, and the spectra were interpolated onto a common wavenumber axis. The pipeline then included cosmic-ray (spike) removal, subtraction of the quartz-substrate contribution and baseline correction to remove the background.
-
-The spectra, acquired over a broader Raman-shift range, have been stripped of the \textit{silent region} (1800--2800 $\mathrm{cm}^{-1}$) (\cref{sec:raman_biological_tissues}), where no useful biological information is found, reducing the number of bands from 888 to 483. The remaining \textit{fingerprint} and \textit{CH} regions were normalized separately and then joined.
-
-This preparation is important for machine learning, because the spectra used as input to the classification model are shaped not only by tissue biochemistry, but also by acquisition conditions and experimental noise. If these effects are not properly controlled or corrected, the model may learn patterns related to measurement variability rather than tissue class.
+The steps described above are crucial because a machine learning process requires high-quality data: noise, incorrect labels, or technical artefacts compromise the reliability of the model, which relies only on the inputs provided to it.
+This analysis starts with Raman data already organised and pre-processed for computational exploration and characterisation. 
 
 \section{Dataset: origin and structure}
 \label{sec:origin-structure}
