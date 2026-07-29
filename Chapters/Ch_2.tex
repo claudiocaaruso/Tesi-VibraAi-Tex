@@ -34,7 +34,7 @@ A typical supervised learning task is classification;
 
 
 Machine learning enables the analysis of large volumes of data, thereby reducing manual processing and making it a powerful tool for decision support and operational analysis. It is used in many technologies that increase laboratory efficiency and automate repetitive activities. Among these advantages, it also makes it possible to extract insights that could not be identified otherwise.
-This approach is well suited to Raman spectroscopy of biological tissues. As discussed in \Cref{ch:introduction}, due to the complexity of biological Raman spectra, it is particularly challenging to reduce the sorting problem to a few manually selected bands. For this reason, we prefer to treat the spectra as numerical objects, as described in \cref{sec:origin-structure-ch4}, and to rely on computational approaches.
+This approach is well suited to Raman spectroscopy of biological tissues. As discussed in \Cref{ch:introduction}, due to the complexity of biological Raman spectra, it is particularly challenging to reduce the sorting problem to a few manually selected bands. For this reason, we prefer to treat the spectra as numerical objects, as described in \cref{sec:origin-structure}, and to rely on computational approaches.
 
 In this chapter, we will present the theoretical principles underlying \textit{Principal Component Analysis (PCA)} and \textit{Artificial Neural Networks (ANN)}, which will be applied to our specific biological problem.
 
@@ -63,7 +63,7 @@ The dataset can be represented as a numerical matrix
     \label{eq:pca_data_matrix}
 \end{equation}
 
-where \(n\) is the number of observations and \(p\) is the number of variables. In this work, each observation is a Raman spectrum and \(p = 483\), as described in \Cref{sec:origin-structure-ch4}.
+where \(n\) is the number of observations and \(p\) is the number of variables. In this work, each observation is a Raman spectrum and \(p = 483\), as described in \Cref{sec:origin-structure}.
 
 When using machine learning methods, thousands or even millions of features can be involved for
 each training instance and working directly with all the original variables not only drastically slows down the algorithm but also makes it hard to find a good solution to the problem; it might be appropriate to reduce the representation.
@@ -71,7 +71,7 @@ each training instance and working directly with all the original variables not 
 The first reason to suggest this type of choice is that, in many cases, nearby variables are linked due to overlapping signals (as in Raman spectra, where spectral bands are broad and rich in correspondence). Therefore, the \(p\) variables do not necessarily outline \(p\) independent sources of information. Dimensionality reduction replaces the original variables with a smaller and new set of components that retain the dataset's main structure.
 
 The motivation for this step is also connected to the so-called \textit{curse of dimensionality} \cite{geron2022hands}. Each observation can be seen not only as a curve or signal but also as a point in a \(p\)-dimensional space. 
-In low-dimensional spaces, points can be relatively close to one another, but when the number of variables increases, distances and volumes grow exponentially with it. High-dimensional data are prone to sparsity, and maintaining the same density of training instances would require an exponentially larger number of observations. For example, with just \(100\) features, you would need more training instances than atoms in the observable universe in order for training instances to be within \(0.1\) of each other on average, assuming they were spread out uniformly across all dimensions \cite{geron2022hands}. 
+In low-dimensional spaces, points can be relatively close to one another, but when the number of variables increases, distances and volumes grow exponentially with it. High-dimensional data are prone to sparsity, and maintaining the same density of training instances would require an exponentially larger number of observations. For example, with just \(100\) features, you would need more training instances than atoms in the observable universe in order for training instances to be within \(0{,}1\) of each other on average, assuming they were spread out uniformly across all dimensions \cite{geron2022hands}. 
 This leads to important consequences for a learning algorithm, because it also means that a new instance
 will likely be far away from any training instance, making predictions much less reliable than in lower dimensions.
 The more dimensions the training set has, the greater the risk of overfitting it.
@@ -397,7 +397,7 @@ This has been the choice for the hidden layers for the ANN used for this thesis.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{Images/images_ch_2/relu.png}
-    \caption{ReLU function (left) and its derivative (right). For $z < 0$ the output and gradient are both exactly zero --- the so-called \textit{dying ReLU} problem --- while for $z > 0$ the gradient is a constant 1, avoiding saturation.}
+    \caption{ReLU function (left) and its derivative (right). For $z < 0$ the output and gradient are both exactly zero (the so-called \textit{dying ReLU} problem), while for $z > 0$ the gradient is a constant 1, avoiding saturation.}
     \label{fig:relu}
 \end{figure}
 
@@ -453,7 +453,7 @@ Likelihood is then maximized by minimizing its negative logarithm, since $\log$ 
 
 This is known as the \textit{binary cross-entropy loss}. The transformed model output $\sigma[f[\mathbf{x}, \boldsymbol{\theta}]]$ predicts the parameter $\lambda$ of the Bernoulli distribution. This represents the probability that $y = 1$, and it follows that $1 - \lambda$ represents the probability that $y = 0$.
 
-When performing inference, the point estimate of $y$ is usually set such that $y = 1$ if $\lambda > 0.5$ and $y = 0$ otherwise.
+When performing inference, the point estimate of $y$ is usually set such that $y = 1$ if $\lambda > 0{,}5$ and $y = 0$ otherwise.
 However, in some cases it might be preferable to slightly tweak this to improve accuracy or recall, while considering that improving one will worsen the other (\cref{sec:evaluation_metrics}).
 
 
@@ -510,11 +510,11 @@ The result of \textit{Adam} is shown in \cref{fig:adam_grid}.
 
 \begin{figure}[ht]
     \centering
-    \subfloat[GD, $\eta=0.05$.\label{fig:gd_small_lr_grid}]{
+    \subfloat[GD, $\eta=0{,}05$.\label{fig:gd_small_lr_grid}]{
         \includegraphics[width=0.4\textwidth]{Images/images_ch_2/grad_desc_1.png}
     }
     \hfill
-    \subfloat[GD, $\eta=1.0$.\label{fig:gd_large_lr_grid}]{
+    \subfloat[GD, $\eta=1{,}0$.\label{fig:gd_large_lr_grid}]{
         \includegraphics[width=0.4\textwidth]{Images/images_ch_2/grad_desc_2.png}
     }\\[1ex]
     \subfloat[Normalized gradients.\label{fig:norm_grad_grid}]{
