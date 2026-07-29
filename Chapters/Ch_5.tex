@@ -122,7 +122,7 @@ The final ANN experiments are evaluated in terms of training behaviour, aggregat
 
 The configuration adopted for the final classification experiments was selected through the hyperparameter search described in \Cref{sec:training}, which compared different model sizes, numbers of retained PCA components and batch sizes.
 
-The comparison of the tested configurations showed comparable results for all three architectures (small (S), medium (M), and large (L)) at an equal number of retained PCs. A substantial improvement in the metrics was registered when raising the number of PCs from 1 to 20 for the macro-class problem (\textit{tumor} vs. \textit{healthy}), and a plateau from 20 to 483 PCs (\cref{fig:heatmap_auc_macroclass}). In the single-class problem (\textit{tumor} vs. \textit{tumor stroma}), the metrics improved from 1 to 10, flattening out for bigger dimensionalities (\cref{fig:heatmap_auc_singleclass}).
+The comparison of the tested configurations showed comparable results for all three architectures (small (S), medium (M), and large (L)) at an equal number of retained PCs. A substantial improvement in the metrics was registered when raising the number of PCs from 1 to 20 (71\% of explained variance) for the macro-class problem (\textit{tumor} vs. \textit{healthy}), and a plateau from 20 to 483 PCs (\cref{fig:heatmap_auc_macroclass}). In the single-class problem (\textit{tumor} vs. \textit{tumor stroma}), the metrics improved from 1 to 10 (55\% of explained variance), flattening out for bigger dimensionalities (\cref{fig:heatmap_auc_singleclass}).
 
 \begin{figure}[H]
     \centering
@@ -138,7 +138,7 @@ The comparison of the tested configurations showed comparable results for all th
     \label{fig:heatmap_auc_singleclass}
 \end{figure}
 
-Although some configurations with more components or larger networks obtained equally good scores for AUC, their training curves showed less stable behavior and a larger discrepancy between training and validation performance that also increased with the number of epochs. This behavior, exemplified by \cref{fig:overfitting_example_L200}, is a clear sign of overfitting. The small model, on the contrary, showed more similarity between training and validation for the considered metrics (\cref{fig:training_curves}) and was therefore preferred as a final choice.
+Although some configurations with more components or larger networks obtained equally good scores for AUC, their training curves showed less stable behavior and a larger discrepancy between training and validation performance that also increased with the number of epochs. This behavior, exemplified by \cref{fig:overfitting_example_L200}, is a clear sign of overfitting. The small model, on the contrary, showed more similarity between training and validation for the considered metrics (\cref{fig:training_curves}) and was therefore preferred as a final choice, matching the metrics of larger architectures at a lower computational cost.
 
 \begin{figure}[h]
     \centering
@@ -151,7 +151,7 @@ The maximum number of epochs was set to \(100\), although \textit{early stopping
 
 %talk about computational complexity 
 
-The decision threshold used to convert the predicted probability into a binary label was selected empirically by comparing threshold values between \(0.45\) and \(0.50\). The final value was set to \(\tau=0.49\), slightly below the standard threshold of \(0.50\), as it provided a compromise between favoring recall of the positive class and maintaining balanced overall performance. In this application, a false negative, corresponding to a tumor-related spectrum classified as non-tumor, is considered more critical than a false positive, corresponding to a non-tumor spectrum classified as tumor-related. A slightly lower threshold increases the tendency of the classifier to assign spectra to the positive class, supporting recall for tumor-related spectra without excessively penalizing accuracy, as seen in \cref{sec:evaluation_metrics}.
+The decision threshold used to convert the predicted probability into a binary label was selected empirically by comparing threshold values between \(0{,}45\) and \(0{,}50\). The final value was set to \(\tau=0{,}49\), slightly below the standard threshold of \(0{,}50\), as it provided a compromise between favoring recall of the positive class and maintaining balanced overall performance. In this application, a false negative, corresponding to a tumor-related spectrum classified as non-tumor, is considered more critical than a false positive, corresponding to a non-tumor spectrum classified as tumor-related. A slightly lower threshold increases the tendency of the classifier to assign spectra to the positive class, supporting recall for tumor-related spectra without excessively penalizing accuracy, as seen in \cref{sec:evaluation_metrics}.
 
 \begin{table}[H]
     \centering
@@ -165,7 +165,7 @@ The decision threshold used to convert the predicted probability into a binary l
         \hline
         Batch size & \multicolumn{2}{c|}{\(4096\)} \\
         \hline
-        Decision threshold & \multicolumn{2}{c|}{\(\tau=0.49\)} \\
+        Decision threshold & \multicolumn{2}{c|}{\(\tau=0{,}49\)} \\
         \hline
     \end{tabular}
     \caption{Configurations used in the final ANN experiments, for the macro-class (\textit{tumor} vs. \textit{healthy}) and single-class (\textit{tumor} vs. \textit{tumor stroma}) problems.}
@@ -178,7 +178,7 @@ The decision threshold used to convert the predicted probability into a binary l
 
 The configurations chosen for the two approaches, listed in \cref{tab:selected_hyperparameters}, were further analyzed to assess their effectiveness.
 
-The confusion matrices and ROC curves, explained in \cref{sec:evaluation_metrics}, showed good results for both problems. The macro-class approach performed slightly worse than the single-class one, especially in non-tumoral classification, with true negative rates equaled 0.71 and 0.75 respectively, while tumoral recall achieved 0.74 in the first problem and 0.76 for the second. The imbalance in TNR is a direct consequence of the internal heterogeneity of the healthy class. The ROC curves showed symmetrical behavior with respect to the TPR and FNR, with high variability depending on the validation fold composition. Mean AUC across 5 folds achieved scores of $\text{AUC} = 0.793\pm0.035$, relative standard deviation $\sigma_{relative} = 4.4\%$, for the macro-class problem (\cref{fig:results_S20_macroclass}), and $\text{AUC} = 0.836\pm0.043$, $\sigma_{relative} = 5.1\%$, for the single-class problem (\cref{fig:results_S10_singleclass}). The difference in mean AUC once again indicates that, on average, the macro-class approach is more difficult than the single-class one.
+The confusion matrices and ROC curves, explained in \cref{sec:evaluation_metrics}, showed good results for both problems. The macro-class approach performed slightly worse than the single-class one, especially in non-tumoral classification, with true negative rates equaled 0,71 and 0,75 respectively, while tumoral recall achieved 0,74 in the first problem and 0,76 for the second. The imbalance in TNR is a direct consequence of the internal heterogeneity of the healthy class. The ROC curves showed symmetrical behavior with respect to the TPR and FNR, with high variability depending on the validation fold composition. Mean AUC across 5 folds achieved scores of $\text{AUC} = 0{,}7931\pm0{,}0390$, relative standard deviation $\sigma_{relative} = 4{,}9\%$, for the macro-class problem (\cref{fig:results_S20_macroclass}), and $\text{AUC} = 0{,}836\pm0{,}043$, $\sigma_{relative} = 5{,}1\%$, for the single-class problem (\cref{fig:results_S10_singleclass}). The difference in mean AUC once again indicates that, on average, the macro-class approach is more difficult than the single-class one.
 
 
 \begin{figure}[H]
@@ -209,7 +209,7 @@ The confusion matrices and ROC curves, explained in \cref{sec:evaluation_metrics
 
 
 The training behavior was observed to be different between the two problems. All the validation curves sit above the training ones for the first epochs due to being evaluated after the weights are updated (while training is evaluated before the weight update). The two curves then intersect, and validation stays below training.
-The validation curves for the macro-class classification displayed very high variability but stabilized after only $\sim2$ epochs (\cref{fig:curves_S20_macroclass}), causing the gap between the curves to mildly increase. The model quickly learned the basic patterns and trends, achieving an AUC of 0.799, especially thanks to the homogeneity of the tumoral class, but did not improve further and failed to generalize as well for the healthy class.
+The validation curves for the macro-class classification displayed very high variability but stabilized after only $\sim2$ epochs (\cref{fig:curves_S20_macroclass}), causing the gap between the curves to mildly increase. The model quickly learned the basic patterns and trends, achieving an AUC of 0,7931, especially thanks to the homogeneity of the tumoral class, but did not improve further and failed to generalize as well for the healthy class.
 The curves for the single-class problem, on the other hand, improved regularly in the early stages of training until reaching a plateau after $\sim5$ epochs, with validation staying within an acceptable margin below training. The random fold composition and small validation set size cause the standard deviation of the validation metric to be greater than that of training, enough for some individual folds to show validation above training, even though the average curve remains below.
 
 \begin{figure}[H]
@@ -233,15 +233,15 @@ The curves for the single-class problem, on the other hand, improved regularly i
         \hline
         \textbf{Metric} & \textbf{Macro-class} & \textbf{Single-class} \\
         \hline
-        AUC & \(0.799\pm0.072\) & \(0.836\pm0.043\) \\
+        AUC & \(0{,}7931\pm0{,}0390\) & \(0{,}836\pm0{,}043\) \\
         \hline
-        Recall (TPR) & \(0.738\pm0.107\) & \(0.760\pm0.098\) \\
+        Recall (TPR) & \(0{,}738\pm0{,}107\) & \(0{,}760\pm0{,}098\) \\
         \hline
-        Specificity (TNR) & \(0.712\pm0.119\) & \(0.749\pm0.073\) \\
+        Specificity (TNR) & \(0{,}712\pm0{,}119\) & \(0{,}749\pm0{,}073\) \\
         \hline
-        Precision & \(0.761\pm0.069\) & \(0.893\pm0.022\) \\
+        Precision & \(0{,}761\pm0{,}069\) & \(0{,}893\pm0{,}022\) \\
         \hline
-        F1-score & \(0.744\pm0.068\) & \(0.818\pm0.046\) \\
+        F1-score & \(0{,}744\pm0{,}068\) & \(0{,}818\pm0{,}046\) \\
         \hline
     \end{tabular}
     \caption{Mean and standard deviation, across the 5 cross-validation folds, of the main evaluation metrics for the two problems.}
@@ -256,8 +256,8 @@ For a more critical analysis, it is important to understand whether errors are e
 
 \Cref{fig:sample_f1_comparison} shows the \textit{F1-score}, which combines \textit{precision} and \textit{recall}, calculated by partitioning the test set pixels by sample and comparing model predictions with the actual labels for each group. A high \textit{F1} means that the model recognises the \textit{tumour} class well within the same sample. On the contrary, a low value indicates that the specific sample is difficult and the prediction contains many \textit{false positives}, \textit{false negatives}, or both.
 
-First of all, the result of this comparison confirms what has already been observed in \Cref{sec:aggregated_classification_results}, namely that the macro-class problem is more complicated and unstable because it introduces greater intra-class heterogeneity, with an average \textit{F1} per sample of \(0.713\), compared with \(0.792\) for the single-class problem.
-Some of the most difficult classified samples in the \textit{tumour} vs \textit{healthy} experiment improve in the \textit{tumour} vs \textit{stroma} problem. The most obvious case is \(3535\_019\) which goes from \textit{F1} approximately \(0.43\) to about \(0.77\) between the two experiments. This supports the thesis that the difficulty in predictions is closely linked to the definition of the negative class.
+First of all, the result of this comparison confirms what has already been observed in \Cref{sec:aggregated_classification_results}, namely that the macro-class problem is more complicated and unstable because it introduces greater intra-class heterogeneity, with an average \textit{F1} per sample of \(0{,}713\), compared with \(0{,}792\) for the single-class problem.
+Some of the most difficult classified samples in the \textit{tumour} vs \textit{healthy} experiment improve in the \textit{tumour} vs \textit{stroma} problem. The most obvious case is \(3535\_019\) which goes from \textit{F1} approximately \(0{,}43\) to about \(0{,}77\) between the two experiments. This supports the thesis that the difficulty in predictions is closely linked to the definition of the negative class.
 
 Other cases, instead, show poor performace in both experiments, as in \(3439\_009\). The sample-specific difficulty could be related to spectral differences typical of an individual patient or specimen. In these cases, the model fails to generalise adequately due to the high biological variance found.
 Furthermore, it is not excluded that, in some cases, a very poor performance on a sample may depend on the quality of the annotations.
@@ -302,28 +302,28 @@ The comparison of raw and smoothed results for both binary problems, presented i
         Kernel size & \textit{AUC} & \textit{TPR} & \textit{TNR} & \textit{AUC} & \textit{TPR} & \textit{TNR} \\
         \hline
         No smoothing
-        & \cellcolor{pastelblue1}0.793 & \cellcolor{pastelblue1}0.741 & \cellcolor{pastelblue1}0.711
-        & \cellcolor{pastelblue1}0.836 & \cellcolor{pastelblue1}0.761 & \cellcolor{pastelblue1}0.749 \\
+        & \cellcolor{pastelblue1}0,793 & \cellcolor{pastelblue1}0,741 & \cellcolor{pastelblue1}0,711
+        & \cellcolor{pastelblue1}0,836 & \cellcolor{pastelblue1}0,761 & \cellcolor{pastelblue1}0,749 \\
 
         \(3 \times 3\)
-        & \cellcolor{pastelblue2}0.848 & \cellcolor{pastelblue2}0.794 & \cellcolor{pastelblue3}0.756
-        & \cellcolor{pastelblue2}0.892 & \cellcolor{pastelblue2}0.811 & \cellcolor{pastelblue4}0.787 \\
+        & \cellcolor{pastelblue2}0,848 & \cellcolor{pastelblue2}0,794 & \cellcolor{pastelblue3}0,756
+        & \cellcolor{pastelblue2}0,892 & \cellcolor{pastelblue2}0,811 & \cellcolor{pastelblue4}0,787 \\
 
         \(5 \times 5\)
-        & \cellcolor{pastelblue3}0.859 & \cellcolor{pastelblue3}0.803 & \cellcolor{pastelblue5}0.768
-        & \cellcolor{pastelblue4}0.904 & \cellcolor{pastelblue3}0.822 & \cellcolor{pastelblue6}0.795 \\
+        & \cellcolor{pastelblue3}0,859 & \cellcolor{pastelblue3}0,803 & \cellcolor{pastelblue5}0,768
+        & \cellcolor{pastelblue4}0,904 & \cellcolor{pastelblue3}0,822 & \cellcolor{pastelblue6}0,795 \\
 
         \(7 \times 7\)
-        & \cellcolor{pastelblue5}0.863 & \cellcolor{pastelblue5}0.806 & \cellcolor{pastelblue6}0.769
-        & \cellcolor{pastelblue6}0.907 & \cellcolor{pastelblue4}0.827 & \cellcolor{pastelblue5}0.792 \\
+        & \cellcolor{pastelblue5}0,863 & \cellcolor{pastelblue5}0,806 & \cellcolor{pastelblue6}0,769
+        & \cellcolor{pastelblue6}0,907 & \cellcolor{pastelblue4}0,827 & \cellcolor{pastelblue5}0,792 \\
 
         \(10 \times 10\)
-        & \cellcolor{pastelblue6}0.864 & \cellcolor{pastelblue6}0.807 & \cellcolor{pastelblue4}0.765
-        & \cellcolor{pastelblue6}0.907 & \cellcolor{pastelblue5}0.831 & \cellcolor{pastelblue3}0.776 \\
+        & \cellcolor{pastelblue6}0,864 & \cellcolor{pastelblue6}0,807 & \cellcolor{pastelblue4}0,765
+        & \cellcolor{pastelblue6}0,907 & \cellcolor{pastelblue5}0,831 & \cellcolor{pastelblue3}0,776 \\
 
         \(15 \times 15\)
-        & \cellcolor{pastelblue4}0.862 & \cellcolor{pastelblue4}0.805 & \cellcolor{pastelblue2}0.755
-        & \cellcolor{pastelblue3}0.899 & \cellcolor{pastelblue6}0.833 & \cellcolor{pastelblue1}0.749 \\
+        & \cellcolor{pastelblue4}0,862 & \cellcolor{pastelblue4}0,805 & \cellcolor{pastelblue2}0,755
+        & \cellcolor{pastelblue3}0,899 & \cellcolor{pastelblue6}0,833 & \cellcolor{pastelblue1}0,749 \\
         \hline
     \end{tabular}
     \caption{Results of spatial post-processing with different kernel sizes on \textit{AUC}, \textit{TPR} and \textit{TNR}.}
@@ -358,7 +358,7 @@ Observing the smoothed prediction maps and comparing them with the raw ones, as 
     
     \vspace{0.5em}
     
-    \subfloat[Prediction map after \(5 \times 5\) smoothing.\label{fig:prediction_map_smoothed_tumour_stroma}]{
+    \subfloat[Prediction map after \(7 \times 7\) smoothing.\label{fig:prediction_map_smoothed_tumour_stroma}]{
         \includegraphics[width=0.90\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_7x7_smoothing.png}
     }
     \caption{Comparison between raw and smoothed prediction maps for the \textit{tumour} vs. \textit{healthy} experiment.}
