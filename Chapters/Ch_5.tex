@@ -241,6 +241,8 @@ The curves for the single-class problem, on the other hand, improved regularly i
         \hline
         Precision & \(0.761\pm0.069\) & \(0.893\pm0.022\) \\
         \hline
+        F1-score & \(0.744\pm0.068\) & \(0.818\pm0.046\) \\
+        \hline
     \end{tabular}
     \caption{Mean and standard deviation, across the 5 cross-validation folds, of the main evaluation metrics for the two problems.}
     \label{tab:aggregated_metrics}
@@ -254,7 +256,7 @@ For a more critical analysis, it is important to understand whether errors are e
 
 \Cref{fig:sample_f1_comparison} shows the \textit{F1-score}, which combines \textit{precision} and \textit{recall}, calculated by partitioning the test set pixels by sample and comparing model predictions with the actual labels for each group. A high \textit{F1} means that the model recognises the \textit{tumour} class well within the same sample. On the contrary, a low value indicates that the specific sample is difficult and the prediction contains many \textit{false positives}, \textit{false negatives}, or both.
 
-First of all, the result of this comparison confirms what has already been observed in \Cref{sec:aggregated_classification_results}, namely that the macro-class problem is more complicated and unstable because it introduces greater intra-class heterogeneity, with an average \textit{F1} per sample of \(0.70\), compared with \(0.78\) for the single-class problem.
+First of all, the result of this comparison confirms what has already been observed in \Cref{sec:aggregated_classification_results}, namely that the macro-class problem is more complicated and unstable because it introduces greater intra-class heterogeneity, with an average \textit{F1} per sample of \(0.704\), compared with \(0.792\) for the single-class problem.
 Some of the most difficult classified samples in the \textit{tumour} vs \textit{healthy} experiment improve in the \textit{tumour} vs \textit{stroma} problem. The most obvious case is \(3535\_019\) which goes from \textit{F1} approximately \(0.43\) to about \(0.77\) between the two experiments. This supports the thesis that the difficulty in predictions is closely linked to the definition of the negative class.
 
 VALORI DA CONTROLLARE
@@ -276,8 +278,6 @@ Furthermore, it is not excluded that, in some cases, a very poor performance on 
     \label{fig:sample_f1_comparison}
 \end{figure}
 
-GRAFICO DA SOSTITUIRE
-
 
 \section{Effect of spatial smoothing}
 \label{sec:effect_spatial_smoothing}
@@ -295,51 +295,51 @@ The comparison of raw and smoothed results for both binary problems, presented i
 
 \begin{table}[htbp]
     \centering
-    \caption{Result of spatial post-processing with different kernel sizes on \textit{AUC}, \textit{TPR} and \textit{TNR}. VALORI DA CAMBIARE}
-    \label{tab:smoothing_heatmap}
-    \begin{tabular}{c c c c c c c}
+    \begin{tabular}{| c | *{3}{>{\centering\arraybackslash}m{1.3cm}} | *{3}{>{\centering\arraybackslash}m{1.3cm}} |}
         \hline
-        & \multicolumn{3}{c}{\textit{tumour} vs. \textit{healthy}} 
-        & \multicolumn{3}{c}{\textit{tumour} vs. \textit{tumour stroma}} \\
+        & \multicolumn{3}{|c|}{\textit{tumor} vs. \textit{healthy}}
+        & \multicolumn{3}{c|}{\textit{tumor} vs. \textit{tumor stroma}} \\
         \hline
         Kernel size & \textit{AUC} & \textit{TPR} & \textit{TNR} & \textit{AUC} & \textit{TPR} & \textit{TNR} \\
         \hline
-        No smoothing 
-        & \cellcolor{pastelblue1}0.7745 & \cellcolor{pastelblue1}0.7419 & \cellcolor{pastelblue1}0.6688
-        & \cellcolor{pastelblue1}0.8154 & \cellcolor{pastelblue1}0.7623 & \cellcolor{pastelblue3}0.7068 \\
-        
+        No smoothing
+        & \cellcolor{pastelblue1}0.799 & \cellcolor{pastelblue1}0.738 & \cellcolor{pastelblue1}0.712
+        & \cellcolor{pastelblue1}0.836 & \cellcolor{pastelblue1}0.761 & \cellcolor{pastelblue1}0.749 \\
+
         \(3 \times 3\)
-        & \cellcolor{pastelblue3}0.8269 & \cellcolor{pastelblue3}0.7914 & \cellcolor{pastelblue4}0.7029
-        & \cellcolor{pastelblue3}0.8688 & \cellcolor{pastelblue3}0.8167 & \cellcolor{pastelblue4}0.7343 \\
-        
+        & \cellcolor{pastelblue2}0.851 & \cellcolor{pastelblue2}0.789 & \cellcolor{pastelblue3}0.758
+        & \cellcolor{pastelblue2}0.892 & \cellcolor{pastelblue2}0.811 & \cellcolor{pastelblue4}0.787 \\
+
         \(5 \times 5\)
-        & \cellcolor{pastelblue4}0.8373 & \cellcolor{pastelblue4}0.7997 & \cellcolor{pastelblue5}0.7134
-        & \cellcolor{pastelblue4}0.8797 & \cellcolor{pastelblue3}0.8298 & \cellcolor{pastelblue5}0.7383 \\
-        
+        & \cellcolor{pastelblue3}0.862 & \cellcolor{pastelblue3}0.797 & \cellcolor{pastelblue5}0.770
+        & \cellcolor{pastelblue4}0.904 & \cellcolor{pastelblue3}0.822 & \cellcolor{pastelblue5}0.795 \\
+
         \(10 \times 10\)
-        & \cellcolor{pastelblue5}0.8417 & \cellcolor{pastelblue5}0.8047 & \cellcolor{pastelblue5}0.7114
-        & \cellcolor{pastelblue5}0.8824 & \cellcolor{pastelblue4}0.8423 & \cellcolor{pastelblue3}0.7166 \\
-        
+        & \cellcolor{pastelblue5}0.866 & \cellcolor{pastelblue5}0.801 & \cellcolor{pastelblue4}0.768
+        & \cellcolor{pastelblue5}0.907 & \cellcolor{pastelblue4}0.831 & \cellcolor{pastelblue3}0.776 \\
+
         \(15 \times 15\)
-        & \cellcolor{pastelblue4}0.8376 & \cellcolor{pastelblue5}0.8033 & \cellcolor{pastelblue3}0.6984
-        & \cellcolor{pastelblue4}0.8757 & \cellcolor{pastelblue5}0.8473 & \cellcolor{pastelblue2}0.6888 \\
+        & \cellcolor{pastelblue4}0.864 & \cellcolor{pastelblue5}0.801 & \cellcolor{pastelblue2}0.756
+        & \cellcolor{pastelblue3}0.899 & \cellcolor{pastelblue5}0.833 & \cellcolor{pastelblue1}0.749 \\
         \hline
     \end{tabular}
+    \caption{Results of spatial post-processing with different kernel sizes on \textit{AUC}, \textit{TPR} and \textit{TNR}.}
+    \label{tab:smoothing_heatmap}
 \end{table}
 
 
 More specifically, a result of particular merit is attributed to the \(5 \times 5\) filter. This leads to clearly better predictions than smaller filters, in terms of global metrics.
 Larger kernels tend to increase \textit{tumour} \textit{recall}, which could be desirable based on what was discussed earlier, but at the same time they lead to an overly aggressive imbalance in the confusion matrix by increasing \textit{false positives} and thus reducing the overall reliability of the classifier. This is why, although the 10x10 filter shows a higher \textit{AUC}, it is not the best compromise when evaluated against the \textit{TNR} and would represent an unwise choice.
-The results of applying a too-large filter (\(15 \times 15\)) make it clear that the benefits of smoothing are limited, and that excessively increasing the filter size leads to deterioration, "spreading" the \textit{tumour} class onto the healthy one.
+The results of applying a filter as large as \(15 \times 15\) make clear that the benefits of smoothing are limited, and that excessively increasing the filter size leads to deterioration, "spreading" the \textit{tumour} class onto the healthy one.
 
 \begin{figure}[H]
     \centering
     \subfloat[\textit{tumour} vs. \textit{healthy}.\label{fig:confusion_matrix_tumour_healthy_smoothed}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_healty_smoothed.jpeg}
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_healthy_smoothed.png}
     }
     \hfill
     \subfloat[\textit{tumour} vs. \textit{tumour stroma}.\label{fig:confusion_matrix_tumour_stroma_smoothed}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_troma_smoothed.jpeg}
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_stroma_smoothed.png}
     }
     \caption{Confusion matrices obtained after spatial post-processing with the \(5 \times 5\) smoothing filter. Compared to the raw results shown in \Cref{fig:results_S20_macroclass,fig:results_S10_singleclass} the \textit{TPR} and \textit{TNR} rise.}
     \label{fig:confusion_matrices_smoothed}
@@ -358,7 +358,7 @@ Observing the smoothed prediction maps and comparing them with the raw ones, as 
     \subfloat[Prediction map after \(5 \times 5\) smoothing.\label{fig:prediction_map_smoothed_tumour_stroma}]{
         \includegraphics[width=0.90\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_5x5_smoothing.png}
     }
-    \caption{Comparison between raw and smoothed prediction maps for the \textit{tumour} vs. \textit{tumour stroma} experiment. FORSE TAGLIARE IL TITOLO POCO LEGGIBILE}
+    \caption{Comparison between raw and smoothed prediction maps for the \textit{tumour} vs. \textit{healthy} experiment.}
     \label{fig:prediction_maps_raw_smoothed_tumour_stroma}
 \end{figure}
 
