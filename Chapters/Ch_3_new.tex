@@ -4,18 +4,16 @@
 
 This thesis was carried out within the VIBRA research group, which poses as its primary aim to develop a next-generation microscopy system capable of inspecting in two dimensions the chemical content of a biological specimen using Raman scattering techniques, more specifically to identify tumours in human biopsies with accuracy and reproducibility.
 
-The object of this work consist of hyperspectral maps acquired from
-patient-derived head and neck squamous cell carcinoma (HNSCC) slice cultures and already prepared for computation. Each pixel of the map is associated with a Raman spectrum comprising 483 Raman-shift variables that contain relevant biological information, along with a label indicating the associated tissue type.
-
-The aim pursued in this thesis is to use machine learning methods, in particular Principal Component Analysis and an Artificial Neural Network implemented in Python, on available data to classify the biological composition of the samples, with particular interest in binary classification to identify a defined tumour class among the tissue types present in the maps.
+The aim pursued in this thesis is to apply machine learning methods, specifically Principal Component Analysis (PCA) and an Artificial Neural Network (ANN), using Python tools, on a dataset consisting of hyperspectral Raman maps acquired from
+patient-derived head and neck squamous cell carcinoma (HNSCC) slice cultures, already prepared for computation. Through these methods, the composition of the available data is investigated, with particular interest in evaluating a binary classification pipeline to identify a defined tumour class among different tissue types.
 
 In detail, the work will focus on the following steps:
 \begin{itemize}
-    \item First, the available data are examined both quantitatively and qualitatively; their structure and statistical distribution are investigated, and the biological relevance of the tissue classes present is assessed in preparation for defining the binary classification problem;
+    \item first, the available data are examined both quantitatively and qualitatively, exploring their structure and statistical distribution. The biological relevance of the tissue classes present is assessed in preparation for defining the binary classification problem;
 
-    \item The data are then subjected to PCA application with the aim of achieving a dimensional reduction of the representation space and capturing the variance of the dataset along the spectral bands, to inspect whether a reduced representation is appropriate. Moreover, this enables the identification of important features that can be used for data separation and inspection;
+    \item PCA is computed to project the dataset into a new subspace and capture the variance along the spectral bands, to assess whether a reduced representation is appropriate. Moreover, this could enable the identification of important features that can be used for data separation and inspection;
 
-    \item Three different artificial neural network models are implemented, and their performance is evaluated by testing them on two distinct binary classification tasks, both of which classify data into tumour and healthy classes. The aim is to determine which of the tested architectures performs best in terms of prediction results and computational complexity;
+    \item three different artificial neural network architectures are implemented, and their performance is evaluated by testing them on two distinct binary classification tasks, both of which classify data into tumour and non-tumour classes. The aim is to determine which of the tested architectures performs best in terms of prediction results and computational complexity;
 \end{itemize}
 
 
