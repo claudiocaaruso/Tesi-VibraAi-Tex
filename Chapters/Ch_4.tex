@@ -4,19 +4,27 @@
 \section{Data provenance and preprocessing}
 \label{sec:data_provenance}
 
-The dataset analysed in this thesis consists of spontaneous Raman hyperspectral maps acquired from patient-derived tumour slice cultures (PDTSCs) of head and neck squamous cell carcinoma (HNSCC). 
+The dataset analysed in this thesis consists of spontaneous Raman hyperspectral maps acquired from patient-derived head and neck squamous cell carcinoma (HNSCC) biopsies. 
 HNSCC constitutes the vast majority of the
 broader category of head and neck tumours; it develops from the mucosal epithelium in
 the oral cavity, pharynx, larynx and sinonasal tract and is classified as the sixth most
 common cancer worldwide, with estimates foreseeing an increasing trend in incidence and
 occurrences in the upcoming years.
+<<<<<<< HEAD
 PDTSCs are ex vivo samples obtained from tumour tissue removed from patients, sliced into thin sections, and maintained in culture. They are useful because they preserve, at least in part, the cellular heterogeneity of the original tumour.
+=======
+>>>>>>> 3d81f20778386c1c372219f67eb1ac2a14788eb4
 
-The acquisition of the maps and the preparation of the raw spectra were not part of the work undertaken in this thesis: a home-built Raman microspectroscopy system was employed to acquire hyperspectral maps of HNSCC samples subjected to different treatment conditions at different time points.  The excitation source used is a continuous-wave diode-pumped laser operating in the red spectral region, specifically around 660 nm.
+The acquisition of the maps and the preparation of the raw spectra were not part of the work undertaken in this thesis.
+
+Hyperspectral maps were acquired using a home-built Raman microspectroscopy system. The excitation source used is a monochromatic, continuous-wave, diode-pumped laser operating in the red spectral region, specifically around \(660\,\mathrm{nm}\) (exposure time of \(500\,\mathrm{ms}\) and \(120\,\mathrm{mW}\) laser power).
+Through the microscope lens, the laser beam was focused on the sample, which was scanned point by point with spatial steps of \(5\,\mu\mathrm{m}\) thanks to a motorised support: in the final map, two spatial dimensions describe the position of the pixels and each pixel corresponds to an acquired spectrum.
+The Raylight component has been removed because, since its intensity is several orders of magnitude greater than that associated with Raman scattering, it represents a disturbance that could hide the weakest signal. The acquired spectra were calibrated and represented as a function of intensity versus Rama shift measured in \(\mathrm{cm}^{-1}\).
 
 A dedicated preprocessing workflow was designed, together with custom Python
 tools for background subtraction, which included cosmic-ray (spike) removal, subtraction of the quartz-substrate contribution, and pixel-wise annotation of maps. 
-The spectra, acquired over a broader Raman-shift range, have been stripped of the \textit{silent region} (1800--2800 $\mathrm{cm}^{-1}$) (\cref{sec:raman_biological_tissues}), where no useful biological information is found, reducing the number of bands from 888 to 483. The remaining \textit{fingerprint} and \textit{CH} regions were normalised separately and then joined.
+
+The spectra, acquired over a broader Raman-shift range, have been stripped of the \textit{silent region} (\(1800--2800\,\mathrm{cm}^{-1}\)) (\cref{sec:raman_biological_tissues}), where no useful biological information is found, reducing the number of bands from \(888\) to \(483\). The remaining \textit{fingerprint} and \textit{CH} regions were normalised separately and then joined.
 
 The steps described above are crucial because a machine learning process requires high-quality data: noise, incorrect labels, or technical artefacts compromise the reliability of the model, which relies only on the inputs provided to it.
 This analysis starts with Raman data already organised and pre-processed for computational exploration and characterisation. 
