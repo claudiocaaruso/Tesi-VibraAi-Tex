@@ -18,7 +18,7 @@ The matrix was constructed so that each column corresponds to one of the 483 ban
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.60\textwidth]{Images/images_ch_5/05_original_vs_centered_spectrum.png}
+    \includegraphics[width=0.65\textwidth]{Images/images_ch_5/05_original_vs_centered_spectrum.png}
     \caption{Example of an original Raman spectrum and the corresponding centered spectrum used for PCA.}
     \label{fig:original_centered_spectrum}
 \end{figure}
@@ -29,8 +29,8 @@ After computing the new principal components, the most relevant parameter evalua
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.60\textwidth]{Images/images_ch_5/07_scree_plot_explained_variance.png}
-    \caption{Explained variance associated with the first principal components.}
+    \includegraphics[width=0.50\textwidth]{Images/images_ch_5/07_scree_plot_explained_variance.png}
+    \caption{Explained variance associated with the first \(50\) principal components.}
     \label{fig:pca_scree_plot}
 \end{figure}
 
@@ -38,10 +38,11 @@ The \textit{Cumulative Explained Variance} (CEV) plotted in \Cref{fig:pca_cumula
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{Images/images_ch_5/06_cumulative_explained_variance.png}
+    \includegraphics[width=0.50\textwidth]{Images/images_ch_5/06_cumulative_explained_variance.png}
     \caption{Cumulative explained variance as a function of the number of retained principal components.}
     \label{fig:pca_cumulative_variance}
 \end{figure}
+
 
 \Cref{fig:pca_reconstruction_comparison} shows the effect of reconstructing the same
 spectrum with just one component and with \(89\) components. The first component is able to capture the dominant trend, whereas the reconstruction using \(89\) components preserves the main spectral profile while providing a more compact representation.
@@ -119,14 +120,14 @@ The comparison of the tested configurations showed comparable results for all th
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{Images/images_ch_5/heatmap_auc_macroclass.png}
+    \includegraphics[width=1\textwidth]{Images/images_ch_5/heatmap_auc_macroclass.png}
     \caption{AUC across the grid of network architectures and number of retained PCs for the macro-class problem (\textit{tumor} vs. \textit{healthy}). AUC stabilizes for numbers of PCs greater than 20.}
     \label{fig:heatmap_auc_macroclass}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{Images/images_ch_5/heatmap_auc_singleclass.png}
+    \includegraphics[width=1\textwidth]{Images/images_ch_5/heatmap_auc_singleclass.png}
     \caption{AUC across the grid of network architectures and number of retained PCs for the single-class problem (\textit{tumor} vs. \textit{tumor stroma}). AUC stabilizes for numbers of PCs greater than 10.}
     \label{fig:heatmap_auc_singleclass}
 \end{figure}
@@ -135,7 +136,7 @@ Although some configurations with more components or larger networks obtained eq
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{Images/images_ch_5/overfitting_example_L200.png}
+    \includegraphics[width=1\textwidth]{Images/images_ch_5/overfitting_example_L200.png}
     \caption{Training and validation curves for the large architecture (L) with \(200\) retained PCA components on the macro-class problem (\textit{tumor} vs. \textit{healthy}). The lines show the average value of the metric across 5 folds, while shaded areas display $\pm\sigma$ from the average. The growing separation between training and validation curves is a sign of overfitting.}
     \label{fig:overfitting_example_L200}
 \end{figure}
@@ -174,14 +175,22 @@ The configurations chosen for the two approaches, listed in \cref{tab:selected_h
 The confusion matrices and ROC curves, explained in \cref{sec:evaluation_metrics}, showed good results for both problems. The macro-class approach performed slightly worse than the single-class one, especially in non-tumoral classification, with true negative rates equaled 0,71 and 0,75 respectively, while tumoral recall achieved 0,74 in the first problem and 0,76 for the second. The imbalance in TNR is a direct consequence of the internal heterogeneity of the healthy class. The ROC curves showed symmetrical behavior with respect to the TPR and FNR, with high variability depending on the validation fold composition. Mean AUC across 5 folds achieved scores of $\text{AUC} = 0{,}7931\pm0{,}0390$, relative standard deviation $\sigma_{relative} = 4{,}9\%$, for the macro-class problem (\cref{fig:results_S20_macroclass}), and $\text{AUC} = 0{,}836\pm0{,}043$, $\sigma_{relative} = 5{,}1\%$, for the single-class problem (\cref{fig:results_S10_singleclass}). The difference in mean AUC once again indicates that, on average, the macro-class approach is more difficult than the single-class one.
 
 
+The training behavior was observed to be different between the two problems. All the validation curves sit above the training ones for the first epochs due to being evaluated after the weights are updated (while training is evaluated before the weight update). The two curves then intersect, and validation stays below training.
+
+The validation curves for the macro-class classification displayed very high variability but stabilized after only $\sim2$ epochs (\cref{fig:curves_S20_macroclass}), causing the gap between the curves to mildly increase. The model quickly learned the basic patterns and trends, achieving an AUC of 0,7931, especially thanks to the homogeneity of the tumoral class, but did not improve further and failed to generalize as well for the healthy class.
+
+
+
+The curves for the single-class problem, on the other hand, improved regularly in the early stages of training until reaching a plateau after $\sim5$ epochs, with validation staying within an acceptable margin below training. The random fold composition and small validation set size cause the standard deviation of the validation metric to be greater than that of training, enough for some individual folds to show validation above training, even though the average curve remains below.
+
 \begin{figure}[H]
     \centering
     \subfloat[Confusion matrix.\label{fig:CM_S20_macroclass}]{
-        \includegraphics[width=0.4\textwidth]{Images/images_ch_5/CM_S20_macroclass.png}
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/CM_S20_macroclass.png}
     }
     \hfill
     \subfloat[ROC curve.\label{fig:ROC_S20_macroclass}]{
-        \includegraphics[width=0.4\textwidth]{Images/images_ch_5/ROC_S20_macroclass.png}
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/ROC_S20_macroclass.png}
     }
     \caption{Confusion matrix and ROC curve for the macro-class problem (\textit{tumor} vs. \textit{healthy}).}
     \label{fig:results_S20_macroclass}
@@ -190,29 +199,25 @@ The confusion matrices and ROC curves, explained in \cref{sec:evaluation_metrics
 \begin{figure}[H]
     \centering
     \subfloat[Confusion matrix.\label{fig:CM_S10_singleclass}]{
-        \includegraphics[width=0.4\textwidth]{Images/images_ch_5/CM_S10_singleclass.png}
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/CM_S10_singleclass.png}
     }
     \hfill
     \subfloat[ROC curve.\label{fig:ROC_S10_singleclass}]{
-        \includegraphics[width=0.4\textwidth]{Images/images_ch_5/ROC_S10_singleclass.png}
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/ROC_S10_singleclass.png}
     }
     \caption{Confusion matrix and ROC curve for the single-class problem (\textit{tumor} vs. \textit{tumor stroma}).}
     \label{fig:results_S10_singleclass}
 \end{figure}
 
 
-The training behavior was observed to be different between the two problems. All the validation curves sit above the training ones for the first epochs due to being evaluated after the weights are updated (while training is evaluated before the weight update). The two curves then intersect, and validation stays below training.
-The validation curves for the macro-class classification displayed very high variability but stabilized after only $\sim2$ epochs (\cref{fig:curves_S20_macroclass}), causing the gap between the curves to mildly increase. The model quickly learned the basic patterns and trends, achieving an AUC of 0,7931, especially thanks to the homogeneity of the tumoral class, but did not improve further and failed to generalize as well for the healthy class.
-The curves for the single-class problem, on the other hand, improved regularly in the early stages of training until reaching a plateau after $\sim5$ epochs, with validation staying within an acceptable margin below training. The random fold composition and small validation set size cause the standard deviation of the validation metric to be greater than that of training, enough for some individual folds to show validation above training, even though the average curve remains below.
-
 \begin{figure}[H]
     \centering
     \subfloat[Macro-class problem (\textit{tumor} vs. \textit{healthy}).\label{fig:curves_S20_macroclass}]{
-        \includegraphics[width=0.8\textwidth]{Images/images_ch_5/curves_S20_macroclass.png}
+        \includegraphics[width=0.9\textwidth]{Images/images_ch_5/curves_S20_macroclass.png}
     }
     \\
     \subfloat[Single-class problem (\textit{tumor} vs. \textit{tumor stroma}).\label{fig:curves_S10_singleclass}]{
-        \includegraphics[width=0.8\textwidth]{Images/images_ch_5/curves_S10_singleclass.png}
+        \includegraphics[width=0.9\textwidth]{Images/images_ch_5/curves_S10_singleclass.png}
     }
     \caption{Training and validation curves for the macro-class and single-class problems. The lines show the average value of the metric across 5 folds, while shaded areas display $\pm\sigma$ from the average. The representation is truncated at the number of epochs used to train the fold that stopped first, although other folds took up to 80 epochs to train.}
     \label{fig:training_curves}
@@ -262,11 +267,11 @@ Furthermore, it is not excluded that a very poor performance on a sample may dep
 \begin{figure}[H]
     \centering
     \subfloat[\textit{tumour} vs. \textit{healthy}.\label{fig:sample_f1_tumour_healthy}]{
-        \includegraphics[width=0.48\textwidth]{Images/images_ch_5/sample_f1_tumour_healthy.png}
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/sample_f1_tumour_healthy.png}
     }
     \hfill
     \subfloat[\textit{tumour} vs. \textit{tumour stroma}.\label{fig:sample_f1_tumour_stroma}]{
-        \includegraphics[width=0.48\textwidth]{Images/images_ch_5/sample_f1_tumour_stroma.png}
+        \includegraphics[width=0.45\textwidth]{Images/images_ch_5/sample_f1_tumour_stroma.png}
     }
     \caption{Per-sample \textit{F1-score} for the two binary classification experiments.}
     \label{fig:sample_f1_comparison}
@@ -350,13 +355,13 @@ Observing the smoothed prediction maps and comparing them with the raw ones, as 
 \begin{figure}[H]
     \centering
     \subfloat[Raw prediction map.\label{fig:prediction_map_raw_tumour_stroma}]{
-        \includegraphics[width=0.90\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_raw.png}
+        \includegraphics[width=1\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_raw.png}
     }
     
     \vspace{0.5em}
     
     \subfloat[Prediction map after \(7 \times 7\) smoothing.\label{fig:prediction_map_smoothed_tumour_stroma}]{
-        \includegraphics[width=0.90\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_7x7_smoothing.png}
+        \includegraphics[width=1\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_7x7_smoothing.png}
     }
     \caption{Comparison between raw and smoothed prediction maps for the \textit{tumour} vs. \textit{healthy} experiment.}
     \label{fig:prediction_maps_raw_smoothed_tumour_stroma}

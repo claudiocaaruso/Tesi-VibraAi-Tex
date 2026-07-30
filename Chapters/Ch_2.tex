@@ -251,11 +251,11 @@ A Perceptron is simply composed of a single layer of TLUs, with each TLU connect
 \begin{figure}[ht]
     \centering
     \subfloat[Single Perceptron: inputs are combined via a weighted sum then passed through a step function.\label{fig:perceptron}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_2/perceptron.png}
+        \includegraphics[width=0.47\textwidth]{Images/images_ch_2/perceptron.png}
     }
     \hfill
     \subfloat[Two-layer Perceptron: multiple TLUs stacked into an input and an output layer.\label{fig:two_layer_perceptron}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_2/two_layer_perceptron.png}
+        \includegraphics[width=0.47\textwidth]{Images/images_ch_2/two_layer_perceptron.png}
     }
     \caption{Perceptron architectures~\cite{geron2022hands}.}
     \label{fig:perceptrons}
@@ -375,7 +375,7 @@ It closely represents the firing rates of biological neurons and, due to squashi
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{Images/images_ch_2/sigmoid.png}
+    \includegraphics[width=0.9\textwidth]{Images/images_ch_2/sigmoid.png}
     \caption{Sigmoid function $\sigma(z)$ (left) and its derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$ (right). The shaded regions show the saturation zones where the gradient is nearly zero, slowing down learning through backpropagation.}
     \label{fig:sigmoid}
 \end{figure}
@@ -396,7 +396,7 @@ This has been the choice for the hidden layers for the ANN used for this thesis.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{Images/images_ch_2/relu.png}
+    \includegraphics[width=0.9\textwidth]{Images/images_ch_2/relu.png}
     \caption{ReLU function (left) and its derivative (right). For $z < 0$ the output and gradient are both exactly zero (the so-called \textit{dying ReLU} problem), while for $z > 0$ the gradient is a constant 1, avoiding saturation.}
     \label{fig:relu}
 \end{figure}

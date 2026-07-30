@@ -10,10 +10,6 @@ broader category of head and neck tumours; it develops from the mucosal epitheli
 the oral cavity, pharynx, larynx and sinonasal tract and is classified as the sixth most
 common cancer worldwide, with estimates foreseeing an increasing trend in incidence and
 occurrences in the upcoming years.
-<<<<<<< HEAD
-PDTSCs are ex vivo samples obtained from tumour tissue removed from patients, sliced into thin sections, and maintained in culture. They are useful because they preserve, at least in part, the cellular heterogeneity of the original tumour.
-=======
->>>>>>> 3d81f20778386c1c372219f67eb1ac2a14788eb4
 
 The acquisition of the maps and the preparation of the raw spectra were not part of the work undertaken in this thesis.
 
@@ -121,11 +117,11 @@ Among the classes, two do not correspond to any biological tissue and were remov
 \begin{figure}[H]
     \centering
     \subfloat[Occurrences for each label in the dataset.\label{fig:label_distribution}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/label_distributions.png}
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_4/label_distributions.png}
     }
     \hfill
     \subfloat[Binary grouping by tumoral and healthy spectra after discarding unlabeled, transparent pixels and artifacts.\label{fig:binary_label_distribution}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/binary_label_distribution.png}
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_4/binary_label_distribution.png}
     }
     \caption{Distribution of labels in the dataset.}
     \label{fig:label_distributions}
@@ -151,11 +147,11 @@ All classes appear to have the same trends, with multiple similar peaks in the \
 \begin{figure}[H]
     \centering
     \subfloat[\textit{tumor} spectrum against the excluded non-tissue classes (\textit{unlabeled/transparent}, \textit{artifact}) and \textit{necrosis}.\label{fig:spectra_comparison_discarded}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/spectra_comparison_discarded.png}
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_4/spectra_comparison_discarded.png}
     }
     \hfill
     \subfloat[\textit{tumor} spectrum against the most represented healthy classes.\label{fig:spectra_comparison_similar}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/spectra_comparison_similar.png}
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_4/spectra_comparison_similar.png}
     }
     \caption{Comparison of spectra for different classes. The spectra are averaged across each label and SNV-normalized.}
     \label{fig:spectra_comparisons}
@@ -207,11 +203,11 @@ Two binary problems are therefore taken forward to the classification stage. The
 \begin{figure}[H]
     \centering
     \subfloat[\textit{Tumor} vs.\textit{healthy} classification.\label{fig:heatmap-tumor-vs-healthy}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/heatmap_tumor_vs_healthy.png}
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_4/heatmap_tumor_vs_healthy.png}
     }
     \hfill
     \subfloat[\textit{Tumor} vs.\textit{tumor stroma} classification.\label{fig:heatmap-tumor-vs-stroma}]{
-        \includegraphics[width=0.45\textwidth]{Images/images_ch_4/heatmap_tumor_vs_stroma.png}
+        \includegraphics[width=0.48\textwidth]{Images/images_ch_4/heatmap_tumor_vs_stroma.png}
     }
     \caption{Maps with highlighted labels based on classification approach. As is often the case, \textit{tumor stroma} is located at the boundary of the \textit{tumoral} region.}
     \label{fig:heatmap_classification}
