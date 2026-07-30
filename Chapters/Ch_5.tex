@@ -361,35 +361,3 @@ Observing the smoothed prediction maps and comparing them with the raw ones, as 
     \caption{Comparison between raw and smoothed prediction maps for the \textit{tumour} vs. \textit{healthy} experiment.}
     \label{fig:prediction_maps_raw_smoothed_tumour_stroma}
 \end{figure}
-
-
-\section{Interpretation and comparison with the literature}
-\label{sec:interpretation_literature}
-
-\textbf{Writing notes.} This section should interpret the results without turning into a new literature review.
-
-\begin{itemize}
-    \item Summarize what the results suggest about Raman spectra as inputs for tumour recognition.
-    \item Compare the two experiments in terms of biological and computational difficulty.
-    \item Relate the observed performance to the spectral complexity and class heterogeneity discussed in the previous chapters.
-    \item Add a short comparison with similar Raman spectroscopy and machine learning studies, if useful.
-    \item Avoid overclaiming clinical validity: the results support the feasibility of the pipeline on the available dataset.
-\end{itemize}
-
-\section{Limitations of the study}
-\label{sec:limitations_study}
-
-Although being based on a large dataset (>1000000 observations), the spectra are strongly spatially correlated. This leads to a substantial reduction in useful independent information. The samples are in fact very few (25), with many types of biological tissue being largely underrepresented. The performance, as seen in \cref{sec:per_sample_analysis}, varies depending on the selected samples. A different dataset split or a larger pool of patients and samples may lead to different results compared to what was found in this thesis, which would be a sign of poor generalization.
-
-Another limitation stems from acquisition and preprocessing. The ANN received spectra which underwent a specific pipeline before being suitable for computational analysis. Different choices for the treatment of the samples, instrumentation, acquisition parameters, or preprocessing steps would reflect on the spectral trends. These differences may transfer to the ANN classification problem, altering the final results. The extent of these changes was not assessed in this thesis, which limits how confidently the pipeline can be expected to generalize to spectra acquired under different conditions.
-
-Spatial smoothing was applied as a post-processing step to improve performance due to common isolated label mismatches. Due to not being an internal part of the ANN decision process, it may also suppress real isolated healthy/tumoral regions as it does with noise. Implementing spatial convolution directly into the ANN could thus lead to more precise classification.
-
-\section{Future developments}
-\label{sec:future_developments}
-
-Possible developments of this work could revolve around solving the issues listed in \cref{sec:limitations_study}. This would mean broadening the training pool in terms of both samples and patients, as well as quantifying the influence of different experimental conditions and preprocessing on the final result.
-
-Enlarging the training pool would also increase the number of samples available for the underrepresented biological tissue classes, allowing different binary classifications to be explored. Multiclass classification would be particularly useful, allowing faster, in-vivo and pixel-exact tissue identification, now performed through H\&E staining by a histopathologist.
-
-Further improvements in the deep learning pipeline may be implemented through a convolutional neural network (CNN). Spectral convolution (1D) could lead to better identification of specific peaks and patterns associated with biological signatures. Spatial convolution (2D) on the Raman maps could serve a similar purpose to spatial smoothing, but inside the deep learning pipeline instead of as a heuristic post-processing step.
