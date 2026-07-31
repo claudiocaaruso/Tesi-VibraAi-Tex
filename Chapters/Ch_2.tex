@@ -221,7 +221,7 @@ Both range between \(0\) and \(1\) and can be expressed as percentages.
 \section{Artificial Neural Networks}
 \label{sec:ann_fundamentals}
 
-To introduce artificial neural networks (ANN) \cite{Goodfellow-et-al-2016}, it is useful to understand first linear models and see how to overcome their limitations. Linear models, such as linear regression, can fit data efficiently and reliably. The problem with linear models is that their fitting capacity is limited to linear functions.
+To introduce artificial neural networks (ANN) \cite{Goodfellow-et-al-2016}, it is useful to understand first linear models and see how to overcome their limitations. Linear models, such as linear regression, can fit data efficiently and reliably. The problem with them is that their fitting capacity is limited to linear functions.
 
 Artificial neural networks, on the contrary, are able to approximate any function. More precisely, the \textbf{Universal Approximation Theorem} \cite{prince2023understanding} states that there exists a network with one hidden layer containing a finite number of hidden units that can approximate any specified continuous function on a compact subset of $\mathbb{R}^n$ to arbitrary accuracy. This was proved by Cybenko (1989) for a class of sigmoid activations and was later shown to be true for a larger class of nonlinear activation functions. The terms used in the theorem will be explained in the following sections.
 
@@ -230,7 +230,7 @@ Artificial neural networks, on the contrary, are able to approximate any functio
 \label{subsec:neurons}
 
 Artificial neural networks owe their name to the loose analogy between artificial neurons and biological neurons.
-Biological neurons \cite{geron2022hands} are composed of a cell body with multiple ramifications. The main branch is called the axon, and it connects to other neurons through synapses. Biological neurons receive short electrical impulses called signals from other neurons via these synapses. When a neuron receives a sufficient number of signals from other neurons within a few milliseconds, it fires its own signals. Individual biological neurons seem to behave in a simple way, but they are organized in a vast network, often in consecutive layers, with each neuron typically connected to thousands of other neurons.
+Biological neurons \cite{geron2022hands} are composed of a cell body with multiple ramifications. The main branch is called the axon, and it connects to other neurons through synapses. Biological neurons receive short electrical impulses called signals from other neurons via these synapses. When a neuron receives a sufficient number of signals from the others within a few milliseconds, it fires its own signals. Individual biological neurons seem to behave in a simple way, but they are organized in a vast network, often in consecutive layers, with each one typically connected to thousands of others.
 
 A simple model for the behavior of biological neurons, the artificial neuron, has one or more binary (on/off) inputs and one binary output. The artificial neuron simply activates its output when more than a certain number of its inputs are active.
 
@@ -288,7 +288,7 @@ Initially, perceptrons were trained by accounting for the error made by the netw
 \end{equation}
 
 where $x_i$ is the $i$-th input value of the current training instance, $\hat{y}_j$ is the predicted output of the $j$-th neuron, $y_j$ is the target output, and $\eta$ is the learning rate.
-This learning method, solely based on the prediction for one instance, cannot be applied in networks with more than one hidden layer. This is due to not being able to isolate the role of a single connection in the prediction. The method, however, strongly resembles gradient descent.
+This learning method, solely based on the prediction for one instance, cannot be applied in networks with more than one hidden layer. This is due to not being able to isolate the role of a single connection in the prediction. The method, as can be seen from the structure of \cref{eq:perceptron_update}, strongly resembles gradient descent.
 
 In the case of networks with more than one hidden layer, called \textit{deep neural networks} (DNN), weights are updated through the \textit{backpropagation} algorithm, which is based on gradient descent. In two passes through the network (one forward, one backward), the backpropagation algorithm computes the gradient of the network's error with respect to every single model parameter:
 

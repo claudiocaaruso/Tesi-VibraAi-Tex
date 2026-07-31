@@ -30,7 +30,7 @@ This analysis starts with Raman data already organized and pre-processed for com
 
 The analyzed biological tissue was taken from 25 \textit{samples}, one from each of 25 different patients.
 
-Two to five areas, called \textit{maps}, were then selected from each sample for the Raman spectra acquisition.
+Two to five areas, called \textit{maps}, were then selected from each sample (\cref{fig:stained_sample}) for the Raman spectra acquisition.
 A spectrum was acquired for each pixel in the map. Each map has a size of $600\times600~\mu\mathrm{m}$, acquired as $120\times120$ pixels.
 Finally, each spectrum ranges across 483 bands and has an associated \textit{label}, indicating the type of biological tissue it belongs to.
 
@@ -61,16 +61,14 @@ With 25 samples and 2 to 5 maps each, the total number of maps is 78, thus amoun
     \centering
     \includegraphics[width=0.8\linewidth]{Images/images_ch_4/stained_sample.png}
     \caption{\textit{Sample} treated with H\&E staining. Two \textit{maps} are magnified and displayed as heatmaps based on Raman data.}
-    \label{fig:placeholder}
+    \label{fig:stained_sample}
 \end{figure}
 
 
 \section{Labels}
 \label{sec:labels}
 
-Each pixel (spectrum) has been assigned a label, corresponding to a specific type of biological tissue, by a histopathologist.
-The classification pipeline started with the preparation of the samples as $12~\mu\mathrm{m}$ slices of tumoral tissue.
-Raman spectroscopy was first performed on each slice. The slices were then treated through H\&E staining to allow the histopathologist to assign the labels. Finally, the annotations from the H\&E were directly transferred into the Raman Map.
+Each pixel (spectrum) has been assigned a label, corresponding to a specific type of biological tissue, by a histopathologist. The classification pipeline started with the preparation of the samples as $12~\mu\mathrm{m}$ slices of tumoral tissue. Raman spectroscopy was first performed on each slice. The slices were then treated through H\&E staining (\cref{fig:stained_sample}) to allow the histopathologist to assign the labels. Finally, the annotations from the H\&E were directly transferred into the Raman Map.
 
 This process includes two critical points:
 
@@ -137,7 +135,7 @@ In a preliminary visual analysis, the average spectrum for each class has been c
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.65\linewidth]{Images/images_ch_4/spectrum_avg_tumor.png}
-    \caption{Average spectrum for the \textit{tumor} label. The shaded band shows $\pm1$ standard deviation across spectra. The \textit{fingerprint region} and \textit{CH region} are joined at band n.382, where the intensity is 0.}
+    \caption{Average spectrum for the \textit{tumor} label. The shaded band shows $\pm1$ standard deviation across spectra. The \textit{fingerprint region} and \textit{CH region} are joined at bands n.382-383, where the intensity is 0.}
     \label{fig:spectrum_avg_tumor}
 \end{figure}
 
@@ -166,9 +164,9 @@ In the prospect of training a binary classification ANN it was necessary to set 
 
 Two strategies were considered for this task:
 \begin{itemize}
-    \item \textbf{\textit{Tumor} vs. \textit{healthy} discrimination}
-    \\Grouping all or part of the labels under the \textit{Tumor} and \textit{Healthy} macro-classes.
-    \item \textbf{Single class discrimination}
+    \item \textbf{Macro-class discrimination}
+    \\Grouping the labels under the \textit{Tumor} and \textit{Healthy} macro-classes.
+    \item \textbf{Single-class discrimination}
     \\Choosing a class of particular interest other than \textit{Tumor} and discarding all others
 \end{itemize}
 
@@ -182,11 +180,11 @@ The choice had to account for the following criteria:
 
 The first approach is the one with the most clinical relevance. Successful classification of tumoral areas against general healthy tissue would be the most versatile result possible, with further single-class distinction to be performed later depending on need. The balance between the two classes would also be close to 50/50, allowing to use the whole dataset for training and testing of the ANN. This approach presents however multiple critical points.
 The \textit{healthy} macro-class, including numerous tissue types, is very heterogeneous (high intra-class variance), leading to poor feature individuation or bias toward the major class.
-The \textit{tumor} macro-class includes the \textit{tumor (2)} and \textit{tumor with necrosis (20)} , since necrotic tissue is expected to be adjacent to tumors and, being mixed with tumor, not to affect affect the average spectrum noticeably (pure \textit{necrosis (0)} was previously deleted from the dataset);
+The \textit{tumor} macro-class includes the \textit{tumor (2)} and \textit{tumor with necrosis (20)} , since necrotic tissue is expected to be adjacent to tumors and, being mixed with them, not to noticeably affect the average spectrum (pure \textit{necrosis (0)} was previously deleted from the dataset);
 
 
 The second approach, using isolated classes, will reduce intra-class variance and allow the model to learn the class-specific patterns, thus improving performance.
-Due to the class imbalance (tumor alone being 46,71\% of the dataset), the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the available training data. The model is then trained on a reduced number of spectra. Due to the size of the dataset ($>$1\,000\,000 spectra) and the strong spatial correlation between adjacent pixels, which makes neighboring spectra highly redundant, the data can be substantially subsampled with little loss of information, provided that spectra from every sample are retained. This reduces the possible choices for \textit{healthy} labels to the most numerous ones, i.e.\ \textit{tumor stroma (6)}, \textit{stroma with inflammation (4)} and \textit{connective tissue (5)} (\Cref{fig:label_distribution}).
+Due to the class imbalance (tumor alone being 46,71\% of the dataset), the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the available training data in order not to skew the classifier. The model is then trained on a reduced number of spectra. Due to the size of the dataset ($>$1\,000\,000 spectra) and the strong spatial correlation between adjacent pixels, which makes neighboring spectra highly redundant, the data can be substantially subsampled with little loss of information, provided that spectra from every sample are retained. This reduces the possible choices for \textit{healthy} labels to the most numerous ones, i.e.\ \textit{tumor stroma (6)}, \textit{stroma with inflammation (4)} and \textit{connective tissue (5)} (\Cref{fig:label_distribution}).
 
 Regarding discernability, the most similar tissues are also the most clinically confusable. Being able to discriminate would then be the most valuable result. The three possible healthy classes show a comparable degree of similarity to the tumor (\Cref{fig:spectra_comparison_similar}); each therefore constitutes an equally valid choice, with no class being a priori better suited than the rest from a separability standpoint.
 
@@ -197,7 +195,7 @@ Clinically, each label can be relevant in different ways:
     \item \textbf{Connective tissue:} Unaltered collagen rich tissue. Would serve to the same purpose of the macro-class distinction proposed previously.
 \end{itemize}
 
-Two binary problems are therefore taken forward to the classification stage. The first, \textit{tumor} vs.\ \textit{healthy}, groups all valid non-tumor classes into a single \textit{healthy} macro-class: it targets the broad, clinically versatile question and keeps the two groups close to 50/50, allowing the whole dataset to be used. The second, \textit{tumor} vs.\ \textit{tumor stroma}, is a single, surgically motivated pairing for margin assessment; building the \textit{healthy} side from the most numerous single class yields a spectrally homogeneous and balanced training set, for which better performance is expected.
+Two binary problems are therefore taken forward to the classification stage. The first, \textit{tumor} vs.\ \textit{healthy}, groups all valid non-tumor classes into a single \textit{healthy} macro-class: it targets the broad, clinically versatile question and keeps the two groups close to 50/50, allowing the whole dataset to be used. The second, \textit{tumor} vs.\ \textit{tumor stroma}, is a single, surgically motivated pairing for margin assessment; building the non-tumoral side from the most numerous single class yields a spectrally homogeneous and balanced training set, for which better performance is expected.
 
 
 \begin{figure}[H]
@@ -326,7 +324,7 @@ Accuracy is often not the best metric to consider in order to evaluate the perfo
 
 A better way to evaluate a model is through the \textit{confusion matrix}, which shows how many times instances of class A are classified as B, for every possible combination of classes. Each row in a confusion matrix represents an \textit{actual class}, while each column represents a \textit{predicted class}.
 For a binary classifier, the \textit{true positive} TP and \textit{true negative} TN lie on the main diagonal, while the off-diagonal terms represent \textit{false positives} FP and \textit{false negatives} FN (\cref{fig:confusion_matrix}).
-Since the absolute counts (TP, FP, TN, FN) can be very big numbers when dealing with large datasets, another way to represent the confusion matrix is through the classification rates (\cref{fig:confusion_matrix_rates}), defined hereafter.
+Since the absolute counts (TP, FP, TN, FN) can be very high when dealing with large datasets, another way to represent the confusion matrix is through the classification rates (\cref{fig:confusion_matrix_rates}), defined hereafter.
 
 The \textit{true positive rate} (TPR), also called \textit{recall}, is the ratio of positive instances that are correctly detected by the classifier:
 
@@ -409,7 +407,7 @@ It is also useful to combine precision and recall into a single metric called th
 
 however, the $F_1$ score favors classifiers that have similar precision and recall, which might not be optimal for every classifier. In some cases precision might be more important than recall, while in other the opposite might be true.
 
-In this work, recall is undoubtedly more important. Classifying a healthy pixel as tumoral has fewer consequences than failing to catch a tumoral one through low recall.
+In this work, recall is undoubtedly more important. Classifying a healthy pixel as tumoral has fewer consequences than failing to catch a tumoral one due to low recall.
 
 The \textit{receiver operating characteristic} (ROC) curve is another common tool used with binary classifiers. It plots TPR (\textit{recall}) against FPR. The tradeoff is always present: the higher the recall, the more false positives (FPR) the classifier produces. The dashed line in \cref{fig:roc_curve} represents the ROC curve of a purely random classifier; a good classifier stays as far away from that line as possible (toward the top-left corner). One way to compare classifiers is to measure the area under the curve (AUC). A perfect classifier will have a ROC AUC equal to 1, whereas a purely random classifier will have a ROC AUC equal to 0,5.
 
@@ -437,7 +435,7 @@ The \textit{receiver operating characteristic} (ROC) curve is another common too
 
 The code for this work was written in Python (version 3.11) and made use of multiple libraries for the dataset's exploration, implementation of PCA, Neural networks and plotting.
 
-The dataset was stored in a \texttt{.parquet} file, a column-based format designed for efficient data storage and retrieval and widely used in clinical data analytics, medical research, and machine learning. The information from the dataset was retrieved through \texttt{PyArrow}, an engine optimized for managing large datasets (in this case more than one million rows). Once the dataset was loaded into a data frame, manipulations such as filtering and label mapping were performed with \texttt{Pandas}, while numerical array operations relied on \texttt{NumPy}.
+The dataset was stored in a \texttt{.parquet} file, a column-based format designed for efficient data storage and retrieval and widely used in clinical data analytics, medical research, and machine learning. The structure of the dataset for this particular problem is reported in \cref{app:dataset-format}. The information from the dataset was retrieved through \texttt{PyArrow}, an engine optimized for managing large datasets (in this case more than one million rows). Once the dataset was loaded into a data frame, manipulations such as filtering and label mapping were performed with \texttt{Pandas}, while numerical array operations relied on \texttt{NumPy}.
 
 Dimensionality reduction and PCA were implemented by importing Scikit-Learn's PCA class as \texttt{sklearn.decomposition.PCA}. This import made available ad hoc functions and variables such as \texttt{.fit\_transform()} and \texttt{.explained\_variance\_ratio\_}, then used for computing SVD and the plotted data.
 
