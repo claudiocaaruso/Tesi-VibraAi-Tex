@@ -17,7 +17,7 @@ Machine Learning is the science (and art) of programming computers so they can
 learn from data \cite{geron2022hands}.
 While classical programming follows fixed, man-defined rules, a machine learning program consists of a function that takes inputs and produces an output based on rules deduced by the algorithm itself, rather than defined by the programmer. 
 
-The examples that the system uses to learn are called \textit{training sets} and are described by numerical features. When a task is presented, the algorithm uses these examples to identify trends beyond what simple statistical analysis can capture and to build a \textit{model}. The patterns found during the learning stage remain informative when new observations are presented, and for this reason the model can be used to make predictions and categorise new data. More specifilìcally, an algorithm is a set of rules and procedures used to solve a specific problem or perform a particular task, while a model is the output or result of applying an algorithm to a data set.
+The examples that the system uses to learn are called \textit{training sets} and are described by numerical features. When a task is presented, the algorithm uses these examples to identify trends beyond what simple statistical analysis can capture and to build a \textit{model}. The patterns found during the learning stage remain informative when new observations are presented, and for this reason the model can be used to make predictions and categorize new data. More specifically, an algorithm is a set of rules and procedures used to solve a specific problem or perform a particular task, while a model is the output or result of applying an algorithm to a data set.
 
 Most machine learning processes require a large amount of high-quality data that will form the basis of the training process.
 Performance is automatically improved by varying a large number of internal parameters and as more data is consumed. 
@@ -25,10 +25,10 @@ Performance is automatically improved by varying a large number of internal para
 It is common to distinguish two types of methods, \textit{supervised} and \textit{unsupervised}, based on the information available during training. Each has its own strengths and limitations, and it is important to choose the right approach for the specific task:
 
 \begin{itemize}
-    \item \textit{supervised}: the input data are labelled and teach the algorithm what conclusions it should draw. This type of learning first requires a human expert to provide the correct answers and label the data. 
+    \item \textit{supervised}: the input data are labeled and teach the algorithm what conclusions it should draw. This type of learning first requires a human expert to provide the correct answers and label the data. 
 A typical supervised learning task is classification;    
 
-       \item \textit{unsupervised}: the computer learns to identify complex schemes without relying on labelled data. The program groups similar data into clusters, autonomously determined based on its own deductions, in the case of the hierarchical clustering algorithm. Or it could transform the original data into a new set of variables that highlight its internal structure; this process, called feature extraction, is related to dimensionality reduction.
+       \item \textit{unsupervised}: the computer learns to identify complex schemes without relying on labeled data. The program groups similar data into clusters, autonomously determined based on its own deductions, in the case of the hierarchical clustering algorithm. Or it could transform the original data into a new set of variables that highlight its internal structure; this process, called feature extraction, is related to dimensionality reduction.
        
 \end{itemize}
 
@@ -100,21 +100,21 @@ The procedure builds a new set of orthogonal directions, called \textit{principa
 \subsection{Data centering}
 \label{subsec:pca_centering_covariance}
 
-Let \(\mathbf{X} \in \mathbb{R}^{n \times p}\) be the data matrix, where each row \(\mathbf{x}_i^{\mathrm{T}}\) is one observation and each column is one of the \(p\) variables. PCA assumes that the dataset is centred around the origin. The mean vector is computed as
+Let \(\mathbf{X} \in \mathbb{R}^{n \times p}\) be the data matrix, where each row \(\mathbf{x}_i^{\mathrm{T}}\) is one observation and each column is one of the \(p\) variables. PCA assumes that the dataset is centered around the origin. The mean vector is computed as
 
 \begin{equation}
     \bar{\mathbf{x}} =
     \frac{1}{n}\sum_{i=1}^{n}\mathbf{x}_i,
     \label{eq:pca_mean_spectrum}
 \end{equation}
- and the centred data matrix is
+ and the centered data matrix is
 \begin{equation}
     \mathbf{X}_c =
     \mathbf{X} - \mathbf{1}\bar{\mathbf{x}}^{\mathrm{T}},
     \label{eq:pca_centered_matrix}
 \end{equation}
 
-where \(\mathbf{1}\) is a column vector of ones. Centring the data means subtracting the average vector from each observation, so that the variations are described around an average profile and not at an absolute level.
+where \(\mathbf{1}\) is a column vector of ones. Centering the data means subtracting the average vector from each observation, so that the variations are described around an average profile and not at an absolute level.
 
 % -----------------------------------------------------------------
 % NEW §2.3.2 "Principal directions and Singular Value Decomposition"
@@ -124,7 +124,7 @@ where \(\mathbf{1}\) is a column vector of ones. Centring the data means subtrac
 \subsection{Principal directions and Singular Value Decomposition}
 \label{subsec:pca_svd}
 
-The \textit{principal directions} can be obtained through the Singular Value Decomposition (SVD) \cite{brunton2019datadriven} of the centred data matrix. The SVD is a standard matrix factorisation technique that decompose \(\mathbf{X}_c\) in:
+The \textit{principal directions} can be obtained through the Singular Value Decomposition (SVD) \cite{brunton2019datadriven} of the centered data matrix. The SVD is a standard matrix factorization technique that decomposes \(\mathbf{X}_c\) in:
 \begin{equation}
     \mathbf{X}_c =
     \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^{\mathrm{T}},
@@ -184,7 +184,7 @@ Let \(\mathbf{W}_d\) be the matrix containing the first \(d\) columns of \(\math
 
 where \(\mathbf{X}_{d\text{-proj}} \in \mathbb{R}^{n \times d}\). 
 
-The principle underlying dimensionality reduction is summarised in the following rank-\(d\) approximation:
+The principle underlying dimensionality reduction is summarized in the following rank-\(d\) approximation:
 
 \begin{equation}
     \mathbf{X}_c \approx
@@ -196,7 +196,7 @@ In this way, the original dataset was decomposed and subsequently reconstructed 
 Instead of arbitrarily choosing the number of dimensions to reduce down to, it is
 generally preferable to choose the number that adds up to a sufficiently
 large portion of the variance (e.g., \(95\%\)).
-The metrics analysed in order to make this assessment are the \textit{Explained Variance Ratio} (EVR), which is the variance fraction explained by each \(\mathrm{PC}_j\) component, strictly linked to the singular values
+The metrics analyzed in order to make this assessment are the \textit{Explained Variance Ratio} (EVR), which is the variance fraction explained by each \(\mathrm{PC}_j\) component, strictly linked to the singular values
 
 \begin{equation}
     \mathrm{EVR}_j =
@@ -487,7 +487,7 @@ where $\mathbf{m}_t$ is the momentum at iteration $t$, $\beta \in [0,1)$ a hyper
 
 The gradient step is an exponentially-weighted sum of all the previous gradients, where the weights get smaller moving back in time. The overall effect is a smoother trajectory and reduced oscillatory behavior in valleys.
 
-To further speed up the convergence in cases where the surface is much steeper in one direction than another (e.g. elongated bowl problem), it's possible to perform a pointwise \textit{normalization} of the gradient, in order to descend more directly towards the minimum (\cref{fig:gd_small_lr_grid,fig:gd_large_lr_grid,fig:norm_grad_grid}). However, since gradients are normalized, this method progresses with a fixed step, $\eta$, bouncing back and forth when near the minimum.
+To further speed up the convergence in cases where the surface is much steeper in one direction than another (e.g. elongated bowl problem), it's possible to perform a pointwise \textit{normalization} of the gradient, in order to descend more directly toward the minimum (\cref{fig:gd_small_lr_grid,fig:gd_large_lr_grid,fig:norm_grad_grid}). However, since gradients are normalized, this method progresses with a fixed step, $\eta$, bouncing back and forth when near the minimum.
 
 The combination of normalization and momentum gives the \textit{Adam Optimizer} \cite{geron2022hands, prince2023understanding}. The momentum term $\mathbf{m}_t$ from \cref{eq:momentum} is kept, and a second statistic $\mathbf{v}_t$ evolves in the same way, using another friction hyperparameter $\gamma \in [0,1)$. Rather than normalizing by the instantaneous gradient as above, Adam divides by a running estimate of its magnitude.
 
