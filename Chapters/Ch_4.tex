@@ -4,9 +4,9 @@
 \section{Data provenance and preprocessing}
 \label{sec:data_provenance}
 
-The dataset analysed in this thesis consists of spontaneous Raman hyperspectral maps acquired from patient-derived head and neck squamous cell carcinoma (HNSCC) biopsies. 
+The dataset analyzed in this thesis consists of spontaneous Raman hyperspectral maps acquired from patient-derived head and neck squamous cell carcinoma (HNSCC) biopsies. 
 HNSCC constitutes the vast majority of the
-broader category of head and neck tumours; it develops from the mucosal epithelium in
+broader category of head and neck tumors; it develops from the mucosal epithelium in
 the oral cavity, pharynx, larynx and sinonasal tract and is classified as the sixth most
 common cancer worldwide, with estimates foreseeing an increasing trend in incidence and
 occurrences in the upcoming years.
@@ -15,15 +15,15 @@ The acquisition of the maps and the preparation of the raw spectra were not part
 
 Hyperspectral maps were acquired using a home-built Raman microspectroscopy system. The excitation source used is a monochromatic, continuous-wave, diode-pumped laser operating in the red spectral region, specifically around \(660\,\mathrm{nm}\) (exposure time of \(500\,\mathrm{ms}\) and \(120\,\mathrm{mW}\) laser power).
 Through the microscope lens, the laser beam was focused on the sample, which was scanned point by point with spatial steps of \(5\,\mu\mathrm{m}\) thanks to a motorised support: in the final map, two spatial dimensions describe the position of the pixels and each pixel corresponds to an acquired spectrum.
-The Raylight component has been removed because, since its intensity is several orders of magnitude greater than that associated with Raman scattering, it represents a disturbance that could hide the weakest signal. The acquired spectra were calibrated and represented as a function of intensity versus Rama shift measured in \(\mathrm{cm}^{-1}\).
+The Rayleigh component has been removed because, since its intensity is several orders of magnitude greater than that associated with Raman scattering, it represents a disturbance that could hide the weakest signal. The acquired spectra were calibrated and represented as a function of intensity versus Raman shift measured in \(\mathrm{cm}^{-1}\).
 
 A dedicated preprocessing workflow was designed, together with custom Python
 tools for background subtraction, which included cosmic-ray (spike) removal, subtraction of the quartz-substrate contribution, and pixel-wise annotation of maps. 
 
-The spectra, acquired over a broader Raman-shift range, have been stripped of the \textit{silent region} (\(1800--2800\,\mathrm{cm}^{-1}\)) (\cref{sec:raman_biological_tissues}), where no useful biological information is found, reducing the number of bands from \(888\) to \(483\). The remaining \textit{fingerprint} and \textit{CH} regions were normalised separately and then joined.
+The spectra, acquired over a broader Raman-shift range, have been stripped of the \textit{silent region} (\(1800--2800\,\mathrm{cm}^{-1}\)) (\cref{sec:raman_biological_tissues}), where no useful biological information is found, reducing the number of bands from \(888\) to \(483\). The remaining \textit{fingerprint} and \textit{CH} regions were normalized separately and then joined.
 
-The steps described above are crucial because a machine learning process requires high-quality data: noise, incorrect labels, or technical artefacts compromise the reliability of the model, which relies only on the inputs provided to it.
-This analysis starts with Raman data already organised and pre-processed for computational exploration and characterisation. 
+The steps described above are crucial because a machine learning process requires high-quality data: noise, incorrect labels, or technical artifacts compromise the reliability of the model, which relies only on the inputs provided to it.
+This analysis starts with Raman data already organized and pre-processed for computational exploration and characterization. 
 
 \section{Dataset structure}
 \label{sec:origin-structure}
@@ -112,7 +112,7 @@ Biological tissues were divided into 13 classes, the most represented of which w
     \label{tab:label-distribution}
 \end{table}
 
-Among the classes, two do not correspond to any biological tissue and were removed before further analysis: the \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifacts} from the H\&E staining. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\cref{fig:spectra_comparison_discarded}). Keeping them would bias the model towards features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset. Purely \textit{necrotic (0)} tissue was also discarded from the dataset since it's average spectrum noticeably differed from the other tissue (\cref{fig:spectra_comparison_discarded}), due to biological degradation. This category was not classifiable as healthy, and including it as tumoral would skew the results.
+Among the classes, two do not correspond to any biological tissue and were removed before further analysis: the \textit{unlabeled/transparent} pixels correspond to holes in the tissue (detection of the glass substrate); the \textit{artifacts} from the H\&E staining. Their average spectra also differ from the tissue classes, mainly in the fingerprint region (\cref{fig:spectra_comparison_discarded}). Keeping them would bias the model toward features unrelated to the tumoral/healthy distinction, so they were excluded from the dataset. Purely \textit{necrotic (0)} tissue was also discarded from the dataset since its average spectrum noticeably differed from the other tissue (\cref{fig:spectra_comparison_discarded}), due to biological degradation. This category was not classifiable as healthy, and including it as tumoral would skew the results.
 
 \begin{figure}[H]
     \centering
@@ -181,12 +181,12 @@ The choice had to account for the following criteria:
 \end{itemize}
 
 The first approach is the one with the most clinical relevance. Successful classification of tumoral areas against general healthy tissue would be the most versatile result possible, with further single-class distinction to be performed later depending on need. The balance between the two classes would also be close to 50/50, allowing to use the whole dataset for training and testing of the ANN. This approach presents however multiple critical points.
-The \textit{healthy} macro-class, including numerous tissue types, is very heterogeneous (high intra-class variance), leading to poor feature individuation or bias towards the major class.
+The \textit{healthy} macro-class, including numerous tissue types, is very heterogeneous (high intra-class variance), leading to poor feature individuation or bias toward the major class.
 The \textit{tumor} macro-class includes the \textit{tumor (2)} and \textit{tumor with necrosis (20)} , since necrotic tissue is expected to be adjacent to tumors and, being mixed with tumor, not to affect affect the average spectrum noticeably (pure \textit{necrosis (0)} was previously deleted from the dataset);
 
 
 The second approach, using isolated classes, will reduce intra-class variance and allow the model to learn the class-specific patterns, thus improving performance.
-Due to the class imbalance (tumor alone being 46,71\% of the dataset), the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the available training data. The model is then trained on a reduced number of spectra. Due to the size of the dataset ($>$1\,000\,000 spectra) and the strong spatial correlation between adjacent pixels, which makes neighbouring spectra highly redundant, the data can be substantially subsampled with little loss of information, provided that spectra from every sample are retained. This reduces the possible choices for \textit{healthy} labels to the most numerous ones, i.e.\ \textit{tumor stroma (6)}, \textit{stroma with inflammation (4)} and \textit{connective tissue (5)} (\Cref{fig:label_distribution}).
+Due to the class imbalance (tumor alone being 46,71\% of the dataset), the classes will not be equal in numerosity anymore, requiring rebalancing by discarding part of the available training data. The model is then trained on a reduced number of spectra. Due to the size of the dataset ($>$1\,000\,000 spectra) and the strong spatial correlation between adjacent pixels, which makes neighboring spectra highly redundant, the data can be substantially subsampled with little loss of information, provided that spectra from every sample are retained. This reduces the possible choices for \textit{healthy} labels to the most numerous ones, i.e.\ \textit{tumor stroma (6)}, \textit{stroma with inflammation (4)} and \textit{connective tissue (5)} (\Cref{fig:label_distribution}).
 
 Regarding discernability, the most similar tissues are also the most clinically confusable. Being able to discriminate would then be the most valuable result. The three possible healthy classes show a comparable degree of similarity to the tumor (\Cref{fig:spectra_comparison_similar}); each therefore constitutes an equally valid choice, with no class being a priori better suited than the rest from a separability standpoint.
 
@@ -291,9 +291,9 @@ All stochastic parts of the pipeline (i.e.\ fold assignment, the split within ea
 \section{Spatial post-processing}
 \label{sec:spatial_post_processing}
 
-The network classifies each pixel in isolation, learning to recognise its composition solely from the corresponding spectrum and not accounting for spatial structure. However, since the spectra are acquired within maps, they are also associated with spatial coordinates \((x,y)\) and consequently adjacent pixels are correlated, as they often belong to the same biological region.
+The network classifies each pixel in isolation, learning to recognize its composition solely from the corresponding spectrum and not accounting for spatial structure. However, since the spectra are acquired within maps, they are also associated with spatial coordinates \((x,y)\) and consequently adjacent pixels are correlated, as they often belong to the same biological region.
 
-To introduce the spatial classification problem and test if these correlations are actually relevant in order to improve predictions, a spatial filter is used. Starting from the probabilities predicted by the model for each pixel, this filter computes the average on a spatially arbitrary window, correcting it on the basis of the context of the predicted neighbouring probabilities.
+To introduce the spatial classification problem and test if these correlations are actually relevant in order to improve predictions, a spatial filter is used. Starting from the probabilities predicted by the model for each pixel, this filter computes the average on a spatially arbitrary window, correcting it on the basis of the context of the predicted neighboring probabilities.
 This step does not alter the neural network's intrinsic capacity, since spatial information never enters the network's training phase and is applied only after inference.
 
 Let \(p(x,y)\) be the probability predicted by the model for the positive class at the pixel located at coordinates \((x,y)\). Using a \(w \times w\) average filter, the smoothed probability \(\tilde{p}(x,y)\) can be written as

@@ -5,16 +5,16 @@ This chapter presents the experimental results obtained with the computational p
 \section{Exploratory PCA of the dataset}
 \label{sec:pca_dataset}
 
-In this work, PCA was first used as an exploratory tool to inspect the structure of the Raman dataset before building the classification model. To perform this step, PCA was calculated on the entire dataset after removing the non-informative labels, namely unlabelled/transparent pixels and artefacts, as described in \Cref{sec:labels}.
+In this work, PCA was first used as an exploratory tool to inspect the structure of the Raman dataset before building the classification model. To perform this step, PCA was calculated on the entire dataset after removing the non-informative labels, namely unlabeled/transparent pixels and artifacts, as described in \Cref{sec:labels}.
 
 As discussed previously, PCA is an unsupervised machine learning method. The final objective of this analysis is therefore not to decide which spectral components are more relevant to distinguish different biological classes within samples or to perform classification, but rather to investigate the content of the spectra in terms of explained variance to understand whether they contain particularly relevant directions and whether a more compact representation may be adequate for our dataset. If this were the case, it would be possible to reduce the dimensionality of our data to the number of components most suitable for training the artificial neural network, for the reasons explained in \Cref{sec:dimensionality_reduction}. 
 
 
-The data was oranized in matrix \(\mathbf{X}\) introduced in
+The data was organized in matrix \(\mathbf{X}\) introduced in
 \Cref{sec:dimensionality_reduction}.
 The matrix was constructed so that each column corresponds to one of the 483 bands and each row contains the intensities.
 
-\Cref{fig:original_centered_spectrum} visually represents the centring of one single spectrum as described in \Cref{subsec:pca_centering_covariance}. This step is applied to all spectra in the dataset, and the new principal directions are calculated on the centered matrix \(\mathbf{X}_c\).
+\Cref{fig:original_centered_spectrum} visually represents the centering of one single spectrum as described in \Cref{subsec:pca_centering_covariance}. This step is applied to all spectra in the dataset, and the new principal directions are calculated on the centered matrix \(\mathbf{X}_c\).
 
 \begin{figure}[H]
     \centering
@@ -34,7 +34,7 @@ After computing the new principal components, the most relevant parameter evalua
     \label{fig:pca_scree_plot}
 \end{figure}
 
-The \textit{Cumulative Explained Variance} (CEV) plotted in \Cref{fig:pca_cumulative_variance} shows a steep initial increase and a progressive flattening of the curve. This proves how the last components are significantly less relevant considering the amount of information they contain; more specifically, we observe that keeping a representation made by the first 89 components only allows us to reach the 95 per cent explained variance threshold.
+The \textit{Cumulative Explained Variance} (CEV) plotted in \Cref{fig:pca_cumulative_variance} shows a steep initial increase and a progressive flattening of the curve. This proves how the last components are significantly less relevant considering the amount of information they contain; more specifically, we observe that keeping a representation made by the first 89 components only allows us to reach the 95 percent explained variance threshold.
 
 \begin{figure}[H]
     \centering
@@ -61,7 +61,7 @@ spectrum with just one component and with \(89\) components. The first component
 \end{figure}
 
 
-In the PCA space, each spectrum can be visualised as a point in a 483-dimensional space if all principal directions are considered, and the Raman dataset is therefore a point cloud.  Reducing the representation to fewer components also reduces the dimensionality of this space, projecting the data onto the directions along which the data cloud extends the most (a new subspace), which are equivalent to the first principal directions.
+In the PCA space, each spectrum can be visualized as a point in a 483-dimensional space if all principal directions are considered, and the Raman dataset is therefore a point cloud.  Reducing the representation to fewer components also reduces the dimensionality of this space, projecting the data onto the directions along which the data cloud extends the most (a new subspace), which are equivalent to the first principal directions.
 
 The score plots in \Cref{fig:pca_score_pc1_pc2} and \Cref{fig:pca_score_pc1_pc483} were generated on a random subset of
 \(10000\) spectra, for better readability.
@@ -79,7 +79,7 @@ The score plots in \Cref{fig:pca_score_pc1_pc2} and \Cref{fig:pca_score_pc1_pc48
     \label{fig:pca_score_plots}
 \end{figure}
 
-\Cref{fig:pca_score_pc1_pc2} shows how the cloud is distributed along both the PC1 and PC2 axes, with a wider spatial extent along the former, consistent with the fact that the former component explains a greater variance. Points associated with spectra labelled differently, depicted in different colours, overlap, indicating that the biological classes are not distinguishable in this examination. More specifically, it is relevant to point attention to the distribution of the tumoral class previously defined: label 2 (\textit{tumor}) and label 20 (\textit{tumor with necrosis}) seem to be concentrated more on the right side of the cloud, suggesting a possible pattern of distinction from other labels. Nevertheless, this does not apply consistently to all the points represented. Many appear widely distributed, suggesting strong spectral similarity to several of the tissues under consideration and do not allow for definitive conclusions. PCA is unsupervised, so, as noticed before, it is not necessarily expected to find a criterion for classification; supervised machine learning methods will be required.
+\Cref{fig:pca_score_pc1_pc2} shows how the cloud is distributed along both the PC1 and PC2 axes, with a wider spatial extent along the former, consistent with the fact that the former component explains a greater variance. Points associated with spectra labeled differently, depicted in different colors, overlap, indicating that the biological classes are not distinguishable in this examination. More specifically, it is relevant to point attention to the distribution of the tumoral class previously defined: label 2 (\textit{tumor}) and label 20 (\textit{tumor with necrosis}) seem to be concentrated more on the right side of the cloud, suggesting a possible pattern of distinction from other labels. Nevertheless, this does not apply consistently to all the points represented. Many appear widely distributed, suggesting strong spectral similarity to several of the tissues under consideration and do not allow for definitive conclusions. PCA is unsupervised, so, as noticed before, it is not necessarily expected to find a criterion for classification; supervised machine learning methods will be required.
  
 \Cref{fig:pca_score_pc1_pc483} highlights the large difference in the distribution of data along the first and last components calculated by PCA. The cloud lies along the first principal component and is compressed almost to zero along PC483, with a few exceptions with respect to the number of data points. 
 
@@ -95,9 +95,9 @@ The final ANN models were trained for the two binary tasks reported in \Cref{tab
         \hline
         \textbf{Experiment} & \textbf{Positive class} & \textbf{Negative class} \\
         \hline
-        \begin{tabular}[t]{@{}c@{}}Tumour-related class\\vs\\non-tumour\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumour (2)\\Tumour with necrosis (20)\end{tabular} & \begin{tabular}[t]{@{}c@{}}Valid non-tumour classes\\(3, 4, 5, 6, 8, 10, 19, 23)\end{tabular} \\
+        \begin{tabular}[t]{@{}c@{}}Tumor-related class\\vs\\non-tumor\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumor (2)\\Tumor with necrosis (20)\end{tabular} & \begin{tabular}[t]{@{}c@{}}Valid non-tumor classes\\(3, 4, 5, 6, 8, 10, 19, 23)\end{tabular} \\
         \hline
-        \begin{tabular}[t]{@{}c@{}}Tumour-related class\\vs\\stroma\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumour (2)\\Tumour with necrosis (20)\end{tabular} & Tumour stroma (6) \\
+        \begin{tabular}[t]{@{}c@{}}Tumor-related class\\vs\\stroma\end{tabular} & \begin{tabular}[t]{@{}c@{}}Tumor (2)\\Tumor with necrosis (20)\end{tabular} & Tumor stroma (6) \\
         \hline
     \end{tabularx}
     \renewcommand{\arraystretch}{1}
@@ -105,9 +105,9 @@ The final ANN models were trained for the two binary tasks reported in \Cref{tab
     \label{tab:final_binary_experiments}
 \end{table}
 
-In both experiments, the positive class includes tumour and tumour with necrosis, consistently with the definition of the binary classification problems in \Cref{sec:binary_classification}. The first experiment compares this tumour-related class with tumour stroma, whereas the second compares it with all valid non-tumour tissue classes available in the dataset. The latter setting is broader and more heterogeneous, since its negative class includes multiple histopathological labels.
+In both experiments, the positive class includes tumor and tumor with necrosis, consistently with the definition of the binary classification problems in \Cref{sec:binary_classification}. The first experiment compares this tumor-related class with tumor stroma, whereas the second compares it with all valid non-tumor tissue classes available in the dataset. The latter setting is broader and more heterogeneous, since its negative class includes multiple histopathological labels.
 
-The final ANN experiments are evaluated in terms of training behaviour, aggregate performance, per-sample variability and the effect of spatial post-processing.
+The final ANN experiments are evaluated in terms of training behavior, aggregate performance, per-sample variability and the effect of spatial post-processing.
 
 \section{Hyperparameter selection}
 \label{sec:hyperparameter_selection}
@@ -141,7 +141,7 @@ Although some configurations with more components or larger networks obtained eq
     \label{fig:overfitting_example_L200}
 \end{figure}
 
-The maximum number of epochs was set to \(100\), although \textit{early stopping} (\cref{sec:training}) often halted the training as early as epoch 20 due to validation already plateauing, with some folds training for up to 80 epochs before stopping (\cref{fig:training_curves}). \textit{Early stopping} often acted prematurely due to noise in the validation curves when working with batch sizes smaller than 2048. Increasing batch size in fact averages the gradient descent step over more observations, smoothing out the curve and speeding up training, while also raising the risk of converging towards sharp minima, which would lead to poor generalization. The final value for the batch size was set to \(4096\), found to be a good compromise for this task.
+The maximum number of epochs was set to \(100\), although \textit{early stopping} (\cref{sec:training}) often halted the training as early as epoch 20 due to validation already plateauing, with some folds training for up to 80 epochs before stopping (\cref{fig:training_curves}). \textit{Early stopping} often acted prematurely due to noise in the validation curves when working with batch sizes smaller than 2048. Increasing batch size in fact averages the gradient descent step over more observations, smoothing out the curve and speeding up training, while also raising the risk of converging toward sharp minima, which would lead to poor generalization. The final value for the batch size was set to \(4096\), found to be a good compromise for this task.
 
 %talk about computational complexity 
 
@@ -250,27 +250,27 @@ The curves for the single-class problem, on the other hand, improved regularly i
 \section{Per-sample analysis}
 \label{sec:per_sample_analysis}
 
-For a more critical analysis, it is important to understand whether errors are evenly distributed across the dataset or are concentrated in specific samples. Despite the large number of spectra in the dataset, they are derived from only \(25\) patients, so many of the spectra do not count as independent observations because they may exhibit similarities. In our specific case, it is crucial to carry out this type of investigation instead of assessing performance across all pixels together, whose overall average may not be sufficiently representative of the model's real capabilities. The per-sample analysis highlights the internal inconsistency of the test and the model's ability to generalise across different patients and specimens. 
+For a more critical analysis, it is important to understand whether errors are evenly distributed across the dataset or are concentrated in specific samples. Despite the large number of spectra in the dataset, they are derived from only \(25\) patients, so many of the spectra do not count as independent observations because they may exhibit similarities. In our specific case, it is crucial to carry out this type of investigation instead of assessing performance across all pixels together, whose overall average may not be sufficiently representative of the model's real capabilities. The per-sample analysis highlights the internal inconsistency of the test and the model's ability to generalize across different patients and specimens. 
 
 
 \Cref{fig:sample_f1_comparison} shows the \textit{F1-score} calculated by partitioning the test set pixels by sample and comparing the model's performance for each group.
-F1 was chosen because it combines \textit{precision} and \textit{recall}, evaluating the quality of the prediction on the positive class: a high \textit{F1} means that the model recognises the \textit{tumour} class well within the same sample. Conversely, a low value indicates that a specific sample is difficult, with many \textit{false positives}, \textit{false negatives}, or both.
+F1 was chosen because it combines \textit{precision} and \textit{recall}, evaluating the quality of the prediction on the positive class: a high \textit{F1} means that the model recognizes the \textit{tumor} class well within the same sample. Conversely, a low value indicates that a specific sample is difficult, with many \textit{false positives}, \textit{false negatives}, or both.
 Although the AUC is informative for the global evaluation, it was not selected to carry out this comparison as it requires both classes to be present within each evaluated group; \textit{F1} instead can be used more consistently across samples with different class content.
 
 First of all, the result of this comparison confirms what has already been observed in \Cref{sec:aggregated_classification_results}, namely that the macro-class problem is more complicated and unstable because it introduces greater intra-class heterogeneity, with an average \textit{F1} per sample of \(0{,}713\), compared with \(0{,}792\) for the single-class task.
-Some of the most difficult classified samples in the \textit{tumour} vs \textit{healthy} experiment improve in the \textit{tumour} vs \textit{stroma} one; the most obvious case is \(3535\_019\) which goes from \textit{F1} approximately \(0{,}43\) to about \(0{,}77\) between the two experiments. This supports the thesis that the difficulty in predictions is closely linked to the definition of the negative class.
+Some of the most difficult classified samples in the \textit{tumor} vs \textit{healthy} experiment improve in the \textit{tumor} vs \textit{stroma} one; the most obvious case is \(3535\_019\) which goes from \textit{F1} approximately \(0{,}43\) to about \(0{,}77\) between the two experiments. This supports the thesis that the difficulty in predictions is closely linked to the definition of the negative class.
 
-Other cases, instead, show poor performance in both experiments, as in \(3439\_009\). The sample-specific difficulty could be related to spectral differences typical of an individual patient or specimen. In these cases, the model fails to generalise adequately due to the high biological variance found.
+Other cases, instead, show poor performance in both experiments, as in \(3439\_009\). The sample-specific difficulty could be related to spectral differences typical of an individual patient or specimen. In these cases, the model fails to generalize adequately due to the high biological variance found.
 Furthermore, it is not excluded that a very poor performance on a sample may depend on the quality of the annotations.
 
 
 \begin{figure}[H]
     \centering
-    \subfloat[\textit{tumour} vs. \textit{healthy}.\label{fig:sample_f1_tumour_healthy}]{
+    \subfloat[\textit{tumor} vs. \textit{healthy}.\label{fig:sample_f1_tumour_healthy}]{
         \includegraphics[width=0.45\textwidth]{Images/images_ch_5/sample_f1_tumour_healthy.png}
     }
     \hfill
-    \subfloat[\textit{tumour} vs. \textit{tumour stroma}.\label{fig:sample_f1_tumour_stroma}]{
+    \subfloat[\textit{tumor} vs. \textit{tumor stroma}.\label{fig:sample_f1_tumour_stroma}]{
         \includegraphics[width=0.45\textwidth]{Images/images_ch_5/sample_f1_tumour_stroma.png}
     }
     \caption{Per-sample \textit{F1-score} for the two binary classification experiments.}
@@ -333,24 +333,24 @@ The comparison of raw and smoothed results for both binary problems, presented i
 
 
 More specifically, a result of particular merit is the one of the \(7 \times 7\) filter. This leads to clearly better predictions than smaller filters, in terms of global metrics.
-Larger kernels tend to increase \textit{tumour} \textit{recall}, which could be desirable based on what was discussed earlier, but at the same time they lead to an overly aggressive imbalance in the confusion matrix by increasing \textit{false positives} and thus reducing TNR and the overall reliability of the classifier. This is why, although the 10x10 filter shows a higher \textit{AUC}, it is not the best compromise when evaluated against the \textit{TNR} and would represent an unwise choice.
+Larger kernels tend to increase \textit{tumor} \textit{recall}, which could be desirable based on what was discussed earlier, but at the same time they lead to an overly aggressive imbalance in the confusion matrix by increasing \textit{false positives} and thus reducing TNR and the overall reliability of the classifier. This is why, although the 10x10 filter shows a higher \textit{AUC}, it is not the best compromise when evaluated against the \textit{TNR} and would represent an unwise choice.
 
-The results of applying a filter as large as \(15 \times 15\) make clear that the benefits of smoothing are limited, and that excessively increasing the filter size leads to deterioration, "spreading" the \textit{tumour} class onto the healthy one.
+The results of applying a filter as large as \(15 \times 15\) make clear that the benefits of smoothing are limited, and that excessively increasing the filter size leads to deterioration, "spreading" the \textit{tumor} class onto the healthy one.
 
 \begin{figure}[H]
     \centering
-    \subfloat[\textit{tumour} vs. \textit{healthy}.\label{fig:confusion_matrix_tumour_healthy_smoothed}]{
+    \subfloat[\textit{tumor} vs. \textit{healthy}.\label{fig:confusion_matrix_tumour_healthy_smoothed}]{
         \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_healthy_smoothed.png}
     }
     \hfill
-    \subfloat[\textit{tumour} vs. \textit{tumour stroma}.\label{fig:confusion_matrix_tumour_stroma_smoothed}]{
+    \subfloat[\textit{tumor} vs. \textit{tumor stroma}.\label{fig:confusion_matrix_tumour_stroma_smoothed}]{
         \includegraphics[width=0.45\textwidth]{Images/images_ch_5/tumor_stroma_smoothed.png}
     }
     \caption{Confusion matrices obtained after spatial post-processing with the \(7 \times 7\) smoothing filter. Compared to the raw results shown in \Cref{fig:results_S20_macroclass,fig:results_S10_singleclass} the \textit{TPR} and \textit{TNR} rise.}
     \label{fig:confusion_matrices_smoothed}
 \end{figure}
 
-Observing the smoothed prediction maps and comparing them with the raw ones, as shown in \Cref{fig:prediction_maps_raw_smoothed_tumour_stroma}, it is clear that the \(7 \times 7\) filter reduces isolated errors in favour of greater spatial consistency and does not excessively propagate the areas that produced incorrect predictions, leading to the optimal result.
+Observing the smoothed prediction maps and comparing them with the raw ones, as shown in \Cref{fig:prediction_maps_raw_smoothed_tumour_stroma}, it is clear that the \(7 \times 7\) filter reduces isolated errors in favor of greater spatial consistency and does not excessively propagate the areas that produced incorrect predictions, leading to the optimal result.
 
 \begin{figure}[H]
     \centering
@@ -363,6 +363,6 @@ Observing the smoothed prediction maps and comparing them with the raw ones, as 
     \subfloat[Prediction map after \(7 \times 7\) smoothing.\label{fig:prediction_map_smoothed_tumour_stroma}]{
         \includegraphics[width=1\textwidth]{Images/images_ch_5/sample_3525_028_map_Map_1_7x7_smoothing.png}
     }
-    \caption{Comparison between raw and smoothed prediction maps for the \textit{tumour} vs. \textit{healthy} experiment.}
+    \caption{Comparison between raw and smoothed prediction maps for the \textit{tumor} vs. \textit{healthy} experiment.}
     \label{fig:prediction_maps_raw_smoothed_tumour_stroma}
 \end{figure}
