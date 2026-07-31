@@ -68,7 +68,7 @@ where \(n\) is the number of observations and \(p\) is the number of variables. 
 When using machine learning methods, thousands or even millions of features can be involved for
 each training instance and working directly with all the original variables not only drastically slows down the algorithm but also makes it hard to find a good solution to the problem; it might be appropriate to reduce the representation.
 
-The first reason to suggest this type of choice is that, in many cases, nearby variables are linked due to overlapping signals (as in Raman spectra, where spectral bands are broad and rich in correspondence). Therefore, the \(p\) variables do not necessarily outline \(p\) independent sources of information. Dimensionality reduction replaces the original variables with a smaller and new set of components that retain the dataset's main structure.
+The first reason to suggest this type of choice is that, in many cases, nearby variables are linked due to overlapping signals (as in Raman spectra, where spectral bands are broad and rich in correspondence). Hence, the \(p\) variables do not necessarily represent \(p\) independent sources of information. Dimensionality reduction replaces the original variables with a smaller and new set of components that retain the dataset's main structure.
 
 The motivation for this step is also connected to the so-called \textit{curse of dimensionality} \cite{geron2022hands}. Each observation can be seen not only as a curve or signal but also as a point in a \(p\)-dimensional space. 
 In low-dimensional spaces, points can be relatively close to one another, but when the number of variables increases, distances and volumes grow exponentially with it. High-dimensional data are prone to sparsity, and maintaining the same density of training instances would require an exponentially larger number of observations. For example, with just \(100\) features, you would need more training instances than atoms in the observable universe in order for training instances to be within \(0{,}1\) of each other on average, assuming they were spread out uniformly across all dimensions \cite{geron2022hands}. 
@@ -76,7 +76,7 @@ This leads to important consequences for a learning algorithm, because it also m
 will likely be far away from any training instance, making predictions much less reliable than in lower dimensions.
 The more dimensions the training set has, the greater the risk of overfitting it.
 
-Although it will speed up training, reducing dimensionality does lose some information, so it cannot be said that it automatically leads to an improvement. Its effect must be evaluated in terms of downstream classification performance.
+Although it will speed up training, reducing dimensionality does lose some information; thus, it cannot be said to automatically lead to an improvement. Its effect must be evaluated in terms of downstream classification performance.
 
 
 % ---------------------------------------------------------------------
