@@ -115,7 +115,7 @@
             \\
 			\vspace{2.5cm}
 			\\
-			{{\color{bluepoli} \singlespacing \huge \bfseries \thesistitle \par}}	
+			{{\color{bluepoli} \singlespacing \LARGE \bfseries \hyphenpenalty=10000 \exhyphenpenalty=10000 \thesistitle \par}}
 			\vspace{1.5cm}
 			{\color{bluepoli} \bfseries \large{\textsc{Tesi di Laurea Triennale in\\ \course}}\par}
 			\vspace{1.5 cm}
