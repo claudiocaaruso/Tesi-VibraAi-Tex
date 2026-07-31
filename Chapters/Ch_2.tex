@@ -17,7 +17,7 @@ Machine Learning is the science (and art) of programming computers so they can
 learn from data \cite{geron2022hands}.
 While classical programming follows fixed, man-defined rules, a machine learning program consists of a function that takes inputs and produces an output based on rules deduced by the algorithm itself, rather than defined by the programmer. 
 
-The examples that the system uses to learn are called \textit{training sets} and are described by numerical features. When a task is presented, the algorithm uses these examples to identify trends beyond what simple statistical analysis can capture and to build a \textit{model}. The patterns found during the learning stage remain informative when new observations are presented, and for this reason the model can be used to make predictions and categorize new data. More specifically, an algorithm is a set of rules and procedures used to solve a specific problem or perform a particular task, while a model is the output or result of applying an algorithm to a data set.
+The examples that the system uses to learn are called \textit{training sets} and are described by numerical features. When a task is presented, the algorithm uses these examples to identify trends beyond what simple statistical analysis can capture and to build a \textit{model}. The patterns found during the learning stage remain informative when new observations are presented, and for this reason the model can be used to make predictions or analyze new data. More specifically, an algorithm is the set of rules and procedures used to solve a specific problem or perform a particular task, while a model is the output or result of applying an algorithm to a data set.
 
 Most machine learning processes require a large amount of high-quality data that will form the basis of the training process.
 Performance is automatically improved by varying a large number of internal parameters and as more data is consumed. 
@@ -33,8 +33,8 @@ A typical supervised learning task is classification;
 \end{itemize}
 
 
-Machine learning enables the analysis of large volumes of data, thereby reducing manual processing and making it a powerful tool for decision support and operational analysis. It is used in many technologies that increase laboratory efficiency and automate repetitive activities. Among these advantages, it also makes it possible to extract insights that could not be identified otherwise.
-This approach is well suited to Raman spectroscopy of biological tissues. As discussed in \Cref{ch:introduction}, due to the complexity of biological Raman spectra, it is particularly challenging to reduce the sorting problem to a few manually selected bands. For this reason, we prefer to treat the spectra as numerical objects, as described in \cref{sec:origin-structure}, and to rely on computational approaches.
+Machine learning offers computational methods for handling large volumes of data, thereby reducing manual processing and making it a powerful tool for decision support and operational analysis. It is used in many technologies that increase laboratory efficiency and automate repetitive activities. Among these advantages, it also makes it possible to extract insights that could not be identified otherwise.
+This approach is well suited to Raman spectroscopy of biological tissues. As discussed in \Cref{ch:introduction}, due to the complexity of biological Raman spectra, it is particularly challenging to reduce the sorting problem to a few manually selected bands. For this reason, we prefer to treat the spectra as numerical objects, as it will be described in \cref{sec:origin-structure}, and to rely on computational approaches.
 
 In this chapter, we will present the theoretical principles underlying \textit{Principal Component Analysis (PCA)} and \textit{Artificial Neural Networks (ANN)}, which will be applied to our specific biological problem.
 
@@ -192,19 +192,19 @@ The principle underlying dimensionality reduction is summarized in the following
     \label{eq:pca_low_rank}
 \end{equation}
 
-In this way, the original dataset was decomposed and subsequently reconstructed using a smaller number \(d\) of directions instead of all the initial variables \(p\). 
+In this way, the original dataset was reconstructed using a smaller number \(d\) of directions instead of all the initial \(p\) variables. 
 Instead of arbitrarily choosing the number of dimensions to reduce down to, it is
 generally preferable to choose the number that adds up to a sufficiently
 large portion of the variance (e.g., \(95\%\)).
-The metrics analyzed in order to make this assessment are the \textit{Explained Variance Ratio} (EVR), which is the variance fraction explained by each \(\mathrm{PC}_j\) component, strictly linked to the singular values
+The metrics analyzed in order to make this assessment are the \textit{Explained Variance Ratio} (EVR), which reveals the variance fraction explained by each \(\mathrm{PC}_j\) component, strictly linked to the singular values as shown in the formula
 
 \begin{equation}
     \mathrm{EVR}_j =
-    \frac{\sigma_j^2}{\sum_{k=1}^{p}\sigma_k^2},
-    \label{eq:pca_explained_variance_ratio_svd}
+    \frac{\sigma_j^2}{\sum_{k=1}^{p}\sigma_k^2}
+    \label{eq:pca_explained_variance_ratio_svd},
 \end{equation}
 
-and, for a global view, the \textit{Cumulative Explained Variance} (CEV), meaning the progressive sum of the \(\mathrm{EVR}_j\) up to the \(d\)-th component
+and for a global view, the \textit{Cumulative Explained Variance} (CEV), meaning the progressive sum of the \(\mathrm{EVR}_j\) up to the \(d\)-th component
 
 \begin{equation}
     \mathrm{CEV}_d =
