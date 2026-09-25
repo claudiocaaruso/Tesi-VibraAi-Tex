@@ -34,7 +34,7 @@ class, one relevant metric inspected is the \textit{Explained Variance Ratio} (E
     \label{fig:pca_scree_plot}
 \end{figure}
 
-The \textit{Cumulative Explained Variance} (CEV) plotted in \Cref{fig:pca_cumulative_variance} shows a steep initial increase and a progressive flattening of the curve. This proves how the last components are significantly less relevant; more specifically, we observe that keeping a representation made by the first 89 components only allows us to reach the 95 percent explained variance threshold.
+The \textit{Cumulative Explained Variance} (CEV) plotted in \Cref{fig:pca_cumulative_variance} shows a steep initial increase and a progressive flattening of the curve after an 'elbow'. This proves how the last components, generally representative of the noise, are significantly less relevant; more specifically, we observe that keeping a representation made by only the first 38 components allows us to reach the 90 percent explained variance threshold.
 
 \begin{figure}[H]
     \centering
@@ -44,16 +44,15 @@ The \textit{Cumulative Explained Variance} (CEV) plotted in \Cref{fig:pca_cumula
 \end{figure}
 
 
-\Cref{fig:pca_reconstruction_comparison} shows the effect of reconstructing the same
-spectrum with just one component and with \(89\) components. The first component is able to capture the dominant trend, whereas the reconstruction using \(89\) components preserves the main spectral profile while providing a more compact representation.
+\Cref{fig:pca_reconstruction_comparison} shows the effect of reconstructing the same spectrum through the principal components. The first image is the starting point of PCA, since a reconstruction with 0 PCs is equivalent to the general mean spectrum, which captures the dominant trends. The reconstruction using \(38\) components, on the right, reproduces closely the chosen spectrum, preserving its profile while compacting the information in $\sim8\%$ of the original size (38 variables from the starting 483).
 
 \begin{figure}[H]
     \centering
-    \subfloat[Reconstruction using the first principal component.\label{fig:pca_reconstructed_1}]{
+    \subfloat[Reconstruction using no principal components, equivalent to the average spectrum.\label{fig:pca_reconstructed_1}]{
         \includegraphics[width=0.48\textwidth]{Images/images_ch_5/12_original_vs_reconstructed_1_components.png}
     }
     \hfill
-    \subfloat[Reconstruction using the first \(89\) principal components.\label{fig:pca_reconstructed_89}]{
+    \subfloat[Reconstruction using the first \(39\) principal components.\label{fig:pca_reconstructed_39}]{
         \includegraphics[width=0.48\textwidth]{Images/images_ch_5/12_original_vs_reconstructed_89_components.png}
     }
     \caption{Comparison between an original Raman spectrum and its PCA reconstruction using different numbers of retained principal components.}
